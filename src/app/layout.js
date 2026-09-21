@@ -1,4 +1,4 @@
-import { Inter, Oswald } from "next/font/google";
+import { Inter } from "next/font/google";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@/styles/globals.css";
 
@@ -10,18 +10,11 @@ const inter = Inter({
   display: "swap",
 });
 
-// Display face — bold condensed, used for hero/section headlines on the
-// public site only (automotive-poster feel for the fleet page).
-const oswald = Oswald({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-display",
-  display: "swap",
-});
-
 export const metadata = {
-  title: "Boss Rent Pererenan — Scooter Rental Bali",
-  description: "Penyewaan sepeda motor matic resmi & admin panel Boss Rent Pererenan",
+  title: "Boss Rent Pererenan — Admin",
+  description: "Panel administrasi rental motor Boss Rent Pererenan",
+  // Panel admin tidak perlu muncul di mesin pencari.
+  robots: { index: false, follow: false },
   icons: {
     icon: [
       { url: '/images/logoCompany.png', type: 'image/png' },
@@ -35,7 +28,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="id" className={`${inter.variable} ${oswald.variable}`}>
+    <html lang="id" className={inter.variable}>
       <body>{children}</body>
     </html>
   );

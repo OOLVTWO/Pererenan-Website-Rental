@@ -14,7 +14,6 @@ const pageMeta = {
   '/expenses':    { title: 'Keuangan',         subtitle: 'Catat pemasukan, pengeluaran & saldo bersih' },
   '/reports':     { title: 'Laporan',          subtitle: 'Export dan analisis pendapatan' },
   '/settings':    { title: 'Pengaturan',       subtitle: 'Profil bisnis, pembayaran, template WA & backup' },
-  '/fleet':       { title: 'Website Publik',   subtitle: 'Katalog sewa motor publik (/fleet)' },
   '/customers':   { title: 'Data Customer',    subtitle: 'Kelola data penyewa & riwayat' },
 };
 

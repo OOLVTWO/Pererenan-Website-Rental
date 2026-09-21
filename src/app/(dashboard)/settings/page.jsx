@@ -440,7 +440,7 @@ export default function SettingsPage() {
       showAlert('Interval servis harus berupa angka lebih dari 0.', 'danger');
       return;
     }
-    // Gabungkan dengan data lama supaya key lain (mis. konten /fleet di browser ini) tidak hilang.
+    // Gabungkan dengan data lama supaya key lain di localStorage tidak hilang.
     const merged = { ...readSavedBiz(), ...bizForm, serviceIntervalKm: km, serviceIntervalDays: days };
     try {
       localStorage.setItem(BIZ_SETTINGS_KEY, JSON.stringify(merged));

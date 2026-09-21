@@ -115,7 +115,6 @@ const NAV_SECTIONS = [
           { href: '/settings?tab=storage',  iconClass: 'fa-solid fa-database',       label: 'Data & Backup' },
         ],
       },
-      { href: '/fleet', iconClass: 'fa-solid fa-globe', label: 'Website Publik' },
     ],
   },
 ];
