@@ -28,7 +28,7 @@ export const VEHICLE_LIGHT_COLUMNS = [
   'rate_per_day', 'rate_per_week', 'rate_per_month',
   'current_km', 'last_service_km', 'last_serviced_at',
   'owner_type', 'owner_name', 'owner_contact', 'revenue_share_percentage',
-  'purchase_date', 'purchase_price', 'created_at', 'updated_at',
+  'created_at', 'updated_at',
 ].join(', ');
 
 export const CUSTOMER_LIGHT_COLUMNS = 'id, name, phone, id_number, address, notes, created_at, updated_at';

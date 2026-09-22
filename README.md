@@ -14,7 +14,7 @@ Next.js 16 (App Router) + Supabase (Postgres, Auth, Storage), di-deploy di **Ver
 | Transaksi | Catat sewa, invoice WhatsApp, foto serah terima (1 foto / transaksi) |
 | Data Customer | Master data penyewa + riwayat |
 | Data Motor | Armada, tarif, motor investor |
-| Tracking Sewa / Ketersediaan | Sewa aktif, overdue, status unit |
+| Tracking Sewa | Sewa aktif, overdue, pengingat WhatsApp + tab Status Armada (tersedia/disewa/perawatan) |
 | Servis Motor | Jejak servis per motor, status "perlu servis" (km / hari) |
 | Keuangan | Pemasukan & pengeluaran |
 | Laporan | Laporan periode + export Excel, bagi hasil investor |

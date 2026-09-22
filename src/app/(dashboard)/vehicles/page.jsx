@@ -390,8 +390,6 @@ function getDefaultVehicleForm() {
     owner_name: '',
     owner_contact: '',
     revenue_share_percentage: '70',
-    purchase_date: '',
-    purchase_price: '',
   };
 }
 
@@ -421,8 +419,6 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
           owner_name: editData.owner_name || '',
           owner_contact: editData.owner_contact || '',
           revenue_share_percentage: editData.revenue_share_percentage ? String(editData.revenue_share_percentage) : '70',
-          purchase_date: editData.purchase_date || '',
-          purchase_price: editData.purchase_price ? String(editData.purchase_price) : '',
         });
       } else {
         setForm(getDefaultVehicleForm());
@@ -432,7 +428,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const numericFields = ['rate_per_day', 'rate_per_week', 'rate_per_month', 'current_km', 'revenue_share_percentage', 'purchase_price'];
+    const numericFields = ['rate_per_day', 'rate_per_week', 'rate_per_month', 'current_km', 'revenue_share_percentage'];
     if (numericFields.includes(name)) {
       setForm({ ...form, [name]: value.replace(/[^0-9]/g, '') });
     } else {
@@ -467,8 +463,6 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
       rate_per_month: safeInt(form.rate_per_month),
       current_km:     safeInt(form.current_km),
       revenue_share_percentage: safeInt(form.revenue_share_percentage) || 70,
-      purchase_price: safeInt(form.purchase_price),
-      purchase_date: (form.purchase_date && String(form.purchase_date).trim() !== '') ? form.purchase_date : null,
     });
     setLoading(false);
   };
@@ -590,7 +584,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
             <div className="pricing-tier-header">
               <i className="fa-solid fa-tags"></i>
               <span>Pricing Tiers</span>
-              <span className="pricing-tier-hint">Set rates for Smart Calculator recommendations</span>
+              <span className="pricing-tier-hint">Tarif harian, mingguan & bulanan</span>
             </div>
             <div className="pricing-tier-grid">
               <div className="pricing-tier-card daily-tier">
@@ -982,11 +976,9 @@ export default function VehiclesPage() {
         contact: v.owner_contact || '-',
         sharePct: v.revenue_share_percentage || 70,
         vehicles: [],
-        totalCapital: 0
       };
     }
     investorMap[name].vehicles.push(v);
-    investorMap[name].totalCapital += Number(v.purchase_price || 0);
   });
   const investorList = Object.values(investorMap);
 
