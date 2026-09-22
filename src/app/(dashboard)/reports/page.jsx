@@ -10,6 +10,7 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import { TX_LIGHT_SELECT, VEHICLE_LIGHT_COLUMNS } from '@/lib/queryColumns';
 import PageTabs from '@/components/ui/PageTabs';
+import Icon from '@/components/ui/Icon';
 
 const VALID_TABS = ['income', 'expenses', 'profit_loss', 'investor'];
 
@@ -17,17 +18,17 @@ const statusBadge = (status) => {
   const map = {
     active: (
       <span className="tx-status-pill active">
-        <i className="fa-solid fa-bolt" style={{ fontSize: '11px' }}></i> Sewa Aktif
+        <Icon fa="fa-solid fa-bolt" style={{ fontSize: '11px' }} /> Sewa Aktif
       </span>
     ),
     completed: (
       <span className="tx-status-pill completed">
-        <i className="fa-solid fa-circle-check" style={{ fontSize: '11px' }}></i> Selesai
+        <Icon fa="fa-solid fa-circle-check" style={{ fontSize: '11px' }} /> Selesai
       </span>
     ),
     cancelled: (
       <span className="tx-status-pill cancelled">
-        <i className="fa-solid fa-circle-xmark" style={{ fontSize: '11px' }}></i> Dibatalkan
+        <Icon fa="fa-solid fa-circle-xmark" style={{ fontSize: '11px' }} /> Dibatalkan
       </span>
     ),
   };
@@ -214,7 +215,7 @@ export default function ReportsPage() {
       </Suspense>
 
       <div className="page-header">
-        <h2><i className="fa-solid fa-chart-line" style={{ marginRight: '8px' }}></i> Laporan Keuangan & Laba Rugi</h2>
+        <h2><Icon fa="fa-solid fa-chart-line" style={{ marginRight: '8px' }} /> Laporan Keuangan & Laba Rugi</h2>
         <p>Analisis terpisah antara Pemasukan, Pengeluaran, Laba Bersih & Bagi Hasil Investor</p>
       </div>
 
@@ -233,12 +234,12 @@ export default function ReportsPage() {
       {/* Filter */}
       <div className="card mb-6">
         <div className="card-header">
-          <div className="card-title"><i className="fa-solid fa-filter" style={{ marginRight: '6px' }}></i> Filter Periode</div>
+          <div className="card-title"><Icon fa="fa-solid fa-filter" style={{ marginRight: '6px' }} /> Filter Periode</div>
         </div>
         <div className="form-row cols-3">
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label" htmlFor="report-start">
-              <i className="fa-solid fa-calendar-days" style={{ marginRight: '6px' }}></i> Tanggal Mulai
+              <Icon fa="fa-solid fa-calendar-days" style={{ marginRight: '6px' }} /> Tanggal Mulai
             </label>
             <input
               id="report-start"
@@ -250,7 +251,7 @@ export default function ReportsPage() {
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label" htmlFor="report-end">
-              <i className="fa-solid fa-calendar-days" style={{ marginRight: '6px' }}></i> Tanggal Selesai
+              <Icon fa="fa-solid fa-calendar-days" style={{ marginRight: '6px' }} /> Tanggal Selesai
             </label>
             <input
               id="report-end"
@@ -280,11 +281,11 @@ export default function ReportsPage() {
           {activeReportTab === 'investor' && (
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label" htmlFor="report-investor">
-                <i className="fa-solid fa-crown" style={{ marginRight: '6px', color: '#1D4ED8' }}></i> Cari & Pilih Investor ({uniqueInvestorNames.length} Terdaftar)
+                <Icon fa="fa-solid fa-crown" style={{ marginRight: '6px', color: '#1D4ED8' }} /> Cari & Pilih Investor ({uniqueInvestorNames.length} Terdaftar)
               </label>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <div style={{ position: 'relative', minWidth: '160px', flex: '1 1 160px' }}>
-                  <i className="fa-solid fa-magnifying-glass" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: '12px' }}></i>
+                  <Icon fa="fa-solid fa-magnifying-glass" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: '12px' }} />
                   <input
                     type="text"
                     className="form-control"
@@ -318,7 +319,7 @@ export default function ReportsPage() {
       <div className="grid-3 mb-6">
         <div className="stat-card">
           <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8' }}>
-            <i className="fa-solid fa-sack-dollar"></i>
+            <Icon fa="fa-solid fa-sack-dollar" />
           </div>
           <div className="stat-info">
             <div className="stat-label">Total Pemasukan</div>
@@ -329,7 +330,7 @@ export default function ReportsPage() {
 
         <div className="stat-card">
           <div className="stat-icon" style={{ background: 'rgba(30,58,138, 0.15)', color: '#1E3A8A' }}>
-            <i className="fa-solid fa-money-bill-transfer"></i>
+            <Icon fa="fa-solid fa-money-bill-transfer" />
           </div>
           <div className="stat-info">
             <div className="stat-label">Total Pengeluaran</div>
@@ -340,7 +341,7 @@ export default function ReportsPage() {
 
         <div className="stat-card">
           <div className="stat-icon" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3B82F6' }}>
-            <i className="fa-solid fa-chart-pie"></i>
+            <Icon fa="fa-solid fa-chart-pie" />
           </div>
           <div className="stat-info">
             <div className="stat-label">Laba Bersih (Net Profit)</div>
@@ -363,13 +364,13 @@ export default function ReportsPage() {
               onClick={handleExport}
               disabled={exporting || loading || paidTx.length === 0}
             >
-              {exporting ? <><i className="fa-solid fa-spinner fa-spin"></i> Mengexport...</> : <><i className="fa-solid fa-file-excel"></i> Download Excel Pemasukan</>}
+              {exporting ? <><Icon fa="fa-solid fa-spinner fa-spin" /> Mengexport...</> : <><Icon fa="fa-solid fa-file-excel" /> Download Excel Pemasukan</>}
             </button>
           </div>
 
           <div className="table-wrapper">
             {loading ? (
-              <div className="table-empty"><i className="fa-solid fa-spinner fa-spin"></i> Memuat laporan...</div>
+              <div className="table-empty"><Icon fa="fa-solid fa-spinner fa-spin" /> Memuat laporan...</div>
             ) : paidTx.length === 0 ? (
               <div className="table-empty"><p>Tidak ada transaksi terbayar untuk periode ini</p></div>
             ) : (
@@ -396,7 +397,7 @@ export default function ReportsPage() {
                         <td data-label="#" style={{ fontWeight: 700, color: 'var(--text-muted)' }}>{idx + 1}</td>
                         <td data-label="Tgl Transaksi">
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12.5px', color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
-                            <i className="fa-solid fa-calendar-day" style={{ color: 'var(--brand-primary-light)', fontSize: '11px' }}></i>
+                            <Icon fa="fa-solid fa-calendar-day" style={{ color: 'var(--brand-primary-light)', fontSize: '11px' }} />
                             {new Date(tx.created_at || tx.start_date).toLocaleDateString('id-ID')}
                           </div>
                         </td>
@@ -405,7 +406,7 @@ export default function ReportsPage() {
                             <strong style={{ fontSize: '13.5px', color: 'var(--text-primary)' }}>{tx.renter_name}</strong>
                             {tx.renter_phone && (
                               <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                                <i className="fa-solid fa-phone" style={{ marginRight: '4px', fontSize: '10px' }}></i>{tx.renter_phone}
+                                <Icon fa="fa-solid fa-phone" style={{ marginRight: '4px', fontSize: '10px' }} />{tx.renter_phone}
                               </div>
                             )}
                           </div>
@@ -416,7 +417,7 @@ export default function ReportsPage() {
                             {tx.vehicles?.plate_number && (
                               <div>
                                 <span className="tx-info-pill" style={{ color: 'var(--brand-primary-light)', borderColor: 'rgba(37, 99, 235, 0.35)', background: 'rgba(37, 99, 235, 0.12)', padding: '4px 10px' }}>
-                                  <i className="fa-solid fa-motorcycle" style={{ fontSize: '11px', marginRight: '6px' }}></i>
+                                  <Icon fa="fa-solid fa-motorcycle" style={{ fontSize: '11px', marginRight: '6px' }} />
                                   {tx.vehicles.plate_number}
                                 </span>
                               </div>
@@ -427,7 +428,7 @@ export default function ReportsPage() {
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '120px' }}>
                             <div>
                               <span className="tx-info-pill" style={{ color: '#60A5FA', borderColor: 'rgba(59, 130, 246, 0.35)', background: 'rgba(59, 130, 246, 0.15)', padding: '5px 12px', fontWeight: 700, fontSize: '11.5px', borderRadius: '50px' }}>
-                                <i className="fa-solid fa-clock" style={{ fontSize: '11px', marginRight: '6px' }}></i>
+                                <Icon fa="fa-solid fa-clock" style={{ fontSize: '11px', marginRight: '6px' }} />
                                 {tx.duration_days} Hari
                               </span>
                             </div>
@@ -468,13 +469,13 @@ export default function ReportsPage() {
               onClick={handleExport}
               disabled={exporting || loading || realExpenses.length === 0}
             >
-              {exporting ? <><i className="fa-solid fa-spinner fa-spin"></i> Mengexport...</> : <><i className="fa-solid fa-file-excel"></i> Download Excel Pengeluaran</>}
+              {exporting ? <><Icon fa="fa-solid fa-spinner fa-spin" /> Mengexport...</> : <><Icon fa="fa-solid fa-file-excel" /> Download Excel Pengeluaran</>}
             </button>
           </div>
 
           <div className="table-wrapper">
             {loading ? (
-              <div className="table-empty"><i className="fa-solid fa-spinner fa-spin"></i> Memuat pengeluaran...</div>
+              <div className="table-empty"><Icon fa="fa-solid fa-spinner fa-spin" /> Memuat pengeluaran...</div>
             ) : realExpenses.length === 0 ? (
               <div className="table-empty"><p>Tidak ada pengeluaran untuk periode ini</p></div>
             ) : (
@@ -509,7 +510,7 @@ export default function ReportsPage() {
       {activeReportTab === 'profit_loss' && (
         <div className="card">
           <div className="card-header">
-            <div className="card-title"><i className="fa-solid fa-calculator" style={{ marginRight: '6px' }}></i> Laporan Ringkasan Laba Rugi</div>
+            <div className="card-title"><Icon fa="fa-solid fa-calculator" style={{ marginRight: '6px' }} /> Laporan Ringkasan Laba Rugi</div>
           </div>
           <div className="list-card" style={{ maxWidth: '640px', margin: '8px 0 4px' }}>
             <div className="dash2-row"><span>Omset sewa motor milik sendiri</span><strong>{formatRupiah(summary.ownerVehicleRevenue)}</strong></div>
@@ -534,7 +535,7 @@ export default function ReportsPage() {
           <div className="grid-4 mb-6">
             <div className="stat-card">
               <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8' }}>
-                <i className="fa-solid fa-arrow-down-left"></i>
+                <Icon fa="fa-solid fa-arrow-down-left" />
               </div>
               <div className="stat-info">
                 <div className="stat-label">Total Omset Motor (+)</div>
@@ -545,7 +546,7 @@ export default function ReportsPage() {
 
             <div className="stat-card" style={{ border: '2px solid rgba(29,78,216, 0.4)', background: 'rgba(29,78,216, 0.06)' }}>
               <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.2)', color: '#1D4ED8' }}>
-                <i className="fa-solid fa-crown"></i>
+                <Icon fa="fa-solid fa-crown" />
               </div>
               <div className="stat-info">
                 <div className="stat-label" style={{ color: '#1D4ED8', fontWeight: 800 }}>HAK INVESTOR ({investorSharePct}% dari omset kotor)</div>
@@ -556,7 +557,7 @@ export default function ReportsPage() {
 
             <div className="stat-card">
               <div className="stat-icon" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3B82F6' }}>
-                <i className="fa-solid fa-building"></i>
+                <Icon fa="fa-solid fa-building" />
               </div>
               <div className="stat-info">
                 <div className="stat-label">Bagian Owner ({bossRentSharePct}%)</div>
@@ -578,7 +579,7 @@ export default function ReportsPage() {
                 onClick={handleExportInvestorExcel}
                 disabled={exporting || loading || targetInvestorVehicles.length === 0}
               >
-                {exporting ? <><i className="fa-solid fa-spinner fa-spin"></i> Mengexport...</> : <><i className="fa-solid fa-file-excel"></i> Download Excel Laporan Investor</>}
+                {exporting ? <><Icon fa="fa-solid fa-spinner fa-spin" /> Mengexport...</> : <><Icon fa="fa-solid fa-file-excel" /> Download Excel Laporan Investor</>}
               </button>
             </div>
 

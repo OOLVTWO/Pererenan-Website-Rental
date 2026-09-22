@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { calcFinancialSummary, formatRupiah, getLocalMonthStr, getLocalDateStr, toLocalDateStr, isPaidTransaction, isIncomeEntry } from '@/lib/finance';
+import Icon from '@/components/ui/Icon';
 
 const MONTH_NAMES = [
   'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -267,7 +268,7 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
           <h1 className="page-title" style={{ marginBottom: 2 }}>Ringkasan</h1>
           <p className="dash2-muted">
             {periodRange.label}
-            {loadingYear && <> · <i className="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> memuat data {viewingYear}…</>}
+            {loadingYear && <> · <Icon fa="fa-solid fa-spinner fa-spin" aria-hidden="true" /> memuat data {viewingYear}…</>}
           </p>
         </div>
         <div className="dash2-period">
@@ -303,7 +304,7 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
           )}
         </div>
         <Link href="/transactions?new=1" className="btn btn-primary dash2-cta">
-          <i className="fa-solid fa-plus" aria-hidden="true"></i> Transaksi baru
+          <Icon fa="fa-solid fa-plus" aria-hidden="true" /> Transaksi baru
         </Link>
       </div>
 
@@ -312,7 +313,7 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
         <section className="dash2-col" aria-labelledby="dash-keuangan">
           <div className="dash2-section-head">
             <h2 id="dash-keuangan">Keuangan</h2>
-            <Link href="/reports">Laporan <i className="fa-solid fa-chevron-right" aria-hidden="true"></i></Link>
+            <Link href="/reports">Laporan <Icon fa="fa-solid fa-chevron-right" aria-hidden="true" /></Link>
           </div>
           <div className="list-card">
             <div className="dash2-hero">
@@ -336,21 +337,21 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
           <div className="list-card">
             {attention.length === 0 ? (
               <div className="list-row">
-                <span className="list-row-icon"><i className="fa-solid fa-check" aria-hidden="true"></i></span>
+                <span className="list-row-icon"><Icon fa="fa-solid fa-check" aria-hidden="true" /></span>
                 <span className="list-row-text"><span className="list-row-title">Semua aman</span><span className="list-row-sub">Tidak ada yang perlu ditindaklanjuti</span></span>
               </div>
             ) : attention.map(a => (
               <Link key={a.href + a.title} href={a.href} className="list-row">
-                <span className="list-row-icon"><i className={a.icon} aria-hidden="true"></i></span>
+                <span className="list-row-icon"><Icon fa={a.icon} aria-hidden="true" /></span>
                 <span className="list-row-text"><span className="list-row-title">{a.title}</span><span className="list-row-sub">{a.sub}</span></span>
-                <i className="fa-solid fa-chevron-right list-row-chev" aria-hidden="true"></i>
+                <Icon fa="fa-solid fa-chevron-right list-row-chev" aria-hidden="true" />
               </Link>
             ))}
           </div>
 
           <div className="dash2-section-head">
             <h2>Armada</h2>
-            <Link href="/tracking?view=armada">Status armada <i className="fa-solid fa-chevron-right" aria-hidden="true"></i></Link>
+            <Link href="/tracking?view=armada">Status armada <Icon fa="fa-solid fa-chevron-right" aria-hidden="true" /></Link>
           </div>
           <div className="list-card dash2-pad">
             <div className="dash2-tiles">
@@ -390,7 +391,7 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
 
           <div className="dash2-section-head">
             <h2>Transaksi terbaru</h2>
-            <Link href="/transactions">Semua <i className="fa-solid fa-chevron-right" aria-hidden="true"></i></Link>
+            <Link href="/transactions">Semua <Icon fa="fa-solid fa-chevron-right" aria-hidden="true" /></Link>
           </div>
           <div className="list-card">
             {recentTx.length === 0 ? (

@@ -8,6 +8,7 @@ import { startVisiblePolling } from '@/lib/visiblePolling';
 import { getWhatsAppShareUrl, getWaReminderTemplate } from '@/lib/countryCodes';
 import FleetStatusPanel, { FLEET_FILTERS } from '@/components/tracking/FleetStatusPanel';
 import PageTabs from '@/components/ui/PageTabs';
+import Icon from '@/components/ui/Icon';
 
 const VALID_TRACKING_TABS = ['all', 'overdue', 'critical', 'upcoming'];
 
@@ -185,7 +186,7 @@ function CountdownTimer({ tx }) {
     return (
       <div className="countdown-display overdue">
         <div className="countdown-overdue-badge">
-          <i className="fa-solid fa-triangle-exclamation"></i>
+          <Icon fa="fa-solid fa-triangle-exclamation" />
           <span>OVERDUE {overdueText}</span>
         </div>
       </div>
@@ -196,7 +197,7 @@ function CountdownTimer({ tx }) {
     return (
       <div className="countdown-display overdue">
         <div className="countdown-overdue-badge">
-          <i className="fa-solid fa-triangle-exclamation"></i>
+          <Icon fa="fa-solid fa-triangle-exclamation" />
           <span>BERAKHIR SEKARANG</span>
         </div>
       </div>
@@ -281,11 +282,11 @@ function TrackingCard({ tx, vehicle, onComplete }) {
       {/* Top Badge */}
       <div className="tracking-card-top">
         <div className="tracking-status-badge" style={{ color: meta.color, background: meta.bg, borderColor: meta.border }}>
-          <i className={`${meta.icon} ${meta.pulse ? 'fa-beat' : ''}`}></i>
+          <Icon fa={`${meta.icon} ${meta.pulse ? 'fa-beat' : ''}`} />
           <span>{meta.label}</span>
         </div>
         <div className="tracking-vehicle-info">
-          <i className="fa-solid fa-motorcycle" style={{ color: meta.color }}></i>
+          <Icon fa="fa-solid fa-motorcycle" style={{ color: meta.color }} />
           <span>{vehicle?.name || 'Motor'}</span>
           <span className="tracking-plate">{vehicle?.plate_number || '-'}</span>
         </div>
@@ -294,25 +295,25 @@ function TrackingCard({ tx, vehicle, onComplete }) {
       {/* Renter Info */}
       <div className="tracking-renter">
         <div className="tracking-renter-avatar" style={{ background: meta.color }}>
-          <i className="fa-solid fa-user"></i>
+          <Icon fa="fa-solid fa-user" />
         </div>
         <div className="tracking-renter-info">
           <div className="tracking-renter-name">{tx.renter_name}</div>
           <div className="tracking-renter-phone">
-            <i className="fa-solid fa-phone" style={{ fontSize: '10px', color: '#1D4ED8' }}></i>
+            <Icon fa="fa-solid fa-phone" style={{ fontSize: '10px', color: '#1D4ED8' }} />
             {tx.renter_phone}
           </div>
         </div>
         <div className="tracking-dates">
           <div className="tracking-date-row" title="Waktu Mulai Sewa (Jam Transaksi)">
-            <i className="fa-solid fa-calendar-plus" style={{ color: '#5B6474', fontSize: '11px' }}></i>
+            <Icon fa="fa-solid fa-calendar-plus" style={{ color: '#5B6474', fontSize: '11px' }} />
             <span>{formatDateTime(tx.start_date, tx.created_at)}</span>
           </div>
           <div className="tracking-date-arrow">
-            <i className="fa-solid fa-arrow-down" style={{ color: '#5B6474', fontSize: '10px' }}></i>
+            <Icon fa="fa-solid fa-arrow-down" style={{ color: '#5B6474', fontSize: '10px' }} />
           </div>
           <div className="tracking-date-row" style={{ color: meta.color, fontWeight: 600 }} title="Waktu Selesai Sewa (Persis Jam yang sama)">
-            <i className="fa-solid fa-calendar-xmark" style={{ fontSize: '11px' }}></i>
+            <Icon fa="fa-solid fa-calendar-xmark" style={{ fontSize: '11px' }} />
             <span>{formatDateTime(tx.end_date, tx.created_at)}</span>
           </div>
         </div>
@@ -321,11 +322,11 @@ function TrackingCard({ tx, vehicle, onComplete }) {
       {/* Progress Bar */}
       <div className="tracking-progress-wrap">
         <div className="tracking-progress-labels">
-          <span><i className="fa-solid fa-hourglass-start" style={{ fontSize: '10px', marginRight: '4px' }}></i>Mulai</span>
+          <span><Icon fa="fa-solid fa-hourglass-start" style={{ fontSize: '10px', marginRight: '4px' }} />Mulai</span>
           <span style={{ color: isOverProgress ? '#1E3A8A' : meta.color }}>
             {isOverProgress ? 'Sudah Berakhir' : `${Math.round(progress)}% berjalan`}
           </span>
-          <span><i className="fa-solid fa-flag-checkered" style={{ fontSize: '10px', marginRight: '4px' }}></i>Selesai</span>
+          <span><Icon fa="fa-solid fa-flag-checkered" style={{ fontSize: '10px', marginRight: '4px' }} />Selesai</span>
         </div>
         <div className="tracking-progress-bar">
           <div
@@ -351,11 +352,11 @@ function TrackingCard({ tx, vehicle, onComplete }) {
           rel="noopener noreferrer"
           className="tracking-btn-wa"
         >
-          <i className="fa-brands fa-whatsapp"></i>
+          <Icon fa="fa-brands fa-whatsapp" />
           <span>Kirim Reminder WA</span>
         </a>
         <button className="tracking-btn-copy" onClick={handleCopy} title="Salin teks pesan">
-          <i className={copied ? 'fa-solid fa-check' : 'fa-solid fa-copy'}></i>
+          <Icon fa={copied ? 'fa-solid fa-check' : 'fa-solid fa-copy'} />
           <span>{copied ? 'Tersalin!' : 'Salin Teks'}</span>
         </button>
       </div>
@@ -373,7 +374,7 @@ function TrackingCard({ tx, vehicle, onComplete }) {
             transition: 'all 0.2s ease'
           }}
         >
-          <i className="fa-solid fa-flag-checkered"></i>
+          <Icon fa="fa-solid fa-flag-checkered" />
           Selesai Sewa (Manual)
         </button>
       ) : (
@@ -382,7 +383,7 @@ function TrackingCard({ tx, vehicle, onComplete }) {
           border: '1.5px solid rgba(29,78,216,0.5)', background: 'rgba(29,78,216,0.08)'
         }}>
           <div style={{ fontSize: '12px', color: '#1D4ED8', fontWeight: 700, marginBottom: '8px', textAlign: 'center' }}>
-            <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: '5px', color: '#1E40AF' }}></i>
+            <Icon fa="fa-solid fa-triangle-exclamation" style={{ marginRight: '5px', color: '#1E40AF' }} />
             Yakin selesaikan sewa ini? Motor akan langsung jadi <strong>Tersedia</strong>.
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -410,8 +411,8 @@ function TrackingCard({ tx, vehicle, onComplete }) {
               }}
             >
               {completing
-                ? <><i className="fa-solid fa-spinner fa-spin"></i> Memproses...</>
-                : <><i className="fa-solid fa-flag-checkered"></i> Ya, Selesaikan!</>}
+                ? <><Icon fa="fa-solid fa-spinner fa-spin" /> Memproses...</>
+                : <><Icon fa="fa-solid fa-flag-checkered" /> Ya, Selesaikan!</>}
             </button>
           </div>
         </div>
@@ -420,7 +421,7 @@ function TrackingCard({ tx, vehicle, onComplete }) {
       {/* Preview message on hover (expandable) */}
       <details className="tracking-msg-preview">
         <summary>
-          <i className="fa-solid fa-eye" style={{ marginRight: '6px' }}></i>
+          <Icon fa="fa-solid fa-eye" style={{ marginRight: '6px' }} />
           Lihat Preview Pesan WA
         </summary>
         <pre className="tracking-msg-text">{reminderText}</pre>
@@ -551,7 +552,7 @@ export default function TrackingPage() {
       <div className="tracking-page-header">
         <div className="tracking-header-left">
           <div className="tracking-header-icon">
-            <i className="fa-solid fa-clock-rotate-left"></i>
+            <Icon fa="fa-solid fa-clock-rotate-left" />
           </div>
           <div>
             <h2>Tracking Sewa Motor</h2>
@@ -560,14 +561,14 @@ export default function TrackingPage() {
         </div>
         <div className="tracking-header-right">
           <div className="tracking-refresh-info">
-            <i className="fa-solid fa-rotate" style={{ fontSize: '11px', color: '#1D4ED8' }}></i>
+            <Icon fa="fa-solid fa-rotate" style={{ fontSize: '11px', color: '#1D4ED8' }} />
             <span>Auto-refresh tiap 60 detik</span>
             <span className="tracking-refresh-time">
               {lastRefresh.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             </span>
           </div>
           <button className="btn-refresh" onClick={loadData}>
-            <i className="fa-solid fa-arrows-rotate"></i> Refresh
+            <Icon fa="fa-solid fa-arrows-rotate" /> Refresh
           </button>
         </div>
       </div>
@@ -598,28 +599,28 @@ export default function TrackingPage() {
       {/* ── Summary Stats ── */}
       <div className="tracking-stats-row">
         <div className="tracking-stat overdue-stat">
-          <div className="tracking-stat-icon"><i className="fa-solid fa-circle-exclamation fa-beat"></i></div>
+          <div className="tracking-stat-icon"><Icon fa="fa-solid fa-circle-exclamation fa-beat" /></div>
           <div>
             <div className="tracking-stat-val">{overdueCnt}</div>
             <div className="tracking-stat-label">Overdue</div>
           </div>
         </div>
         <div className="tracking-stat critical-stat">
-          <div className="tracking-stat-icon"><i className="fa-solid fa-bell fa-shake"></i></div>
+          <div className="tracking-stat-icon"><Icon fa="fa-solid fa-bell fa-shake" /></div>
           <div>
             <div className="tracking-stat-val">{criticalCnt}</div>
             <div className="tracking-stat-label">Kritis (Hari ini/Besok)</div>
           </div>
         </div>
         <div className="tracking-stat upcoming-stat">
-          <div className="tracking-stat-icon"><i className="fa-solid fa-calendar-days"></i></div>
+          <div className="tracking-stat-icon"><Icon fa="fa-solid fa-calendar-days" /></div>
           <div>
             <div className="tracking-stat-val">{upcomingCnt}</div>
             <div className="tracking-stat-label">Akan Datang (2-7 Hari)</div>
           </div>
         </div>
         <div className="tracking-stat total-stat">
-          <div className="tracking-stat-icon"><i className="fa-solid fa-motorcycle"></i></div>
+          <div className="tracking-stat-icon"><Icon fa="fa-solid fa-motorcycle" /></div>
           <div>
             <div className="tracking-stat-val">{enriched.length}</div>
             <div className="tracking-stat-label">Total Aktif</div>
@@ -636,7 +637,7 @@ export default function TrackingPage() {
           tabs={FILTERS.map(f => ({ key: f.key, label: f.label, count: f.count }))}
         />
         <div className="tracking-search-wrap">
-          <i className="fa-solid fa-magnifying-glass"></i>
+          <Icon fa="fa-solid fa-magnifying-glass" />
           <input
             type="text"
             placeholder="Cari nama, HP, atau motor..."
@@ -646,7 +647,7 @@ export default function TrackingPage() {
           />
           {search && (
             <button onClick={() => setSearch('')} className="tracking-search-clear">
-              <i className="fa-solid fa-xmark"></i>
+              <Icon fa="fa-solid fa-xmark" />
             </button>
           )}
         </div>
@@ -655,22 +656,22 @@ export default function TrackingPage() {
       {/* ── Content ── */}
       {loading ? (
         <div className="tracking-loading">
-          <i className="fa-solid fa-spinner fa-spin-pulse" style={{ fontSize: '32px', color: 'var(--brand-primary)' }}></i>
+          <Icon fa="fa-solid fa-spinner fa-spin-pulse" style={{ fontSize: '32px', color: 'var(--brand-primary)' }} />
           <p>Memuat data sewa aktif...</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="tracking-empty">
-          <i className="fa-solid fa-motorcycle" style={{ fontSize: '48px', color: 'var(--text-muted)', marginBottom: '16px' }}></i>
+          <Icon fa="fa-solid fa-motorcycle" style={{ fontSize: '48px', color: 'var(--text-muted)', marginBottom: '16px' }} />
           <h3>Tidak ada data</h3>
           <p>{enriched.length === 0 ? 'Tidak ada transaksi sewa aktif saat ini.' : 'Tidak ada transaksi yang sesuai filter.'}</p>
           {search && <button className="btn-refresh" onClick={() => setSearch('')} style={{ marginTop: '12px' }}>
-            <i className="fa-solid fa-xmark"></i> Reset Pencarian
+            <Icon fa="fa-solid fa-xmark" /> Reset Pencarian
           </button>}
         </div>
       ) : (
         <>
           <div className="tracking-results-info">
-            <i className="fa-solid fa-list-check" style={{ color: 'var(--brand-primary)' }}></i>
+            <Icon fa="fa-solid fa-list-check" style={{ color: 'var(--brand-primary)' }} />
             Menampilkan <strong>{filtered.length}</strong> dari <strong>{enriched.length}</strong> transaksi aktif
           </div>
           <div className="tracking-grid">

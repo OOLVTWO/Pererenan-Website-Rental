@@ -8,6 +8,7 @@
  */
 import { useState } from 'react';
 import PageTabs from '@/components/ui/PageTabs';
+import Icon from '@/components/ui/Icon';
 
 function formatDate(dateStr) {
   if (!dateStr) return '-';
@@ -62,23 +63,23 @@ function VehicleCard({ vehicle, activeTransaction }) {
 
       {/* Status Badge */}
       <div className="avail-status-badge" style={{ color: statusMeta.color, background: statusMeta.bg, borderColor: statusMeta.border }}>
-        <i className={`${statusMeta.icon}${isRented && daysLeft === 0 ? ' fa-shake' : isRented && daysLeft < 0 ? ' fa-beat' : ''}`}></i>
+        <Icon fa={`${statusMeta.icon}${isRented && daysLeft === 0 ? ' fa-shake' : isRented && daysLeft < 0 ? ' fa-beat' : ''}`} />
         {statusMeta.label}
       </div>
 
       {/* Vehicle Icon & Name */}
       <div className="avail-vehicle-main">
         <div className="avail-vehicle-icon" style={{ color: brandMeta.color, background: `${brandMeta.color}18` }}>
-          <i className={brandMeta.icon}></i>
+          <Icon fa={brandMeta.icon} />
         </div>
         <div className="avail-vehicle-identity">
           <div className="avail-vehicle-name">{vehicle.name}</div>
           <div className="avail-vehicle-plate">
-            <i className="fa-solid fa-id-card" style={{ fontSize: '10px', marginRight: '4px', color: '#5B6474' }}></i>
+            <Icon fa="fa-solid fa-id-card" style={{ fontSize: '10px', marginRight: '4px', color: '#5B6474' }} />
             {vehicle.plate_number}
           </div>
           <div className="avail-vehicle-brand" style={{ color: brandMeta.color }}>
-            <i className={`${brandMeta.icon}`} style={{ fontSize: '10px', marginRight: '4px' }}></i>
+            <Icon fa={`${brandMeta.icon}`} style={{ fontSize: '10px', marginRight: '4px' }} />
             {brandMeta.label} · {vehicle.year}
           </div>
         </div>
@@ -86,7 +87,7 @@ function VehicleCard({ vehicle, activeTransaction }) {
 
       {/* Rate */}
       <div className="avail-rate">
-        <i className="fa-solid fa-tag" style={{ color: 'var(--brand-accent)', fontSize: '11px' }}></i>
+        <Icon fa="fa-solid fa-tag" style={{ color: 'var(--brand-accent)', fontSize: '11px' }} />
         <span>{formatRupiah(vehicle.rate_per_day)} / hari</span>
       </div>
 
@@ -94,30 +95,30 @@ function VehicleCard({ vehicle, activeTransaction }) {
       {isRented && activeTransaction && (
         <div className="avail-renter-info">
           <div className="avail-renter-divider">
-            <i className="fa-solid fa-user-tie" style={{ color: statusMeta.color, marginRight: '6px' }}></i>
+            <Icon fa="fa-solid fa-user-tie" style={{ color: statusMeta.color, marginRight: '6px' }} />
             Info Penyewa
           </div>
           <div className="avail-renter-row">
-            <i className="fa-solid fa-user" style={{ color: '#5B6474', fontSize: '11px', width: '14px' }}></i>
+            <Icon fa="fa-solid fa-user" style={{ color: '#5B6474', fontSize: '11px', width: '14px' }} />
             <span className="avail-renter-name">{activeTransaction.renter_name}</span>
           </div>
           <div className="avail-renter-row">
-            <i className="fa-solid fa-phone" style={{ color: '#1D4ED8', fontSize: '11px', width: '14px' }}></i>
+            <Icon fa="fa-solid fa-phone" style={{ color: '#1D4ED8', fontSize: '11px', width: '14px' }} />
             <span>{activeTransaction.renter_phone}</span>
           </div>
           <div className="avail-renter-row">
-            <i className="fa-solid fa-calendar-plus" style={{ color: '#3B82F6', fontSize: '11px', width: '14px' }}></i>
+            <Icon fa="fa-solid fa-calendar-plus" style={{ color: '#3B82F6', fontSize: '11px', width: '14px' }} />
             <span>Mulai: {formatDate(activeTransaction.start_date)}</span>
           </div>
           <div className="avail-renter-row" style={{ color: statusMeta.color, fontWeight: 600 }}>
-            <i className="fa-solid fa-calendar-xmark" style={{ fontSize: '11px', width: '14px' }}></i>
+            <Icon fa="fa-solid fa-calendar-xmark" style={{ fontSize: '11px', width: '14px' }} />
             <span>Selesai: {formatDate(activeTransaction.end_date)}</span>
           </div>
 
           {/* Days left indicator */}
           {daysLeft !== null && (
             <div className="avail-days-left" style={{ color: statusMeta.color, background: statusMeta.bg, borderColor: statusMeta.border }}>
-              <i className={`fa-solid ${daysLeft < 0 ? 'fa-circle-exclamation fa-beat' : daysLeft === 0 ? 'fa-bell fa-shake' : 'fa-hourglass-half'}`}></i>
+              <Icon fa={`fa-solid ${daysLeft < 0 ? 'fa-circle-exclamation fa-beat' : daysLeft === 0 ? 'fa-bell fa-shake' : 'fa-hourglass-half'}`} />
               {daysLeft < 0
                 ? `Overdue ${Math.abs(daysLeft)} hari`
                 : daysLeft === 0
@@ -131,7 +132,7 @@ function VehicleCard({ vehicle, activeTransaction }) {
       {/* If available — show availability indicator */}
       {isAvailable && (
         <div className="avail-ready-badge">
-          <i className="fa-solid fa-circle-check fa-beat-fade" style={{ color: '#1D4ED8' }}></i>
+          <Icon fa="fa-solid fa-circle-check fa-beat-fade" style={{ color: '#1D4ED8' }} />
           <span>Siap disewa sekarang</span>
         </div>
       )}
@@ -139,7 +140,7 @@ function VehicleCard({ vehicle, activeTransaction }) {
       {/* If maintenance */}
       {isMaintenance && (
         <div className="avail-maintenance-badge">
-          <i className="fa-solid fa-wrench" style={{ color: '#1E40AF' }}></i>
+          <Icon fa="fa-solid fa-wrench" style={{ color: '#1E40AF' }} />
           <span>Sedang dalam perawatan</span>
           {vehicle.notes && <p className="avail-notes">{vehicle.notes}</p>}
         </div>
@@ -147,7 +148,7 @@ function VehicleCard({ vehicle, activeTransaction }) {
 
       {/* Warna motor */}
       <div className="avail-km-row">
-        <i className="fa-solid fa-paint-roller" style={{ color: '#5B6474', fontSize: '11px' }}></i>
+        <Icon fa="fa-solid fa-paint-roller" style={{ color: '#5B6474', fontSize: '11px' }} />
         <span>{vehicle.color || '-'}</span>
       </div>
     </div>
@@ -210,32 +211,32 @@ export default function FleetStatusPanel({ vehicles, activeTransactions, loading
       {/* ── Summary Bar ── */}
       <div className="avail-summary-bar">
         <div className="avail-summary-item available-item">
-          <div className="avail-summary-icon"><i className="fa-solid fa-circle-check"></i></div>
+          <div className="avail-summary-icon"><Icon fa="fa-solid fa-circle-check" /></div>
           <div className="avail-summary-count">{availableCount}</div>
           <div className="avail-summary-label">Tersedia</div>
         </div>
         <div className="avail-summary-divider"></div>
         <div className="avail-summary-item rented-item">
-          <div className="avail-summary-icon"><i className="fa-solid fa-key"></i></div>
+          <div className="avail-summary-icon"><Icon fa="fa-solid fa-key" /></div>
           <div className="avail-summary-count">{rentedCount}</div>
           <div className="avail-summary-label">Disewa</div>
         </div>
         <div className="avail-summary-divider"></div>
         <div className="avail-summary-item overdue-item-sm">
-          <div className="avail-summary-icon"><i className="fa-solid fa-circle-exclamation fa-beat"></i></div>
+          <div className="avail-summary-icon"><Icon fa="fa-solid fa-circle-exclamation fa-beat" /></div>
           <div className="avail-summary-count">{overdueCount}</div>
           <div className="avail-summary-label">Overdue</div>
         </div>
         <div className="avail-summary-divider"></div>
         <div className="avail-summary-item maintenance-item">
-          <div className="avail-summary-icon"><i className="fa-solid fa-wrench"></i></div>
+          <div className="avail-summary-icon"><Icon fa="fa-solid fa-wrench" /></div>
           <div className="avail-summary-count">{maintenanceCount}</div>
           <div className="avail-summary-label">Perawatan</div>
         </div>
 
         <div className="avail-util-wrap">
           <div className="avail-util-label">
-            <i className="fa-solid fa-chart-pie" style={{ marginRight: '5px', color: 'var(--brand-accent)' }}></i>
+            <Icon fa="fa-solid fa-chart-pie" style={{ marginRight: '5px', color: 'var(--brand-accent)' }} />
             Utilisasi Armada
           </div>
           <div className="avail-util-bar">
@@ -259,7 +260,7 @@ export default function FleetStatusPanel({ vehicles, activeTransactions, loading
           tabs={FILTERS.map(f => ({ key: f.key, label: f.label, count: f.count }))}
         />
         <div className="tracking-search-wrap">
-          <i className="fa-solid fa-magnifying-glass"></i>
+          <Icon fa="fa-solid fa-magnifying-glass" />
           <input
             type="text"
             placeholder="Cari nama motor, plat, atau penyewa..."
@@ -269,7 +270,7 @@ export default function FleetStatusPanel({ vehicles, activeTransactions, loading
           />
           {search && (
             <button onClick={() => setSearch('')} className="tracking-search-clear">
-              <i className="fa-solid fa-xmark"></i>
+              <Icon fa="fa-solid fa-xmark" />
             </button>
           )}
         </div>
@@ -278,19 +279,19 @@ export default function FleetStatusPanel({ vehicles, activeTransactions, loading
       {/* ── Grid ── */}
       {loading ? (
         <div className="tracking-loading">
-          <i className="fa-solid fa-spinner fa-spin-pulse" style={{ fontSize: '32px', color: 'var(--brand-primary)' }}></i>
+          <Icon fa="fa-solid fa-spinner fa-spin-pulse" style={{ fontSize: '32px', color: 'var(--brand-primary)' }} />
           <p>Memuat data armada motor...</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="tracking-empty">
-          <i className="fa-solid fa-magnifying-glass" style={{ fontSize: '48px', color: 'var(--text-muted)', marginBottom: '16px' }}></i>
+          <Icon fa="fa-solid fa-magnifying-glass" style={{ fontSize: '48px', color: 'var(--text-muted)', marginBottom: '16px' }} />
           <h3>Tidak ada motor ditemukan</h3>
           <p>Coba ubah filter atau kata pencarian.</p>
         </div>
       ) : (
         <>
           <div className="tracking-results-info">
-            <i className="fa-solid fa-motorcycle" style={{ color: 'var(--brand-primary)' }}></i>
+            <Icon fa="fa-solid fa-motorcycle" style={{ color: 'var(--brand-primary)' }} />
             Menampilkan <strong>{filtered.length}</strong> dari <strong>{enrichedVehicles.length}</strong> motor
           </div>
           <div className="avail-grid">

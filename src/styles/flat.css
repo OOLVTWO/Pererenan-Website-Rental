@@ -324,3 +324,7 @@ pre, code { white-space: pre-wrap; word-break: break-word; }
   .stats-grid, .grid-3, .grid-4 { grid-template-columns: minmax(0, 1fr) !important; }
   .page-tab { font-size: 13px; padding: 0 12px; }
 }
+
+/* Ikon SVG (lucide) — animasi putar untuk status memuat */
+@keyframes icon-spin { to { transform: rotate(360deg); } }
+.icon-spin { animation: icon-spin 0.9s linear infinite !important; }

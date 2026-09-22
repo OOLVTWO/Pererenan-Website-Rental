@@ -6,6 +6,7 @@ import { exportFinancesToExcel } from '@/lib/excel';
 import { getLocalDateStr } from '@/lib/finance';
 import { createClient } from '@/lib/supabase/client';
 import PageTabs from '@/components/ui/PageTabs';
+import Icon from '@/components/ui/Icon';
 
 const VALID_TYPE_TABS = ['all', 'income', 'expense'];
 
@@ -170,11 +171,11 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
           <div>
             <div className="modal-title" style={{ color: isIncome ? '#1D4ED8' : '#1E3A8A' }}>
               {editData ? (
-                <><i className="fa-solid fa-pen-to-square" style={{ marginRight: '6px' }}></i> Edit Transaksi Keuangan</>
+                <><Icon fa="fa-solid fa-pen-to-square" style={{ marginRight: '6px' }} /> Edit Transaksi Keuangan</>
               ) : isIncome ? (
-                <><i className="fa-solid fa-circle-arrow-down" style={{ marginRight: '6px' }}></i> Tambah Pemasukan Baru</>
+                <><Icon fa="fa-solid fa-circle-arrow-down" style={{ marginRight: '6px' }} /> Tambah Pemasukan Baru</>
               ) : (
-                <><i className="fa-solid fa-circle-arrow-up" style={{ marginRight: '6px' }}></i> Tambah Pengeluaran Baru</>
+                <><Icon fa="fa-solid fa-circle-arrow-up" style={{ marginRight: '6px' }} /> Tambah Pengeluaran Baru</>
               )}
             </div>
             <div className="modal-subtitle">Isi data transaksi arus kas usaha Boss Rent</div>
@@ -186,7 +187,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
           {/* TYPE TOGGLE SWITCH */}
           <div className="form-group mb-4">
             <label className="form-label">
-              <i className="fa-solid fa-right-left" style={{ marginRight: '6px' }}></i> Jenis Transaksi Keuangan <span className="required">*</span>
+              <Icon fa="fa-solid fa-right-left" style={{ marginRight: '6px' }} /> Jenis Transaksi Keuangan <span className="required">*</span>
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               <button
@@ -208,7 +209,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
                   gap: '8px'
                 }}
               >
-                <i className="fa-solid fa-circle-arrow-down" style={{ fontSize: '15px' }}></i>
+                <Icon fa="fa-solid fa-circle-arrow-down" style={{ fontSize: '15px' }} />
                 Pemasukan (+)
               </button>
               <button
@@ -230,7 +231,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
                   gap: '8px'
                 }}
               >
-                <i className="fa-solid fa-circle-arrow-up" style={{ fontSize: '15px' }}></i>
+                <Icon fa="fa-solid fa-circle-arrow-up" style={{ fontSize: '15px' }} />
                 Pengeluaran (-)
               </button>
             </div>
@@ -238,7 +239,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
 
           {isIncome && !editData && (
             <div className="alert alert-info" style={{ marginBottom: '16px', fontSize: '12.5px', lineHeight: 1.6 }}>
-              <i className="fa-solid fa-circle-info" style={{ marginTop: '1px' }}></i>
+              <Icon fa="fa-solid fa-circle-info" style={{ marginTop: '1px' }} />
               <span>
                 Pendapatan sewa motor sudah otomatis tercatat lewat menu <strong>Transaksi</strong>. Gunakan
                 form ini hanya untuk pemasukan di luar itu — misalnya tip, biaya antar-jemput, atau klaim
@@ -249,7 +250,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
 
           {!isIncome && !editData && (
             <div className="alert alert-info" style={{ marginBottom: '16px', fontSize: '12.5px', lineHeight: 1.6 }}>
-              <i className="fa-solid fa-circle-info" style={{ marginTop: '1px' }}></i>
+              <Icon fa="fa-solid fa-circle-info" style={{ marginTop: '1px' }} />
               <span>
                 Gunakan form ini untuk biaya operasional usaha — servis motor, suku cadang, bahan bakar,
                 atau gaji karyawan. Untuk pengeluaran terkait motor tertentu, catat di sini agar bisa
@@ -260,7 +261,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
 
           <div className="form-group">
             <label className="form-label" htmlFor="fin-title">
-              <i className="fa-solid fa-file-signature" style={{ marginRight: '6px' }}></i> Keterangan Transaksi <span className="required">*</span>
+              <Icon fa="fa-solid fa-file-signature" style={{ marginRight: '6px' }} /> Keterangan Transaksi <span className="required">*</span>
             </label>
             <input
               id="fin-title"
@@ -277,7 +278,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
           <div className="form-row cols-2">
             <div className="form-group">
               <label className="form-label" htmlFor="fin-cat">
-                <i className="fa-solid fa-list" style={{ marginRight: '6px' }}></i> Kategori <span className="required">*</span>
+                <Icon fa="fa-solid fa-list" style={{ marginRight: '6px' }} /> Kategori <span className="required">*</span>
               </label>
               <select id="fin-cat" name="categoryKey" className="form-control" value={form.categoryKey} onChange={handleChange} required>
                 {isIncome ? (
@@ -293,7 +294,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="fin-amount">
-                <i className="fa-solid fa-coins" style={{ marginRight: '6px' }}></i> Jumlah Nominal (Rp) <span className="required">*</span>
+                <Icon fa="fa-solid fa-coins" style={{ marginRight: '6px' }} /> Jumlah Nominal (Rp) <span className="required">*</span>
               </label>
               <input id="fin-amount" name="amount" type="number" className="form-control" placeholder="150000" min="0" value={form.amount} onChange={handleChange} required />
             </div>
@@ -301,14 +302,14 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
 
           <div className="form-group">
             <label className="form-label" htmlFor="fin-date">
-              <i className="fa-solid fa-calendar-days" style={{ marginRight: '6px' }}></i> Tanggal Transaksi <span className="required">*</span>
+              <Icon fa="fa-solid fa-calendar-days" style={{ marginRight: '6px' }} /> Tanggal Transaksi <span className="required">*</span>
             </label>
             <input id="fin-date" name="expense_date" type="date" className="form-control" value={form.expense_date} onChange={handleChange} required />
           </div>
 
           <div className="form-group">
             <label className="form-label" htmlFor="fin-notes">
-              <i className="fa-regular fa-note-sticky" style={{ marginRight: '6px' }}></i> Catatan Tambahan
+              <Icon fa="fa-regular fa-note-sticky" style={{ marginRight: '6px' }} /> Catatan Tambahan
             </label>
             <textarea id="fin-notes" name="notes" className="form-control" rows={3} placeholder="Catatan opsional..." value={form.notes} onChange={handleChange} style={{ resize: 'vertical' }} />
           </div>
@@ -327,13 +328,13 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
               }}
             >
               {loading ? (
-                <><i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '6px' }}></i> Menyimpan...</>
+                <><Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '6px' }} /> Menyimpan...</>
               ) : editData ? (
-                <><i className="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }}></i> Simpan Perubahan</>
+                <><Icon fa="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }} /> Simpan Perubahan</>
               ) : isIncome ? (
-                <><i className="fa-solid fa-plus" style={{ marginRight: '6px' }}></i> Simpan Pemasukan</>
+                <><Icon fa="fa-solid fa-plus" style={{ marginRight: '6px' }} /> Simpan Pemasukan</>
               ) : (
-                <><i className="fa-solid fa-plus" style={{ marginRight: '6px' }}></i> Simpan Pengeluaran</>
+                <><Icon fa="fa-solid fa-plus" style={{ marginRight: '6px' }} /> Simpan Pengeluaran</>
               )}
             </button>
           </div>
@@ -364,7 +365,7 @@ function MigrationBanner({ onCopy }) {
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
         <div style={{ fontSize: '28px', color: '#1E3A8A', flexShrink: 0 }}>
-          <i className="fa-solid fa-circle-exclamation"></i>
+          <Icon fa="fa-solid fa-circle-exclamation" />
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontWeight: 700, fontSize: '15px', color: '#1E3A8A', marginBottom: '6px' }}>
@@ -375,7 +376,7 @@ function MigrationBanner({ onCopy }) {
           </div>
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             <button className="btn btn-primary" onClick={handleCopy} style={{ gap: '8px' }}>
-              <i className={`fa-solid ${copied ? 'fa-check' : 'fa-copy'}`}></i>
+              <Icon fa={`fa-solid ${copied ? 'fa-check' : 'fa-copy'}`} />
               {copied ? 'SQL Tersalin! Tempel ke Supabase' : 'Salin SQL Migration'}
             </button>
             <a
@@ -384,7 +385,7 @@ function MigrationBanner({ onCopy }) {
               rel="noopener noreferrer"
               className="btn btn-secondary"
             >
-              <i className="fa-solid fa-arrow-up-right-from-square"></i>
+              <Icon fa="fa-solid fa-arrow-up-right-from-square" />
               Buka Supabase SQL Editor
             </a>
           </div>
@@ -408,7 +409,7 @@ function ConfirmDeleteModal({ isOpen, onClose, onConfirm, record }) {
       <div className="modal modal-sm" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <div className="modal-title">
-            <i className="fa-solid fa-trash-can" style={{ marginRight: '6px', color: '#1E3A8A' }}></i> Hapus Record {isIncome ? 'Pemasukan' : 'Pengeluaran'}?
+            <Icon fa="fa-solid fa-trash-can" style={{ marginRight: '6px', color: '#1E3A8A' }} /> Hapus Record {isIncome ? 'Pemasukan' : 'Pengeluaran'}?
           </div>
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
@@ -432,7 +433,7 @@ function ConfirmDeleteModal({ isOpen, onClose, onConfirm, record }) {
         <div className="modal-footer">
           <button className="btn btn-secondary" onClick={onClose}>Batal</button>
           <button className="btn btn-danger" onClick={() => { onConfirm(record.id); onClose(); }}>
-            <i className="fa-solid fa-trash-can" style={{ marginRight: '6px' }}></i> Ya, Hapus
+            <Icon fa="fa-solid fa-trash-can" style={{ marginRight: '6px' }} /> Ya, Hapus
           </button>
         </div>
       </div>
@@ -572,7 +573,7 @@ export default function FinancesPage() {
 
       <div className="page-header">
         <div>
-          <h2><i className="fa-solid fa-wallet" style={{ marginRight: '8px' }}></i> Kelola Keuangan Usaha</h2>
+          <h2><Icon fa="fa-solid fa-wallet" style={{ marginRight: '8px' }} /> Kelola Keuangan Usaha</h2>
           <p>Catat dan pantau seluruh arus kas pemasukan, pengeluaran operasional, serta saldo bersih Boss Rent</p>
         </div>
       </div>
@@ -586,7 +587,7 @@ export default function FinancesPage() {
         {/* Total Pemasukan Card */}
         <div className="stat-card" style={{ borderLeft: '4px solid #1D4ED8' }}>
           <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8' }}>
-            <i className="fa-solid fa-circle-arrow-down"></i>
+            <Icon fa="fa-solid fa-circle-arrow-down" />
           </div>
           <div className="stat-info">
             <div className="stat-label">Total Pemasukan</div>
@@ -600,7 +601,7 @@ export default function FinancesPage() {
         {/* Total Pengeluaran Card */}
         <div className="stat-card" style={{ borderLeft: '4px solid #1E3A8A' }}>
           <div className="stat-icon" style={{ background: 'rgba(30,58,138, 0.15)', color: '#1E3A8A' }}>
-            <i className="fa-solid fa-circle-arrow-up"></i>
+            <Icon fa="fa-solid fa-circle-arrow-up" />
           </div>
           <div className="stat-info">
             <div className="stat-label">Total Pengeluaran</div>
@@ -614,7 +615,7 @@ export default function FinancesPage() {
         {/* Saldo Net Profit Card */}
         <div className="stat-card" style={{ borderLeft: `4px solid ${netBalance >= 0 ? '#3B82F6' : '#1E3A8A'}` }}>
           <div className="stat-icon" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3B82F6' }}>
-            <i className="fa-solid fa-scale-balanced"></i>
+            <Icon fa="fa-solid fa-scale-balanced" />
           </div>
           <div className="stat-info">
             <div className="stat-label">Saldo / Laba Bersih</div>
@@ -650,20 +651,20 @@ export default function FinancesPage() {
               title="Export Laporan Keuangan ke Excel (.xlsx)"
               style={{ padding: '9px 14px', borderRadius: '12px', fontWeight: 600 }}
             >
-              <i className="fa-solid fa-file-excel" style={{ marginRight: '6px', color: '#1D4ED8' }}></i>
+              <Icon fa="fa-solid fa-file-excel" style={{ marginRight: '6px', color: '#1D4ED8' }} />
               Export Excel
             </button>
             <button
               className="fin-btn-income"
               onClick={() => { setEditData(null); setDefaultModalType('income'); setShowModal(true); }}
             >
-              <i className="fa-solid fa-plus"></i> Tambah Pemasukan
+              <Icon fa="fa-solid fa-plus" /> Tambah Pemasukan
             </button>
             <button
               className="fin-btn-expense"
               onClick={() => { setEditData(null); setDefaultModalType('expense'); setShowModal(true); }}
             >
-              <i className="fa-solid fa-plus"></i> Tambah Pengeluaran
+              <Icon fa="fa-solid fa-plus" /> Tambah Pengeluaran
             </button>
           </div>
         </div>
@@ -671,7 +672,7 @@ export default function FinancesPage() {
         {/* SEARCH & CATEGORY FILTER */}
         <div className="filter-bar mt-4" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           <div className="search-bar" style={{ flex: 1, minWidth: '220px' }}>
-            <span className="search-bar-icon"><i className="fa-solid fa-magnifying-glass"></i></span>
+            <span className="search-bar-icon"><Icon fa="fa-solid fa-magnifying-glass" /></span>
             <input
               type="text"
               className="form-control"
@@ -705,10 +706,10 @@ export default function FinancesPage() {
       <div className="card" style={{ padding: 0 }}>
         <div className="table-wrapper">
           {loading ? (
-            <div className="table-empty"><i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '8px' }}></i> Memuat data keuangan...</div>
+            <div className="table-empty"><Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '8px' }} /> Memuat data keuangan...</div>
           ) : filtered.length === 0 ? (
             <div className="table-empty">
-              <div className="table-empty-icon"><i className="fa-solid fa-wallet"></i></div>
+              <div className="table-empty-icon"><Icon fa="fa-solid fa-wallet" /></div>
               <p>{needsMigration ? 'Jalankan SQL migration untuk mengaktifkan fitur ini.' : 'Belum ada pencatatan transaksi keuangan'}</p>
             </div>
           ) : (
@@ -735,7 +736,7 @@ export default function FinancesPage() {
                       <td data-label="#" style={{ fontWeight: 700, color: 'var(--text-muted)' }}>{idx + 1}</td>
                       <td data-label="Jenis Arus Kas">
                         <span className={`tx-status-pill ${isInc ? 'completed' : 'cancelled'}`}>
-                          <i className={`fa-solid ${isInc ? 'fa-arrow-down-left' : 'fa-arrow-up-right'}`} style={{ fontSize: '11px' }}></i>
+                          <Icon fa={`fa-solid ${isInc ? 'fa-arrow-down-left' : 'fa-arrow-up-right'}`} style={{ fontSize: '11px' }} />
                           {isInc ? 'Pemasukan (+)' : 'Pengeluaran (-)'}
                         </span>
                       </td>
@@ -746,7 +747,7 @@ export default function FinancesPage() {
                           {item.isAutoTransaction && (
                             <div>
                               <span className="badge badge-success" style={{ background: 'rgba(29,78,216, 0.12)', color: '#1D4ED8', borderColor: 'rgba(29,78,216, 0.35)', fontSize: '10.5px', padding: '2px 8px' }}>
-                                <i className="fa-solid fa-bolt" style={{ marginRight: '4px' }}></i> Otomatis dari Transaksi Sewa
+                                <Icon fa="fa-solid fa-bolt" style={{ marginRight: '4px' }} /> Otomatis dari Transaksi Sewa
                               </span>
                             </div>
                           )}
@@ -754,7 +755,7 @@ export default function FinancesPage() {
                       </td>
                       <td data-label="Kategori">
                         <span className="badge badge-muted" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                          <i className={meta.icon} style={{ color: meta.color }}></i>
+                          <Icon fa={meta.icon} style={{ color: meta.color }} />
                           {meta.label}
                         </span>
                       </td>
@@ -768,7 +769,7 @@ export default function FinancesPage() {
                         <div className="flex gap-2">
                           {item.isAutoTransaction ? (
                             <span className="badge badge-muted" title="Otomatis terhubung dengan fitur transaksi sewa" style={{ fontSize: '11px', padding: '6px 10px' }}>
-                              <i className="fa-solid fa-lock" style={{ marginRight: '4px' }}></i> Auto System
+                              <Icon fa="fa-solid fa-lock" style={{ marginRight: '4px' }} /> Auto System
                             </span>
                           ) : (
                             <>
@@ -777,14 +778,14 @@ export default function FinancesPage() {
                                 title="Edit Transaksi"
                                 onClick={() => { setEditData(item); setShowModal(true); }}
                               >
-                                <i className="fa-solid fa-pen-to-square"></i>
+                                <Icon fa="fa-solid fa-pen-to-square" />
                               </button>
                               <button
                                 className="btn btn-danger btn-sm"
                                 title="Hapus Transaksi"
                                 onClick={() => setDeleteModal({ open: true, data: item })}
                               >
-                                <i className="fa-solid fa-trash-can"></i>
+                                <Icon fa="fa-solid fa-trash-can" />
                               </button>
                             </>
                           )}

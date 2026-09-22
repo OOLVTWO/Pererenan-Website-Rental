@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { formatRupiah, getLocalDateStr } from '@/lib/finance';
 import { SERVICE_ITEM_OPTIONS } from '@/lib/serviceLog';
+import Icon from '@/components/ui/Icon';
 
 /**
  * Servis Motor — PENCATATAN saja (bukan deteksi jadwal servis).
@@ -119,7 +120,7 @@ function ServiceLogModal({ vehicles, editData, defaultVehicleId, onClose, onSave
                 return (
                   <button key={item} type="button" onClick={() => toggleItem(item)}
                     className={`page-tab${active ? ' active' : ''}`} aria-pressed={active}>
-                    {active && <i className="fa-solid fa-check" aria-hidden="true"></i>}{item}
+                    {active && <Icon fa="fa-solid fa-check" aria-hidden="true" />}{item}
                   </button>
                 );
               })}
@@ -159,13 +160,13 @@ function ServiceLogModal({ vehicles, editData, defaultVehicleId, onClose, onSave
           <div className="modal-footer" style={{ justifyContent: 'space-between' }}>
             {editData ? (
               <button type="button" className="btn btn-danger" onClick={() => onDelete(editData)} disabled={saving}>
-                <i className="fa-solid fa-trash" aria-hidden="true"></i> Hapus
+                <Icon fa="fa-solid fa-trash" aria-hidden="true" /> Hapus
               </button>
             ) : <span />}
             <div style={{ display: 'flex', gap: '8px' }}>
               <button type="button" className="btn btn-secondary" onClick={onClose} disabled={saving}>Batal</button>
               <button type="submit" className="btn btn-primary" disabled={saving}>
-                {saving ? <><i className="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Menyimpan…</> : 'Simpan'}
+                {saving ? <><Icon fa="fa-solid fa-spinner fa-spin" aria-hidden="true" /> Menyimpan…</> : 'Simpan'}
               </button>
             </div>
           </div>
@@ -274,7 +275,7 @@ function ServicePageInner() {
           <p className="dash2-muted">Catatan servis setiap motor</p>
         </div>
         <button className="btn btn-primary" onClick={() => setModal({ editData: null })} disabled={needsMigration}>
-          <i className="fa-solid fa-plus" aria-hidden="true"></i> Catat servis
+          <Icon fa="fa-solid fa-plus" aria-hidden="true" /> Catat servis
         </button>
       </div>
 
@@ -303,7 +304,7 @@ function ServicePageInner() {
 
       <div className="list-card">
         {loading ? (
-          <div className="list-row"><span className="list-row-sub"><i className="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Memuat catatan…</span></div>
+          <div className="list-row"><span className="list-row-sub"><Icon fa="fa-solid fa-spinner fa-spin" aria-hidden="true" /> Memuat catatan…</span></div>
         ) : logs.length === 0 ? (
           <div className="list-row">
             <span className="list-row-text">
@@ -314,7 +315,7 @@ function ServicePageInner() {
         ) : logs.map(l => (
           <button key={l.id} type="button" className="list-row" onClick={() => setModal({ editData: l })}
             style={{ width: '100%', background: 'none', border: 0, borderTop: '1px solid var(--bg-border)', textAlign: 'left', cursor: 'pointer', font: 'inherit' }}>
-            <span className="list-row-icon"><i className="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i></span>
+            <span className="list-row-icon"><Icon fa="fa-solid fa-screwdriver-wrench" aria-hidden="true" /></span>
             <span className="list-row-text">
               <span className="list-row-title">{vehicleLabel(l.vehicles)}</span>
               <span className="list-row-sub">
@@ -354,7 +355,7 @@ function ServicePageInner() {
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" onClick={() => setConfirmDelete(null)} disabled={deleting}>Batal</button>
               <button type="button" className="btn btn-danger" onClick={handleDelete} disabled={deleting}>
-                {deleting ? <i className="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> : <i className="fa-solid fa-trash" aria-hidden="true"></i>} Hapus
+                {deleting ? <Icon fa="fa-solid fa-spinner fa-spin" aria-hidden="true" /> : <Icon fa="fa-solid fa-trash" aria-hidden="true" />} Hapus
               </button>
             </div>
           </div>

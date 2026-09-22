@@ -7,6 +7,7 @@ import { fetchCustomers, upsertCustomer, syncTransactionsToCustomers } from '@/l
 import { exportCustomersToExcel, formatRupiah } from '@/lib/excel';
 import { COUNTRY_CODES, getFlagImageUrl } from '@/lib/countryCodes';
 import PageTabs from '@/components/ui/PageTabs';
+import Icon from '@/components/ui/Icon';
 
 const VALID_CUSTOMER_TABS = ['all', 'repeat', 'new'];
 
@@ -60,7 +61,7 @@ function CountryCodePicker({ value, onChange }) {
           />
           <span style={{ fontSize: '13px' }}>{currentCountry.code}</span>
         </div>
-        <i className={`fa-solid fa-chevron-${isOpen ? 'up' : 'down'}`} style={{ fontSize: '10px', color: 'var(--text-muted)' }}></i>
+        <Icon fa={`fa-solid fa-chevron-${isOpen ? 'up' : 'down'}`} style={{ fontSize: '10px', color: 'var(--text-muted)' }} />
       </button>
 
       {isOpen && (
@@ -335,7 +336,7 @@ export default function CustomersPage() {
           alignItems: 'center',
           gap: '10px'
         }}>
-          <i className={`fa-solid fa-${feedbackMsg.type === 'error' ? 'circle-xmark' : 'circle-check'}`}></i>
+          <Icon fa={`fa-solid fa-${feedbackMsg.type === 'error' ? 'circle-xmark' : 'circle-check'}`} />
           {feedbackMsg.text}
         </div>
       )}
@@ -351,7 +352,7 @@ export default function CustomersPage() {
       }}>
         <div>
           <h1 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <i className="fa-solid fa-users" style={{ color: 'var(--brand-primary)' }}></i>
+            <Icon fa="fa-solid fa-users" style={{ color: 'var(--brand-primary)' }} />
             Database Master Customer
           </h1>
           <p style={{ margin: '4px 0 0', color: 'var(--text-muted)', fontSize: '14px' }}>
@@ -367,7 +368,7 @@ export default function CustomersPage() {
             disabled={syncing}
             style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}
           >
-            <i className={`fa-solid fa-rotate ${syncing ? 'fa-spin' : ''}`}></i>
+            <Icon fa={`fa-solid fa-rotate ${syncing ? 'fa-spin' : ''}`} />
             {syncing ? 'Menyinkronkan...' : 'Sync Histori Transaksi'}
           </button>
 
@@ -377,7 +378,7 @@ export default function CustomersPage() {
             onClick={handleExportExcel}
             style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', background: 'rgba(29,78,216, 0.15)', borderColor: '#1D4ED8', color: '#1D4ED8' }}
           >
-            <i className="fa-solid fa-file-excel"></i>
+            <Icon fa="fa-solid fa-file-excel" />
             Download Backup Excel
           </button>
 
@@ -387,7 +388,7 @@ export default function CustomersPage() {
             onClick={handleOpenAddModal}
             style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}
           >
-            <i className="fa-solid fa-user-plus"></i>
+            <Icon fa="fa-solid fa-user-plus" />
             Tambah Customer
           </button>
         </div>
@@ -415,7 +416,7 @@ export default function CustomersPage() {
             background: 'rgba(37, 99, 235, 0.15)', color: 'var(--brand-primary)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px'
           }}>
-            <i className="fa-solid fa-address-book"></i>
+            <Icon fa="fa-solid fa-address-book" />
           </div>
           <div>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Total Customer</div>
@@ -438,7 +439,7 @@ export default function CustomersPage() {
             background: 'rgba(59, 130, 246, 0.15)', color: '#3B82F6',
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px'
           }}>
-            <i className="fa-solid fa-user-check"></i>
+            <Icon fa="fa-solid fa-user-check" />
           </div>
           <div>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Repeat Customer (Loyal)</div>
@@ -461,7 +462,7 @@ export default function CustomersPage() {
             background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8',
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px'
           }}>
-            <i className="fa-solid fa-vault"></i>
+            <Icon fa="fa-solid fa-vault" />
           </div>
           <div>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Omset dari Customer</div>
@@ -484,7 +485,7 @@ export default function CustomersPage() {
             background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8',
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px'
           }}>
-            <i className="fa-solid fa-user-plus"></i>
+            <Icon fa="fa-solid fa-user-plus" />
           </div>
           <div>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Customer Baru Bulan Ini</div>
@@ -527,16 +528,16 @@ export default function CustomersPage() {
             onChange={e => setSearchQuery(e.target.value)}
             style={{ paddingLeft: '38px', fontSize: '13px' }}
           />
-          <i className="fa-solid fa-magnifying-glass" style={{
+          <Icon fa="fa-solid fa-magnifying-glass" style={{
             position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: '13px'
-          }}></i>
+          }} />
         </div>
       </div>
 
       {/* Main Customers List / Table */}
       {loading ? (
         <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-muted)' }}>
-          <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '32px', marginBottom: '12px', color: 'var(--brand-primary)' }}></i>
+          <Icon fa="fa-solid fa-spinner fa-spin" style={{ fontSize: '32px', marginBottom: '12px', color: 'var(--brand-primary)' }} />
           <div>Memuat data master customer...</div>
         </div>
       ) : filteredCustomers.length === 0 ? (
@@ -547,7 +548,7 @@ export default function CustomersPage() {
           borderRadius: '12px',
           border: '1px dashed var(--bg-border)'
         }}>
-          <i className="fa-solid fa-users-slash" style={{ fontSize: '40px', color: 'var(--text-muted)', marginBottom: '12px', opacity: 0.5 }}></i>
+          <Icon fa="fa-solid fa-users-slash" style={{ fontSize: '40px', color: 'var(--text-muted)', marginBottom: '12px', opacity: 0.5 }} />
           <h3 style={{ margin: '0 0 6px', fontSize: '16px', color: 'var(--text-primary)' }}>Tidak Ada Customer Ditemukan</h3>
           <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '13px' }}>
             {searchQuery ? 'Coba ubah kata kunci pencarian Anda.' : 'Klik "Sync Histori Transaksi" atau "Tambah Customer" untuk memasukkan data.'}
@@ -594,7 +595,7 @@ export default function CustomersPage() {
                             {customer.customer_image_url ? (
                               <img src={customer.customer_image_url} alt={customer.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             ) : (
-                              <i className="fa-solid fa-user" style={{ fontSize: '18px', color: 'var(--text-muted)' }}></i>
+                              <Icon fa="fa-solid fa-user" style={{ fontSize: '18px', color: 'var(--text-muted)' }} />
                             )}
                           </div>
 
@@ -606,7 +607,7 @@ export default function CustomersPage() {
                                   background: 'var(--status-info-bg)', color: 'var(--status-info)', border: '1px solid var(--status-info)',
                                   fontSize: '10px', padding: '1px 6px', borderRadius: '10px', fontWeight: 700, whiteSpace: 'nowrap'
                                 }}>
-                                  <i className="fa-solid fa-crown" style={{ marginRight: '3px' }}></i> Loyal
+                                  <Icon fa="fa-solid fa-crown" style={{ marginRight: '3px' }} /> Loyal
                                 </span>
                               )}
                             </div>
@@ -632,7 +633,7 @@ export default function CustomersPage() {
                             whiteSpace: 'nowrap'
                           }}
                         >
-                          <i className="fa-brands fa-whatsapp" style={{ fontSize: '14px' }}></i>
+                          <Icon fa="fa-brands fa-whatsapp" style={{ fontSize: '14px' }} />
                           {customer.phone || '-'}
                         </a>
                       </td>
@@ -686,7 +687,7 @@ export default function CustomersPage() {
                           onClick={() => handleOpenEditModal(customer)}
                           style={{ fontSize: '12px', padding: '6px 12px' }}
                         >
-                          <i className="fa-solid fa-pen-to-square"></i> Edit
+                          <Icon fa="fa-solid fa-pen-to-square" /> Edit
                         </button>
                       </td>
                     </tr>
@@ -706,9 +707,9 @@ export default function CustomersPage() {
               <div>
                 <div className="modal-title">
                   {editingCustomer ? (
-                    <><i className="fa-solid fa-user-pen" style={{ marginRight: '6px' }}></i> Edit Data Customer</>
+                    <><Icon fa="fa-solid fa-user-pen" style={{ marginRight: '6px' }} /> Edit Data Customer</>
                   ) : (
-                    <><i className="fa-solid fa-user-plus" style={{ marginRight: '6px' }}></i> Tambah Customer Baru</>
+                    <><Icon fa="fa-solid fa-user-plus" style={{ marginRight: '6px' }} /> Tambah Customer Baru</>
                   )}
                 </div>
                 <div className="modal-subtitle">Isi profil & dokumen identitas pelanggan</div>
@@ -794,7 +795,7 @@ export default function CustomersPage() {
                   Batal
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  <i className="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }}></i>
+                  <Icon fa="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }} />
                   Simpan Customer
                 </button>
               </div>

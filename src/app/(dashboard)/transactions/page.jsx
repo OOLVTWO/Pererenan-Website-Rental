@@ -8,6 +8,7 @@ import { COUNTRY_CODES, getWhatsAppShareUrl, generateInvoiceText, generateInvoic
 import { createClient } from '@/lib/supabase/client';
 import { fetchCustomers, upsertCustomer } from '@/lib/customers';
 import { getLocalDateStr } from '@/lib/finance';
+import Icon from '@/components/ui/Icon';
 
 
 function formatRupiah(amount) {
@@ -23,24 +24,24 @@ const statusBadge = (status, paymentStatus) => {
   if (status === 'active' && paymentStatus === 'unpaid') {
     return (
       <span className="tx-status-pill" style={{ background: 'rgba(30,64,175,0.15)', color: '#1E40AF', borderColor: 'rgba(30,64,175,0.4)' }}>
-        <i className="fa-solid fa-clock" style={{ fontSize: '11px' }}></i> Belum Bayar
+        <Icon fa="fa-solid fa-clock" style={{ fontSize: '11px' }} /> Belum Bayar
       </span>
     );
   }
   const map = {
     active: (
       <span className="tx-status-pill active">
-        <i className="fa-solid fa-bolt" style={{ fontSize: '11px' }}></i> Sewa Aktif
+        <Icon fa="fa-solid fa-bolt" style={{ fontSize: '11px' }} /> Sewa Aktif
       </span>
     ),
     completed: (
       <span className="tx-status-pill completed">
-        <i className="fa-solid fa-circle-check" style={{ fontSize: '11px' }}></i> Selesai
+        <Icon fa="fa-solid fa-circle-check" style={{ fontSize: '11px' }} /> Selesai
       </span>
     ),
     cancelled: (
       <span className="tx-status-pill cancelled">
-        <i className="fa-solid fa-circle-xmark" style={{ fontSize: '11px' }}></i> Dibatalkan
+        <Icon fa="fa-solid fa-circle-xmark" style={{ fontSize: '11px' }} /> Dibatalkan
       </span>
     ),
   };
@@ -108,7 +109,7 @@ function VehicleCombobox({ vehicles, value, onChange }) {
   return (
     <div className="form-group">
       <label className="form-label">
-        <i className="fa-solid fa-motorcycle" style={{ marginRight: '6px' }}></i>
+        <Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '6px' }} />
         Pilih Kendaraan Motor <span className="required">*</span>
       </label>
 
@@ -141,7 +142,7 @@ function VehicleCombobox({ vehicles, value, onChange }) {
                   transition: 'all 0.15s ease'
                 }}
               >
-                <i className={brand.icon} style={{ fontSize: '12px' }}></i>
+                <Icon fa={brand.icon} style={{ fontSize: '12px' }} />
                 {brand.label}
                 {count > 0 && (
                   <span style={{
@@ -165,7 +166,7 @@ function VehicleCombobox({ vehicles, value, onChange }) {
       {selectedBrand && (
         <div>
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '8px' }}>
-            <i className="fa-solid fa-list" style={{ marginRight: '4px' }}></i>
+            <Icon fa="fa-solid fa-list" style={{ marginRight: '4px' }} />
             Langkah 2 — Pilih Motor {brandMeta(selectedBrand).label}
             {' '}({brandVehicles.length} unit tersedia)
           </div>
@@ -180,7 +181,7 @@ function VehicleCombobox({ vehicles, value, onChange }) {
                 onChange={e => setQuery(e.target.value)}
                 style={{ paddingLeft: '36px', fontSize: '13px' }}
               />
-              <i className="fa-solid fa-magnifying-glass" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none', fontSize: '12px' }}></i>
+              <Icon fa="fa-solid fa-magnifying-glass" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none', fontSize: '12px' }} />
             </div>
           )}
 
@@ -194,7 +195,7 @@ function VehicleCombobox({ vehicles, value, onChange }) {
               fontSize: '13px',
               color: 'var(--text-muted)'
             }}>
-              <i className="fa-solid fa-motorcycle" style={{ fontSize: '24px', display: 'block', marginBottom: '6px', opacity: 0.4 }}></i>
+              <Icon fa="fa-solid fa-motorcycle" style={{ fontSize: '24px', display: 'block', marginBottom: '6px', opacity: 0.4 }} />
               {brandVehicles.length === 0
                 ? `Belum ada motor ${brandMeta(selectedBrand).label} yang tersedia untuk disewa.`
                 : 'Tidak ada motor yang cocok dengan pencarian.'}
@@ -234,7 +235,7 @@ function VehicleCombobox({ vehicles, value, onChange }) {
                       {v.image_url ? (
                         <img src={v.image_url} alt={v.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
                       ) : (
-                        <i className="fa-solid fa-motorcycle" style={{ fontSize: '16px', color: 'var(--brand-primary)' }}></i>
+                        <Icon fa="fa-solid fa-motorcycle" style={{ fontSize: '16px', color: 'var(--brand-primary)' }} />
                       )}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -246,7 +247,7 @@ function VehicleCombobox({ vehicles, value, onChange }) {
                       </div>
                     </div>
                     {isSelected && (
-                      <i className="fa-solid fa-circle-check" style={{ color: 'var(--brand-primary)', fontSize: '16px', flexShrink: 0 }}></i>
+                      <Icon fa="fa-solid fa-circle-check" style={{ color: 'var(--brand-primary)', fontSize: '16px', flexShrink: 0 }} />
                     )}
                   </div>
                 );
@@ -305,7 +306,7 @@ function CountryCodePicker({ value, onChange }) {
           />
           <span>{currentCountry.code}</span>
         </div>
-        <i className={`fa-solid fa-chevron-${isOpen ? 'up' : 'down'}`} style={{ fontSize: '11px', color: 'var(--text-muted)' }}></i>
+        <Icon fa={`fa-solid fa-chevron-${isOpen ? 'up' : 'down'}`} style={{ fontSize: '11px', color: 'var(--text-muted)' }} />
       </button>
 
       {isOpen && (
@@ -425,7 +426,7 @@ function CustomerPickerCombobox({ onSelectCustomer }) {
   return (
     <div style={{ marginBottom: '16px', background: 'rgba(37, 99, 235, 0.06)', border: '1px solid rgba(37, 99, 235, 0.25)', borderRadius: '12px', padding: '12px' }}>
       <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--brand-primary-light)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span><i className="fa-solid fa-users" style={{ marginRight: '6px' }}></i> Auto-Fill Customer Terdaftar</span>
+        <span><Icon fa="fa-solid fa-users" style={{ marginRight: '6px' }} /> Auto-Fill Customer Terdaftar</span>
         <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 500 }}>{customers.length} customer tersimpan</span>
       </div>
 
@@ -439,7 +440,7 @@ function CustomerPickerCombobox({ onSelectCustomer }) {
           onFocus={() => setIsOpen(true)}
           style={{ fontSize: '13px', paddingLeft: '36px', background: 'var(--bg-elevated)' }}
         />
-        <i className="fa-solid fa-magnifying-glass" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: '13px' }}></i>
+        <Icon fa="fa-solid fa-magnifying-glass" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: '13px' }} />
 
         {isOpen && (
           <>
@@ -472,7 +473,7 @@ function CustomerPickerCombobox({ onSelectCustomer }) {
                         {c.customer_image_url ? (
                           <img src={c.customer_image_url} alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
-                          <i className="fa-solid fa-user" style={{ fontSize: '14px', color: 'var(--brand-primary)' }}></i>
+                          <Icon fa="fa-solid fa-user" style={{ fontSize: '14px', color: 'var(--brand-primary)' }} />
                         )}
                       </div>
                       <div>
@@ -480,7 +481,7 @@ function CustomerPickerCombobox({ onSelectCustomer }) {
                           {c.name}
                           {(c.total_rentals || 0) > 1 && (
                             <span style={{ fontSize: '9px', background: 'rgba(59, 130, 246, 0.2)', color: '#60A5FA', padding: '1px 6px', borderRadius: '10px', fontWeight: 700 }}>
-                              <i className="fa-solid fa-crown" style={{ marginRight: '2px' }}></i> Loyal ({c.total_rentals}x)
+                              <Icon fa="fa-solid fa-crown" style={{ marginRight: '2px' }} /> Loyal ({c.total_rentals}x)
                             </span>
                           )}
                         </div>
@@ -503,7 +504,7 @@ function CustomerPickerCombobox({ onSelectCustomer }) {
 
       {selectedCust && (
         <div style={{ marginTop: '8px', fontSize: '12px', color: '#1D4ED8', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span><i className="fa-solid fa-circle-check" style={{ marginRight: '6px' }}></i> Terpilih: <strong>{selectedCust.name}</strong> ({selectedCust.phone})</span>
+          <span><Icon fa="fa-solid fa-circle-check" style={{ marginRight: '6px' }} /> Terpilih: <strong>{selectedCust.name}</strong> ({selectedCust.phone})</span>
           <button type="button" onClick={() => setSelectedCust(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '11px', textDecoration: 'underline' }}>Reset</button>
         </div>
       )}
@@ -777,9 +778,9 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           <div>
             <div className="modal-title">
               {editData ? (
-                <><i className="fa-solid fa-pen-to-square" style={{ marginRight: '6px' }}></i> Edit Transaksi</>
+                <><Icon fa="fa-solid fa-pen-to-square" style={{ marginRight: '6px' }} /> Edit Transaksi</>
               ) : (
-                <><i className="fa-solid fa-plus" style={{ marginRight: '6px' }}></i> Transaksi Baru</>
+                <><Icon fa="fa-solid fa-plus" style={{ marginRight: '6px' }} /> Transaksi Baru</>
               )}
             </div>
             <div className="modal-subtitle">Isi data penyewaan motor & customer</div>
@@ -797,7 +798,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           {/* ── Pilih Motor ── */}
           {noVehiclesAvailable && !editData ? (
             <div style={{ padding: '16px', background: 'rgba(30,58,138,0.08)', border: '1px solid rgba(30,58,138,0.35)', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#1E3A8A' }}>
-              <i className="fa-solid fa-triangle-exclamation" style={{ fontSize: '18px', flexShrink: 0 }}></i>
+              <Icon fa="fa-solid fa-triangle-exclamation" style={{ fontSize: '18px', flexShrink: 0 }} />
               <div>
                 <strong>Semua motor sedang disewa atau dalam perawatan.</strong>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
@@ -817,13 +818,13 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           <div className="form-row cols-2">
             <div className="form-group">
               <label className="form-label" htmlFor="tx-name">
-                <i className="fa-solid fa-user" style={{ marginRight: '6px' }}></i> Nama Penyewa <span className="required">*</span>
+                <Icon fa="fa-solid fa-user" style={{ marginRight: '6px' }} /> Nama Penyewa <span className="required">*</span>
               </label>
               <input id="tx-name" name="renter_name" type="text" className="form-control" placeholder="Nama lengkap penyewa" value={form.renter_name} onChange={handleChange} required />
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="tx-phone">
-                <i className="fa-solid fa-globe" style={{ marginRight: '6px' }}></i> No. WhatsApp <span className="required">*</span>
+                <Icon fa="fa-solid fa-globe" style={{ marginRight: '6px' }} /> No. WhatsApp <span className="required">*</span>
               </label>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'nowrap' }}>
                 <CountryCodePicker
@@ -856,13 +857,13 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           <div className="form-row cols-2">
             <div className="form-group">
               <label className="form-label" htmlFor="tx-start">
-                <i className="fa-solid fa-calendar-plus" style={{ marginRight: '6px' }}></i> Tanggal Mulai <span className="required">*</span>
+                <Icon fa="fa-solid fa-calendar-plus" style={{ marginRight: '6px' }} /> Tanggal Mulai <span className="required">*</span>
               </label>
               <input id="tx-start" name="start_date" type="date" className="form-control" value={form.start_date} onChange={handleChange} required />
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="tx-end">
-                <i className="fa-solid fa-calendar-check" style={{ marginRight: '6px' }}></i> Tanggal Selesai <span className="required">*</span>
+                <Icon fa="fa-solid fa-calendar-check" style={{ marginRight: '6px' }} /> Tanggal Selesai <span className="required">*</span>
               </label>
               <input id="tx-end" name="end_date" type="date" className="form-control" value={form.end_date} onChange={handleChange} min={form.start_date} required />
             </div>
@@ -871,7 +872,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           {/* ── Alamat ── */}
           <div className="form-group">
             <label className="form-label" htmlFor="tx-address">
-              <i className="fa-solid fa-location-dot" style={{ marginRight: '6px', color: 'var(--brand-primary)' }}></i> Alamat / Villa / Hotel
+              <Icon fa="fa-solid fa-location-dot" style={{ marginRight: '6px', color: 'var(--brand-primary)' }} /> Alamat / Villa / Hotel
             </label>
             <input id="tx-address" name="renter_address" type="text" className="form-control" placeholder="e.g. Villa Bamboo, Jl. Pererenan" value={form.renter_address || ''} onChange={handleChange} />
           </div>
@@ -879,22 +880,22 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
                {/* ── Status Pembayaran ── */}
           <div className="form-group" style={{ marginBottom: '16px' }}>
             <label className="form-label">
-              <i className="fa-solid fa-money-bill-wave" style={{ marginRight: '6px', color: '#1D4ED8' }}></i>
+              <Icon fa="fa-solid fa-money-bill-wave" style={{ marginRight: '6px', color: '#1D4ED8' }} />
               Status Pembayaran <span className="required">*</span>
             </label>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button type="button" onClick={() => setForm(prev => ({ ...prev, payment_status: 'paid' }))}
                 style={{ flex: 1, padding: '12px 16px', borderRadius: '10px', border: `2px solid ${form.payment_status !== 'unpaid' ? '#1D4ED8' : 'var(--bg-border)'}`, background: form.payment_status !== 'unpaid' ? 'rgba(29,78,216,0.15)' : 'var(--bg-elevated)', color: form.payment_status !== 'unpaid' ? '#1D4ED8' : 'var(--text-secondary)', fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                <i className="fa-solid fa-circle-check"></i> Lunas / Paid
+                <Icon fa="fa-solid fa-circle-check" /> Lunas / Paid
               </button>
               <button type="button" onClick={() => setForm(prev => ({ ...prev, payment_status: 'unpaid' }))}
                 style={{ flex: 1, padding: '12px 16px', borderRadius: '10px', border: `2px solid ${form.payment_status === 'unpaid' ? '#1E40AF' : 'var(--bg-border)'}`, background: form.payment_status === 'unpaid' ? 'rgba(30,64,175,0.15)' : 'var(--bg-elevated)', color: form.payment_status === 'unpaid' ? '#1E40AF' : 'var(--text-secondary)', fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                <i className="fa-solid fa-clock"></i> Belum Bayar
+                <Icon fa="fa-solid fa-clock" /> Belum Bayar
               </button>
             </div>
             {form.payment_status === 'unpaid' && (
               <div style={{ marginTop: '8px', padding: '8px 12px', background: 'rgba(30,64,175,0.08)', borderRadius: '8px', border: '1px solid rgba(30,64,175,0.3)', fontSize: '12px', color: '#1E40AF', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <i className="fa-solid fa-triangle-exclamation"></i>
+                <Icon fa="fa-solid fa-triangle-exclamation" />
                 Motor tetap tidak tersedia. Pembayaran <strong>belum masuk</strong> ke laporan pendapatan.
               </div>
             )}
@@ -904,7 +905,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           {totalPrice > 0 && (
             <div style={{ padding: '12px 16px', background: 'rgba(29,78,216,0.08)', border: '1px solid rgba(29,78,216,0.25)', borderRadius: '10px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <i className="fa-solid fa-calculator" style={{ color: '#1D4ED8' }}></i>
+                <Icon fa="fa-solid fa-calculator" style={{ color: '#1D4ED8' }} />
                 Harga Terbaik Otomatis
                 {form.discount > 0 && <span style={{ fontSize: '11px', color: '#1E40AF' }}>(sudah potong diskon)</span>}
               </div>
@@ -918,19 +919,19 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           <div className="form-row cols-3">
             <div className="form-group">
               <label className="form-label" htmlFor="tx-discount">
-                <i className="fa-solid fa-tags" style={{ marginRight: '6px' }}></i> Diskon (Rp)
+                <Icon fa="fa-solid fa-tags" style={{ marginRight: '6px' }} /> Diskon (Rp)
               </label>
               <input id="tx-discount" name="discount" type="number" className="form-control" placeholder="0" value={form.discount} onChange={handleChange} min="0" style={{ MozAppearance: 'textfield' }} />
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="tx-deposit">
-                <i className="fa-solid fa-vault" style={{ marginRight: '6px' }}></i> Deposit (Rp)
+                <Icon fa="fa-solid fa-vault" style={{ marginRight: '6px' }} /> Deposit (Rp)
               </label>
               <input id="tx-deposit" name="deposit" type="number" className="form-control" placeholder="0" value={form.deposit} onChange={handleChange} min="0" style={{ MozAppearance: 'textfield' }} />
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="tx-payment">
-                <i className="fa-solid fa-credit-card" style={{ marginRight: '6px' }}></i> Metode Bayar
+                <Icon fa="fa-solid fa-credit-card" style={{ marginRight: '6px' }} /> Metode Bayar
               </label>
               <select id="tx-payment" name="payment_method" className="form-control" value={form.payment_method} onChange={handleChange}>
                 {getPaymentMethods().filter(m => m.active).map(m => (
@@ -944,7 +945,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           {/* ── Catatan ── */}
           <div className="form-group">
             <label className="form-label" htmlFor="tx-notes">
-              <i className="fa-regular fa-note-sticky" style={{ marginRight: '6px' }}></i> Catatan Tambahan
+              <Icon fa="fa-regular fa-note-sticky" style={{ marginRight: '6px' }} /> Catatan Tambahan
             </label>
             <textarea id="tx-notes" name="notes" className="form-control" rows={2} placeholder="Catatan khusus, permintaan khusus, dll..." value={form.notes} onChange={handleChange} style={{ resize: 'vertical' }} />
           </div>
@@ -955,7 +956,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
             onClick={() => setShowOptional(prev => !prev)}
             style={{ width: '100%', padding: '10px', background: 'var(--bg-elevated)', border: '1px dashed var(--bg-border)', borderRadius: '10px', color: 'var(--text-muted)', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}
           >
-            <i className={`fa-solid fa-chevron-${showOptional ? 'up' : 'down'}`} style={{ fontSize: '11px' }}></i>
+            <Icon fa={`fa-solid fa-chevron-${showOptional ? 'up' : 'down'}`} style={{ fontSize: '11px' }} />
             {showOptional ? 'Sembunyikan Data Opsional' : 'Data Opsional: No. KTP & Foto Dokumentasi'}
           </button>
 
@@ -966,25 +967,25 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
               {/* No. KTP */}
               <div className="form-group">
                 <label className="form-label" htmlFor="tx-id-num">
-                  <i className="fa-solid fa-id-card" style={{ marginRight: '6px' }}></i> No. KTP / Paspor / SIM
+                  <Icon fa="fa-solid fa-id-card" style={{ marginRight: '6px' }} /> No. KTP / Paspor / SIM
                 </label>
                 <input id="tx-id-num" name="renter_id_number" type="text" className="form-control" placeholder="Nomor identitas" value={form.renter_id_number} onChange={handleChange} />
               </div>
 
               {/* Foto Serah Terima (1 foto: penyewa + motor) — disimpan di Supabase Storage */}
               <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--brand-primary-light)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <i className="fa-solid fa-camera-retro"></i> Foto Serah Terima (Opsional)
+                <Icon fa="fa-solid fa-camera-retro" /> Foto Serah Terima (Opsional)
               </div>
               <div className="form-group mb-0">
                 <label className="form-label" style={{ fontSize: '12px' }}>
-                  <i className="fa-solid fa-motorcycle" style={{ marginRight: '6px', color: '#3B82F6' }}></i> Foto Penyewa + Motor saat serah terima
+                  <Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '6px', color: '#3B82F6' }} /> Foto Penyewa + Motor saat serah terima
                 </label>
                 {form.handover_image_url ? (
                   <div style={{ position: 'relative', width: '100%', maxWidth: '360px', height: '180px', borderRadius: '10px', overflow: 'hidden', border: '2px solid #3B82F6', background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {handoverPreview ? (
                       <img src={handoverPreview} alt="Serah terima" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                      <i className="fa-solid fa-spinner fa-spin" style={{ color: 'var(--text-muted)' }}></i>
+                      <Icon fa="fa-solid fa-spinner fa-spin" style={{ color: 'var(--text-muted)' }} />
                     )}
                     <button type="button" onClick={handleRemovePhoto} title="Hapus foto"
                       style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(30,58,138,0.9)', color: '#FFF', border: 'none', borderRadius: '50%', width: '26px', height: '26px', cursor: 'pointer', fontWeight: 800, fontSize: '12px' }}>✕</button>
@@ -995,7 +996,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
                     <input type="file" accept="image/*" id="tx-handover-photo-input" onChange={handleImageFile} style={{ display: 'none' }} disabled={uploading} />
                     <label htmlFor="tx-handover-photo-input" className="custom-file-btn"
                       style={{ height: '100px', maxWidth: '360px', flexDirection: 'column', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed #3B82F6', borderRadius: '10px', background: 'rgba(255,255,255,0.02)', cursor: 'pointer', padding: '12px', textAlign: 'center' }}>
-                      <i className="fa-solid fa-camera" style={{ fontSize: '22px', color: '#3B82F6' }}></i>
+                      <Icon fa="fa-solid fa-camera" style={{ fontSize: '22px', color: '#3B82F6' }} />
                       <span style={{ fontSize: '11px', fontWeight: 700, marginTop: '6px' }}>Ambil / pilih foto serah terima</span>
                       <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Penyewa bersama motor</span>
                     </label>
@@ -1005,7 +1006,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
 
               {uploading && (
                 <div style={{ fontSize: '11px', color: 'var(--brand-primary-light)', marginTop: '8px', textAlign: 'center' }}>
-                  <i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '4px' }}></i> Mengompres & mengunggah foto...
+                  <Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '4px' }} /> Mengompres & mengunggah foto...
                 </div>
               )}
             </div>
@@ -1016,9 +1017,9 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
             <button type="button" className="btn btn-secondary" onClick={handleClose}>Batal</button>
             <button type="submit" className="btn btn-primary" disabled={loading || uploading}>
               {loading ? (
-                <><i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '4px' }}></i> Menyimpan...</>
+                <><Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '4px' }} /> Menyimpan...</>
               ) : (
-                <><i className="fa-solid fa-floppy-disk" style={{ marginRight: '4px' }}></i> Simpan Transaksi</>
+                <><Icon fa="fa-solid fa-floppy-disk" style={{ marginRight: '4px' }} /> Simpan Transaksi</>
               )}
             </button>
           </div>
@@ -1032,7 +1033,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
               <div className="modal-header" style={{ borderBottom: '1px solid var(--bg-border)', paddingBottom: '16px' }}>
                 <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '16px', fontWeight: 800 }}>
                   <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(29,78,216,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <i className="fa-solid fa-floppy-disk" style={{ color: '#1D4ED8', fontSize: '16px' }}></i>
+                    <Icon fa="fa-solid fa-floppy-disk" style={{ color: '#1D4ED8', fontSize: '16px' }} />
                   </div>
                   {editData ? 'Konfirmasi Perubahan' : 'Konfirmasi Transaksi Baru'}
                 </div>
@@ -1042,12 +1043,12 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
               <div style={{ padding: '20px 0 4px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: 'var(--bg-elevated)', borderRadius: '10px', border: '1px solid var(--bg-border)', marginBottom: '16px' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--bg-card-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <i className="fa-solid fa-user" style={{ color: 'var(--brand-primary)', fontSize: '16px' }}></i>
+                    <Icon fa="fa-solid fa-user" style={{ color: 'var(--brand-primary)', fontSize: '16px' }} />
                   </div>
                   <div>
                     <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>{form.renter_name || '—'}</div>
                     <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                      <i className="fa-solid fa-motorcycle" style={{ marginRight: '5px', fontSize: '11px' }}></i>
+                      <Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '5px', fontSize: '11px' }} />
                       {vehicles.find(v => v.id === (form.vehicle_id || '').trim())?.name || '—'}
                       {totalPrice > 0 && (
                         <span style={{ marginLeft: '8px', color: '#1D4ED8', fontWeight: 700 }}>· {formatRupiah(totalPrice)}</span>
@@ -1063,7 +1064,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
                 </div>
 
                 <p style={{ fontSize: '11.5px', color: 'var(--text-muted)', margin: '8px 0 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <i className="fa-solid fa-circle-info" style={{ fontSize: '11px' }}></i>
+                  <Icon fa="fa-solid fa-circle-info" style={{ fontSize: '11px' }} />
                   Data akan langsung tersimpan ke database.
                 </p>
               </div>
@@ -1072,7 +1073,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
                 <button className="btn btn-secondary" onClick={() => setShowConfirm(false)}>Batal</button>
                 <button className="btn btn-primary" onClick={handleConfirmSave}
                   style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <i className="fa-solid fa-floppy-disk"></i>
+                  <Icon fa="fa-solid fa-floppy-disk" />
                   {editData ? 'Ya, Simpan Perubahan' : 'Ya, Tambah Transaksi'}
                 </button>
               </div>
@@ -1251,7 +1252,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
         <div className="modal-header no-print">
           <div>
             <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <i className="fa-brands fa-whatsapp" style={{ color: '#1D4ED8', fontSize: '20px' }}></i>
+              <Icon fa="fa-brands fa-whatsapp" style={{ color: '#1D4ED8', fontSize: '20px' }} />
               Kirim Invoice WhatsApp & Pesan Customer
             </div>
             <div className="modal-subtitle">
@@ -1267,13 +1268,13 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
             className={`btn btn-${activeTab === 'text' ? 'primary' : 'secondary'} btn-sm`}
             onClick={() => setActiveTab('text')}
           >
-            <i className="fa-brands fa-whatsapp" style={{ marginRight: '6px' }}></i> Format Text WA
+            <Icon fa="fa-brands fa-whatsapp" style={{ marginRight: '6px' }} /> Format Text WA
           </button>
           <button
             className={`btn btn-${activeTab === 'visual' ? 'primary' : 'secondary'} btn-sm`}
             onClick={() => setActiveTab('visual')}
           >
-            <i className="fa-solid fa-file-invoice" style={{ marginRight: '6px' }}></i> Kartu Invoice Gambar / Print
+            <Icon fa="fa-solid fa-file-invoice" style={{ marginRight: '6px' }} /> Kartu Invoice Gambar / Print
           </button>
         </div>
 
@@ -1281,7 +1282,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
           <div>
             <div className="form-group">
               <label className="form-label">
-                <i className="fa-solid fa-pen-to-square" style={{ marginRight: '6px' }}></i> Text Invoice Formal (Dapat Diedit):
+                <Icon fa="fa-solid fa-pen-to-square" style={{ marginRight: '6px' }} /> Text Invoice Formal (Dapat Diedit):
               </label>
               <textarea
                 className="form-control"
@@ -1294,7 +1295,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
 
             <div className="modal-footer" style={{ justifyContent: 'space-between' }}>
               <button className="btn btn-secondary" onClick={handleCopy}>
-                <i className={`fa-solid ${copied ? 'fa-check' : 'fa-copy'}`} style={{ marginRight: '6px' }}></i>
+                <Icon fa={`fa-solid ${copied ? 'fa-check' : 'fa-copy'}`} style={{ marginRight: '6px' }} />
                 {copied ? 'Tercopy!' : 'Copy Text Invoice'}
               </button>
               <a
@@ -1304,7 +1305,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
                 className="btn btn-success"
                 style={{ textDecoration: 'none', background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff' }}
               >
-                <i className="fa-brands fa-whatsapp" style={{ marginRight: '6px', fontSize: '16px' }}></i>
+                <Icon fa="fa-brands fa-whatsapp" style={{ marginRight: '6px', fontSize: '16px' }} />
                 Buka WhatsApp & Kirim Pesan
               </a>
             </div>
@@ -1339,7 +1340,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #1E293B', paddingBottom: '18px', marginBottom: '20px' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '19px', fontWeight: 800, color: '#1E293B' }}>
-                    <i className="fa-solid fa-motorcycle" style={{ color: '#2563EB' }}></i>
+                    <Icon fa="fa-solid fa-motorcycle" style={{ color: '#2563EB' }} />
                     BOSS RENT PERERENAN
                   </div>
                   <div style={{ fontSize: '10.5px', color: '#64748B', marginTop: '5px', lineHeight: 1.6 }}>
@@ -1374,7 +1375,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
                   <div style={{ fontSize: '12px', color: '#475569' }}>{tx.renter_phone}</div>
                   {tx.renter_address && (
                     <div style={{ fontSize: '11.5px', color: '#2563EB', marginTop: '4px' }}>
-                      <i className="fa-solid fa-location-dot" style={{ marginRight: '4px' }}></i> {tx.renter_address}
+                      <Icon fa="fa-solid fa-location-dot" style={{ marginRight: '4px' }} /> {tx.renter_address}
                     </div>
                   )}
                 </div>
@@ -1389,7 +1390,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
               {tx.handover_image_url && (
                 <div style={{ marginBottom: '20px', background: '#F8FAFC', padding: '14px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
                   <div style={{ fontSize: '10.5px', color: '#64748B', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <i className="fa-solid fa-camera" style={{ color: '#2563EB' }}></i> Transaction Photo Documentation
+                    <Icon fa="fa-solid fa-camera" style={{ color: '#2563EB' }} /> Transaction Photo Documentation
                   </div>
                   <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
                     {tx.handover_image_url && (
@@ -1496,7 +1497,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: '#64748B', borderTop: '1px solid #E2E8F0', paddingTop: '14px' }}>
-                <div>Payment Method: <strong style={{ color: paymentMeta.color }}><i className={paymentMeta.icon}></i> {paymentLabelEn}</strong></div>
+                <div>Payment Method: <strong style={{ color: paymentMeta.color }}><Icon fa={paymentMeta.icon} /> {paymentLabelEn}</strong></div>
                 <div>Thank you for choosing Boss Rent Bali! 🌴</div>
               </div>
             </div>
@@ -1504,7 +1505,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
 
             <div className="no-print" style={{ marginTop: '16px' }}>
               <div className="alert alert-info" style={{ fontSize: '12px', marginBottom: '12px' }}>
-                <i className="fa-solid fa-circle-info" style={{ marginTop: '1px' }}></i>
+                <Icon fa="fa-solid fa-circle-info" style={{ marginTop: '1px' }} />
                 <span>
                   <strong>Bagikan Langsung</strong> membuka menu share HP Anda — pilih WhatsApp dan
                   invoice PDF akan terlampir otomatis di chat customer (didukung sebagian besar HP).
@@ -1516,15 +1517,15 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
               <div className="modal-footer" style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <button className="btn btn-success" onClick={handleShareDirect} disabled={sharing} style={{ background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff' }}>
-                    <i className={`fa-solid ${sharing ? 'fa-spinner fa-spin' : 'fa-share-nodes'}`} style={{ marginRight: '6px' }}></i>
+                    <Icon fa={`fa-solid ${sharing ? 'fa-spinner fa-spin' : 'fa-share-nodes'}`} style={{ marginRight: '6px' }} />
                     {sharing ? 'Menyiapkan Invoice...' : 'Bagikan Langsung ke WhatsApp'}
                   </button>
                   <button className="btn btn-primary" onClick={handleDownloadPdf} disabled={downloading}>
-                    <i className={`fa-solid ${downloading ? 'fa-spinner fa-spin' : downloaded ? 'fa-check' : 'fa-download'}`} style={{ marginRight: '6px' }}></i>
+                    <Icon fa={`fa-solid ${downloading ? 'fa-spinner fa-spin' : downloaded ? 'fa-check' : 'fa-download'}`} style={{ marginRight: '6px' }} />
                     {downloading ? 'Membuat PDF...' : downloaded ? 'Terunduh!' : 'Download PDF Invoice'}
                   </button>
                   <button className="btn btn-secondary" onClick={handlePrint}>
-                    <i className="fa-solid fa-print" style={{ marginRight: '6px' }}></i> Cetak
+                    <Icon fa="fa-solid fa-print" style={{ marginRight: '6px' }} /> Cetak
                   </button>
                 </div>
                 <a
@@ -1534,7 +1535,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
                   className="btn btn-secondary"
                   style={{ textDecoration: 'none' }}
                 >
-                  <i className="fa-brands fa-whatsapp" style={{ marginRight: '6px', fontSize: '16px', color: '#1D4ED8' }}></i> Buka WhatsApp
+                  <Icon fa="fa-brands fa-whatsapp" style={{ marginRight: '6px', fontSize: '16px', color: '#1D4ED8' }} /> Buka WhatsApp
                 </a>
               </div>
             </div>
@@ -1567,7 +1568,7 @@ function CompleteModal({ isOpen, onClose, onConfirm, tx }) {
         <div className="modal-header">
           <div>
             <div className="modal-title">
-              <i className="fa-solid fa-flag-checkered" style={{ marginRight: '6px', color: '#1D4ED8' }}></i>
+              <Icon fa="fa-solid fa-flag-checkered" style={{ marginRight: '6px', color: '#1D4ED8' }} />
               Selesaikan Transaksi & Pengembalian Deposit
             </div>
             <div className="modal-subtitle">Customer: <strong>{tx.renter_name}</strong> | Motor: <strong>{tx.vehicles?.name} ({tx.vehicles?.plate_number})</strong></div>
@@ -1595,9 +1596,9 @@ function CompleteModal({ isOpen, onClose, onConfirm, tx }) {
             <button type="button" className="btn btn-secondary" onClick={onClose}>Batal</button>
             <button type="submit" className="btn btn-success" disabled={loading}>
               {loading ? (
-                <><i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '4px' }}></i> Menyimpan...</>
+                <><Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '4px' }} /> Menyimpan...</>
               ) : (
-                <><i className="fa-solid fa-check" style={{ marginRight: '4px' }}></i> Selesaikan Transaksi</>
+                <><Icon fa="fa-solid fa-check" style={{ marginRight: '4px' }} /> Selesaikan Transaksi</>
               )}
             </button>
           </div>
@@ -1616,7 +1617,7 @@ function ConfirmLunasModal({ isOpen, onClose, onConfirm, tx }) {
         <div className="modal-header" style={{ borderBottom: '1px solid var(--bg-border)', paddingBottom: '16px' }}>
           <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '16px', fontWeight: 800 }}>
             <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(29,78,216,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <i className="fa-solid fa-money-bill-wave" style={{ color: '#1D4ED8', fontSize: '16px' }}></i>
+              <Icon fa="fa-solid fa-money-bill-wave" style={{ color: '#1D4ED8', fontSize: '16px' }} />
             </div>
             Konfirmasi Pembayaran Lunas
           </div>
@@ -1627,12 +1628,12 @@ function ConfirmLunasModal({ isOpen, onClose, onConfirm, tx }) {
           {/* Info penyewa */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: 'var(--bg-elevated)', borderRadius: '10px', border: '1px solid var(--bg-border)', marginBottom: '16px' }}>
             <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--bg-card-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <i className="fa-solid fa-user" style={{ color: 'var(--brand-primary)', fontSize: '16px' }}></i>
+              <Icon fa="fa-solid fa-user" style={{ color: 'var(--brand-primary)', fontSize: '16px' }} />
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>{tx.renter_name}</div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                <i className="fa-solid fa-motorcycle" style={{ marginRight: '5px', fontSize: '11px' }}></i>
+                <Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '5px', fontSize: '11px' }} />
                 {tx.vehicles?.name || '-'} · {tx.vehicles?.plate_number || '-'}
               </div>
             </div>
@@ -1646,7 +1647,7 @@ function ConfirmLunasModal({ isOpen, onClose, onConfirm, tx }) {
           </div>
 
           <p style={{ fontSize: '11.5px', color: 'var(--text-muted)', margin: '8px 0 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <i className="fa-solid fa-circle-info" style={{ fontSize: '11px' }}></i>
+            <Icon fa="fa-solid fa-circle-info" style={{ fontSize: '11px' }} />
             Tindakan ini tidak dapat dibatalkan secara otomatis.
           </p>
         </div>
@@ -1658,7 +1659,7 @@ function ConfirmLunasModal({ isOpen, onClose, onConfirm, tx }) {
             onClick={() => { onConfirm(tx); onClose(); }}
             style={{ background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}
           >
-            <i className="fa-solid fa-circle-check"></i> Ya, Tandai Lunas
+            <Icon fa="fa-solid fa-circle-check" /> Ya, Tandai Lunas
           </button>
         </div>
       </div>
@@ -1703,7 +1704,7 @@ function LunasSuccessToast({ isOpen, onClose, renterName }) {
         background: 'rgba(29,78,216,0.2)', border: '2px solid rgba(29,78,216,0.45)',
         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
       }}>
-        <i className="fa-solid fa-circle-check" style={{ color: '#3B82F6', fontSize: '20px' }}></i>
+        <Icon fa="fa-solid fa-circle-check" style={{ color: '#3B82F6', fontSize: '20px' }} />
       </div>
 
       {/* Text */}
@@ -1721,7 +1722,7 @@ function LunasSuccessToast({ isOpen, onClose, renterName }) {
         onClick={onClose}
         style={{ background: 'none', border: 'none', color: '#BFD1FF', cursor: 'pointer', fontSize: '16px', padding: '4px', lineHeight: 1, flexShrink: 0 }}
       >
-        <i className="fa-solid fa-xmark"></i>
+        <Icon fa="fa-solid fa-xmark" />
       </button>
     </div>
   );
@@ -1757,7 +1758,7 @@ function SaveSuccessToast({ isOpen, onClose, isEdit, renterName }) {
         background: 'rgba(29,78,216,0.2)', border: '2px solid rgba(29,78,216,0.45)',
         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
       }}>
-        <i className="fa-solid fa-floppy-disk" style={{ color: '#BFD1FF', fontSize: '18px' }}></i>
+        <Icon fa="fa-solid fa-floppy-disk" style={{ color: '#BFD1FF', fontSize: '18px' }} />
       </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontWeight: 800, fontSize: '14px', color: '#eef2ff', letterSpacing: '-0.2px' }}>
@@ -1771,7 +1772,7 @@ function SaveSuccessToast({ isOpen, onClose, isEdit, renterName }) {
         onClick={onClose}
         style={{ background: 'none', border: 'none', color: '#BFD1FF', cursor: 'pointer', fontSize: '16px', padding: '4px', lineHeight: 1, flexShrink: 0 }}
       >
-        <i className="fa-solid fa-xmark"></i>
+        <Icon fa="fa-solid fa-xmark" />
       </button>
     </div>
   );
@@ -1805,7 +1806,7 @@ function ErrorToast({ isOpen, onClose, message }) {
         background: 'rgba(30,58,138,0.2)', border: '2px solid rgba(30,58,138,0.45)',
         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
       }}>
-        <i className="fa-solid fa-circle-exclamation" style={{ color: '#C7D6FF', fontSize: '20px' }}></i>
+        <Icon fa="fa-solid fa-circle-exclamation" style={{ color: '#C7D6FF', fontSize: '20px' }} />
       </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontWeight: 800, fontSize: '14px', color: '#E8EEFB', letterSpacing: '-0.2px' }}>
@@ -1819,7 +1820,7 @@ function ErrorToast({ isOpen, onClose, message }) {
         onClick={onClose}
         style={{ background: 'none', border: 'none', color: '#C7D6FF', cursor: 'pointer', fontSize: '16px', padding: '4px', lineHeight: 1, flexShrink: 0 }}
       >
-        <i className="fa-solid fa-xmark"></i>
+        <Icon fa="fa-solid fa-xmark" />
       </button>
     </div>
   );
@@ -1833,7 +1834,7 @@ function SuccessModal({ isOpen, onClose, message }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal modal-sm" onClick={e => e.stopPropagation()} style={{ textAlign: 'center', padding: '32px 24px' }}>
         <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(29,78,216, 0.2)', color: '#1D4ED8', fontSize: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-          <i className="fa-solid fa-circle-check"></i>
+          <Icon fa="fa-solid fa-circle-check" />
         </div>
         <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>Transaksi Selesai!</h3>
         <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px' }}>{message}</p>
@@ -1851,7 +1852,7 @@ function ConfirmDeleteModal({ isOpen, onClose, onConfirm }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal modal-sm" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
-          <div className="modal-title"><i className="fa-solid fa-trash-can" style={{ marginRight: '6px' }}></i> Hapus Transaksi?</div>
+          <div className="modal-title"><Icon fa="fa-solid fa-trash-can" style={{ marginRight: '6px' }} /> Hapus Transaksi?</div>
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
         <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
@@ -2125,7 +2126,7 @@ const handleSubmit = async (formData) => {
     <div className="fade-in">
       <div className="page-header">
         <div>
-          <h2><i className="fa-solid fa-file-invoice-dollar" style={{ marginRight: '8px' }}></i> Kelola Transaksi Sewa</h2>
+          <h2><Icon fa="fa-solid fa-file-invoice-dollar" style={{ marginRight: '8px' }} /> Kelola Transaksi Sewa</h2>
           <p>Catat transaksi penyewaan motor, kirim invoice WhatsApp, dan kelola deposit jaminan</p>
         </div>
       </div>
@@ -2133,7 +2134,7 @@ const handleSubmit = async (formData) => {
       <div className="page-actions">
         <div className="filter-bar">
           <div className="search-bar">
-            <span className="search-bar-icon"><i className="fa-solid fa-magnifying-glass"></i></span>
+            <span className="search-bar-icon"><Icon fa="fa-solid fa-magnifying-glass" /></span>
             <input
               type="text"
               className="form-control"
@@ -2159,17 +2160,17 @@ const handleSubmit = async (formData) => {
           className="btn btn-primary"
           onClick={() => { setEditData(null); setShowModal(true); }}
         >
-          <i className="fa-solid fa-plus" style={{ marginRight: '6px' }}></i> Transaksi Baru
+          <Icon fa="fa-solid fa-plus" style={{ marginRight: '6px' }} /> Transaksi Baru
         </button>
       </div>
 
       <div className="card" style={{ padding: 0 }}>
         <div className="table-wrapper">
           {loading ? (
-            <div className="table-empty"><i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '8px' }}></i> Memuat data...</div>
+            <div className="table-empty"><Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '8px' }} /> Memuat data...</div>
           ) : filtered.length === 0 ? (
             <div className="table-empty">
-              <div className="table-empty-icon"><i className="fa-solid fa-file-invoice"></i></div>
+              <div className="table-empty-icon"><Icon fa="fa-solid fa-file-invoice" /></div>
               <p>Tidak ada transaksi ditemukan</p>
             </div>
           ) : (
@@ -2194,29 +2195,29 @@ const handleSubmit = async (formData) => {
                       <div className="tx-customer-cell">
                         <div style={{ display: 'flex', position: 'relative', flexShrink: 0 }}>
                           <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'var(--bg-card-hover)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--bg-border)' }}>
-                            <i className="fa-solid fa-user" style={{ fontSize: '16px', color: 'var(--brand-primary)' }}></i>
+                            <Icon fa="fa-solid fa-user" style={{ fontSize: '16px', color: 'var(--brand-primary)' }} />
                           </div>
                           {photoIds.has(tx.id) && (
                             <button type="button" onClick={() => openPhoto(tx)} title="Lihat foto serah terima"
                               style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#3B82F6', color: '#fff', position: 'absolute', bottom: '-2px', right: '-6px', border: '2px solid #0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', cursor: 'pointer', padding: 0 }}>
-                              <i className="fa-solid fa-camera"></i>
+                              <Icon fa="fa-solid fa-camera" />
                             </button>
                           )}
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
                           <strong style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{tx.renter_name}</strong>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                            <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}><i className="fa-solid fa-phone" style={{ marginRight: '4px', fontSize: '10px' }}></i>{tx.renter_phone}</span>
+                            <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}><Icon fa="fa-solid fa-phone" style={{ marginRight: '4px', fontSize: '10px' }} />{tx.renter_phone}</span>
                             {tx.payment_method && (
                               <span className="tx-info-pill" style={{ color: getPaymentMethodMeta(tx.payment_method).color, borderColor: `${getPaymentMethodMeta(tx.payment_method).color}40`, background: `${getPaymentMethodMeta(tx.payment_method).color}15` }}>
-                                <i className={getPaymentMethodMeta(tx.payment_method).icon} style={{ fontSize: '10px' }}></i>
+                                <Icon fa={getPaymentMethodMeta(tx.payment_method).icon} style={{ fontSize: '10px' }} />
                                 {getPaymentMethodMeta(tx.payment_method).label}
                               </span>
                             )}
                           </div>
                           {tx.renter_address && (
                             <div style={{ fontSize: '11px', color: 'var(--brand-primary-light)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '220px' }} title={tx.renter_address}>
-                              <i className="fa-solid fa-location-dot" style={{ marginRight: '4px' }}></i>
+                              <Icon fa="fa-solid fa-location-dot" style={{ marginRight: '4px' }} />
                               {tx.renter_address}
                             </div>
                           )}
@@ -2230,7 +2231,7 @@ const handleSubmit = async (formData) => {
                         </strong>
                         <div>
                           <span className="tx-info-pill" style={{ color: 'var(--brand-primary-light)', borderColor: 'rgba(37, 99, 235, 0.35)', background: 'rgba(37, 99, 235, 0.12)', padding: '4px 10px' }}>
-                            <i className="fa-solid fa-motorcycle" style={{ fontSize: '11px', marginRight: '6px' }}></i>
+                            <Icon fa="fa-solid fa-motorcycle" style={{ fontSize: '11px', marginRight: '6px' }} />
                             {tx.vehicles?.plate_number || '-'}
                           </span>
                         </div>
@@ -2239,11 +2240,11 @@ const handleSubmit = async (formData) => {
                     <td data-label="Mulai / Selesai">
                       <div className="tx-date-cell">
                         <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>
-                          <i className="fa-solid fa-calendar-plus" style={{ marginRight: '6px', fontSize: '11px', color: '#1D4ED8' }}></i>
+                          <Icon fa="fa-solid fa-calendar-plus" style={{ marginRight: '6px', fontSize: '11px', color: '#1D4ED8' }} />
                           {new Date(tx.start_date).toLocaleDateString('id-ID')}
                         </div>
                         <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>
-                          <i className="fa-solid fa-calendar-check" style={{ marginRight: '6px', fontSize: '11px', color: '#3B82F6' }}></i>
+                          <Icon fa="fa-solid fa-calendar-check" style={{ marginRight: '6px', fontSize: '11px', color: '#3B82F6' }} />
                           {new Date(tx.end_date).toLocaleDateString('id-ID')}
                         </div>
                         <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: 600 }}>
@@ -2273,7 +2274,7 @@ const handleSubmit = async (formData) => {
                       {tx.status === 'active' && tx.payment_status !== 'unpaid' && (
                         <div style={{ marginTop: '4px' }}>
                           <span style={{ fontSize: '10px', color: '#1D4ED8', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                            <i className="fa-solid fa-circle-check" style={{ fontSize: '9px' }}></i> Lunas
+                            <Icon fa="fa-solid fa-circle-check" style={{ fontSize: '9px' }} /> Lunas
                           </span>
                         </div>
                       )}
@@ -2288,7 +2289,7 @@ const handleSubmit = async (formData) => {
                           onClick={() => openWa(tx)}
                           disabled={openingId === tx.id}
                         >
-                          <i className="fa-brands fa-whatsapp"></i>
+                          <Icon fa="fa-brands fa-whatsapp" />
                         </button>
 
                         {/* Tandai Lunas button for unpaid active transactions */}
@@ -2299,7 +2300,7 @@ const handleSubmit = async (formData) => {
                         style={{ padding: '7px 10px', background: 'rgba(29,78,216,0.15)', border: '1px solid #1D4ED8', color: '#1D4ED8', fontWeight: 700 }}
                         onClick={() => setLunasModal({ open: true, tx })}
                       >
-                        <i className="fa-solid fa-money-bill-wave"></i>
+                        <Icon fa="fa-solid fa-money-bill-wave" />
                       </button>
                     )}
 
@@ -2310,7 +2311,7 @@ const handleSubmit = async (formData) => {
                             style={{ padding: '7px 10px' }}
                             onClick={() => setCompleteModal({ open: true, tx })}
                           >
-                            <i className="fa-solid fa-check"></i>
+                            <Icon fa="fa-solid fa-check" />
                           </button>
                         )}
                         <button
@@ -2320,7 +2321,7 @@ const handleSubmit = async (formData) => {
                           onClick={() => openEdit(tx)}
                           disabled={openingId === tx.id}
                         >
-                          <i className={openingId === tx.id ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-pen-to-square'}></i>
+                          <Icon fa={openingId === tx.id ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-pen-to-square'} />
                         </button>
                         <button
                           className="btn btn-danger btn-sm"
@@ -2328,7 +2329,7 @@ const handleSubmit = async (formData) => {
                           style={{ padding: '7px 10px' }}
                           onClick={() => setDeleteModal({ open: true, txId: tx.id })}
                         >
-                          <i className="fa-solid fa-trash-can"></i>
+                          <Icon fa="fa-solid fa-trash-can" />
                         </button>
                       </div>
                     </td>
@@ -2363,12 +2364,12 @@ const handleSubmit = async (formData) => {
         <div className="modal-overlay" onClick={() => setPhotoViewer({ open: false, loading: false, src: null, name: '' })}>
           <div className="modal modal-md" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <div className="modal-title"><i className="fa-solid fa-camera" style={{ marginRight: '6px' }}></i> Foto Serah Terima — {photoViewer.name}</div>
+              <div className="modal-title"><Icon fa="fa-solid fa-camera" style={{ marginRight: '6px' }} /> Foto Serah Terima — {photoViewer.name}</div>
               <button className="modal-close" type="button" onClick={() => setPhotoViewer({ open: false, loading: false, src: null, name: '' })}>✕</button>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
               {photoViewer.loading ? (
-                <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '22px', color: 'var(--text-muted)' }}></i>
+                <Icon fa="fa-solid fa-spinner fa-spin" style={{ fontSize: '22px', color: 'var(--text-muted)' }} />
               ) : photoViewer.src ? (
                 <img src={photoViewer.src} alt="Foto serah terima" style={{ maxWidth: '100%', maxHeight: '70vh', borderRadius: '10px' }} />
               ) : (

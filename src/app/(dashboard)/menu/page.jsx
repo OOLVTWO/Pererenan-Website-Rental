@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { NAV_GROUPS } from '@/components/layout/navConfig';
+import Icon from '@/components/ui/Icon';
 
 /** Halaman Menu (HP): semua menu dalam satu daftar datar — tanpa dropdown. */
 export default function MenuPage() {
@@ -23,18 +24,18 @@ export default function MenuPage() {
         <div key={gi} className="list-card">
           {group.map(item => (
             <Link key={item.href} href={item.href} className="list-row">
-              <span className="list-row-icon"><i className={item.icon} aria-hidden="true"></i></span>
+              <span className="list-row-icon"><Icon fa={item.icon} aria-hidden="true" /></span>
               <span className="list-row-text">
                 <span className="list-row-title">{item.label}</span>
                 <span className="list-row-sub">{item.desc}</span>
               </span>
-              <i className="fa-solid fa-chevron-right list-row-chev" aria-hidden="true"></i>
+              <Icon fa="fa-solid fa-chevron-right list-row-chev" aria-hidden="true" />
             </Link>
           ))}
         </div>
       ))}
       <button type="button" className="btn btn-secondary btn-block" onClick={handleLogout}>
-        <i className="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i> Keluar
+        <Icon fa="fa-solid fa-arrow-right-from-bracket" aria-hidden="true" /> Keluar
       </button>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Icon from '@/components/ui/Icon';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -42,7 +43,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="auth-logo">
           <div className="auth-logo-icon">
-            <i className="fa-solid fa-motorcycle"></i>
+            <Icon fa="fa-solid fa-motorcycle" />
           </div>
           <h1>Boss Rent Pererenan</h1>
           <p>Masuk ke panel admin</p>
@@ -51,7 +52,7 @@ export default function LoginPage() {
         {/* Error */}
         {error && (
           <div className="alert alert-danger" role="alert">
-            <i className="fa-solid fa-circle-exclamation" style={{ marginRight: '6px' }}></i> {error}
+            <Icon fa="fa-solid fa-circle-exclamation" style={{ marginRight: '6px' }} /> {error}
           </div>
         )}
 
@@ -99,9 +100,9 @@ export default function LoginPage() {
             disabled={loading}
           >
             {loading ? (
-              <><i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '6px' }}></i> Masuk...</>
+              <><Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '6px' }} /> Masuk...</>
             ) : (
-              <><i className="fa-solid fa-right-to-bracket" style={{ marginRight: '6px' }}></i> Masuk</>
+              <><Icon fa="fa-solid fa-right-to-bracket" style={{ marginRight: '6px' }} /> Masuk</>
             )}
           </button>
         </form>

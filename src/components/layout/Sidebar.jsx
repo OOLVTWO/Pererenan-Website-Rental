@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { NAV_GROUPS, isActivePath } from '@/components/layout/navConfig';
+import Icon from '@/components/ui/Icon';
 
 /** Sidebar desktop: flat, 1 menu = 1 klik. Disembunyikan di HP (pakai BottomNav). */
 export default function Sidebar({ user, trackingAlerts = 0 }) {
@@ -43,7 +44,7 @@ export default function Sidebar({ user, trackingAlerts = 0 }) {
                   className={`shell-nav-item${active ? ' active' : ''}`}
                   aria-current={active ? 'page' : undefined}
                 >
-                  <i className={item.icon} aria-hidden="true"></i>
+                  <Icon fa={item.icon} aria-hidden="true" />
                   <span className="shell-nav-label">{item.label}</span>
                   {badge > 0 && <span className="shell-nav-badge" aria-label={`${badge} perlu perhatian`}>{badge}</span>}
                 </Link>
@@ -60,7 +61,7 @@ export default function Sidebar({ user, trackingAlerts = 0 }) {
           <span className="shell-user-role">Admin</span>
         </span>
         <button type="button" className="shell-icon-btn" onClick={handleLogout} aria-label="Keluar" title="Keluar">
-          <i className="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+          <Icon fa="fa-solid fa-arrow-right-from-bracket" aria-hidden="true" />
         </button>
       </div>
     </aside>

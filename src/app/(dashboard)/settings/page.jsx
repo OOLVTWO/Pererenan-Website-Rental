@@ -17,6 +17,7 @@ import { fetchAllRows } from '@/lib/queryColumns';
 import { pushSettings, pullSettings } from '@/lib/appSettings';
 import { uploadHandoverPhoto } from '@/lib/handoverPhoto';
 import PageTabs from '@/components/ui/PageTabs';
+import Icon from '@/components/ui/Icon';
 
 // Panel Pengaturan difokuskan untuk ADMINISTRASI saja.
 // CMS website publik (hero, galeri, FAQ, rating) dihapus: isinya hanya
@@ -427,7 +428,7 @@ export default function SettingsPage() {
       </Suspense>
 
       <div className="page-header">
-        <h2><i className="fa-solid fa-gear" style={{ marginRight: '8px' }}></i> Pengaturan</h2>
+        <h2><Icon fa="fa-solid fa-gear" style={{ marginRight: '8px' }} /> Pengaturan</h2>
         <p>Profil bisnis, metode pembayaran, template WhatsApp, keamanan akun, dan backup data</p>
       </div>
 
@@ -465,7 +466,7 @@ export default function SettingsPage() {
               margin: '0 auto 16px auto',
               boxShadow: `0 0 24px ${alert.type === 'danger' ? 'rgba(30,58,138,0.3)' : 'rgba(29,78,216,0.3)'}`
             }}>
-              <i className={alert.type === 'danger' ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-circle-check'}></i>
+              <Icon fa={alert.type === 'danger' ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-circle-check'} />
             </div>
 
             <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#F8FAFC', margin: '0 0 8px 0' }}>
@@ -491,7 +492,7 @@ export default function SettingsPage() {
                 gap: '8px'
               }}
             >
-              <i className="fa-solid fa-check"></i> OK, Selesai
+              <Icon fa="fa-solid fa-check" /> OK, Selesai
             </button>
           </div>
         </div>
@@ -514,7 +515,7 @@ export default function SettingsPage() {
       {activeTab === 'business' && (
         <form className="card" onSubmit={handleSaveBizSettings} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
-            <h3 style={{ margin: 0 }}><i className="fa-solid fa-store" style={{ marginRight: '8px' }}></i> Profil Bisnis</h3>
+            <h3 style={{ margin: 0 }}><Icon fa="fa-solid fa-store" style={{ marginRight: '8px' }} /> Profil Bisnis</h3>
             <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
               Nama, alamat, dan nomor WhatsApp muncul di invoice & pesan pengingat. Tersimpan di browser ini.
             </p>
@@ -526,7 +527,7 @@ export default function SettingsPage() {
               style={{ width: '64px', height: '64px', objectFit: 'contain', borderRadius: '12px', background: 'var(--bg-elevated)', border: '1px solid var(--bg-border)' }} />
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer' }}>
-                <i className="fa-solid fa-upload"></i> Ganti logo
+                <Icon fa="fa-solid fa-upload" /> Ganti logo
                 <input type="file" accept="image/*" onChange={handleLogoFileUpload} style={{ display: 'none' }} />
               </label>
               <button type="button" className="btn btn-secondary btn-sm" onClick={() => setBizForm(p => ({ ...p, logoUrl: DEFAULT_BIZ_FORM.logoUrl }))}>
@@ -554,7 +555,7 @@ export default function SettingsPage() {
 
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <button type="submit" className="btn btn-primary">
-              <i className="fa-solid fa-floppy-disk"></i> Simpan Profil
+              <Icon fa="fa-solid fa-floppy-disk" /> Simpan Profil
             </button>
           </div>
         </form>
@@ -567,7 +568,7 @@ export default function SettingsPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
               <div>
                 <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>
-                  <i className="fa-solid fa-credit-card" style={{ marginRight: '8px', color: 'var(--brand-primary-light)' }}></i>
+                  <Icon fa="fa-solid fa-credit-card" style={{ marginRight: '8px', color: 'var(--brand-primary-light)' }} />
                   Pengaturan Metode Pembayaran
                 </h3>
                 <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -576,10 +577,10 @@ export default function SettingsPage() {
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button className="btn btn-secondary btn-sm" onClick={handleResetPaymentMethods}>
-                  <i className="fa-solid fa-rotate-left" style={{ marginRight: '4px' }}></i> Reset Default
+                  <Icon fa="fa-solid fa-rotate-left" style={{ marginRight: '4px' }} /> Reset Default
                 </button>
                 <button className="btn btn-primary" onClick={() => { setEditPayment(null); setPaymentForm({ id: '', label: '', icon: 'fa-solid fa-building-columns', color: '#3B82F6', active: true }); setShowPaymentModal(true); }}>
-                  <i className="fa-solid fa-plus" style={{ marginRight: '6px' }}></i> Tambah Metode Baru
+                  <Icon fa="fa-solid fa-plus" style={{ marginRight: '6px' }} /> Tambah Metode Baru
                 </button>
               </div>
             </div>
@@ -608,7 +609,7 @@ export default function SettingsPage() {
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       color: method.color, fontSize: '18px'
                     }}>
-                      <i className={method.icon}></i>
+                      <Icon fa={method.icon} />
                     </div>
                     <div>
                       <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>
@@ -626,20 +627,20 @@ export default function SettingsPage() {
                       onClick={() => handleTogglePaymentActive(method.id)}
                       title={method.active ? 'Nonaktifkan' : 'Aktifkan'}
                     >
-                      <i className={`fa-solid ${method.active ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                      <Icon fa={`fa-solid ${method.active ? 'fa-eye-slash' : 'fa-eye'}`} />
                       {method.active ? ' Sembunyikan' : ' Tampilkan'}
                     </button>
                     <button
                       className="btn btn-secondary btn-sm"
                       onClick={() => { setEditPayment(method); setPaymentForm(method); setShowPaymentModal(true); }}
                     >
-                      <i className="fa-solid fa-pen-to-square"></i>
+                      <Icon fa="fa-solid fa-pen-to-square" />
                     </button>
                     <button
                       className="btn btn-danger btn-sm"
                       onClick={() => handleDeletePaymentMethod(method.id)}
                     >
-                      <i className="fa-solid fa-trash-can"></i>
+                      <Icon fa="fa-solid fa-trash-can" />
                     </button>
                   </div>
                 </div>
@@ -657,7 +658,7 @@ export default function SettingsPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
               <div>
                 <h3 style={{ fontSize: '17px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <i className="fa-brands fa-whatsapp" style={{ color: '#1D4ED8', fontSize: '22px' }}></i>
+                  <Icon fa="fa-brands fa-whatsapp" style={{ color: '#1D4ED8', fontSize: '22px' }} />
                   Custom Format Text WhatsApp (Dual Templates)
                 </h3>
                 <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -673,21 +674,21 @@ export default function SettingsPage() {
                 className={`scrollable-tab-btn ${waSubTab === 'invoice' ? 'active' : ''}`}
                 onClick={() => setWaSubTab('invoice')}
               >
-                <i className="fa-solid fa-file-invoice"></i> 1. Template Invoice WA
+                <Icon fa="fa-solid fa-file-invoice" /> 1. Template Invoice WA
               </button>
               <button
                 type="button"
                 className={`scrollable-tab-btn ${waSubTab === 'reminder' ? 'active' : ''}`}
                 onClick={() => setWaSubTab('reminder')}
               >
-                <i className="fa-solid fa-bell"></i> 2. Template Reminder WA (Pengingat)
+                <Icon fa="fa-solid fa-bell" /> 2. Template Reminder WA (Pengingat)
               </button>
             </div>
 
             {/* Alert Banner */}
             {waSavedAlert && (
               <div className="alert alert-success mb-4" style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(29,78,216, 0.15)', border: '1px solid rgba(29,78,216, 0.3)', color: '#1D4ED8', padding: '14px 18px', borderRadius: '10px' }}>
-                <i className="fa-solid fa-circle-check" style={{ fontSize: '20px' }}></i>
+                <Icon fa="fa-solid fa-circle-check" style={{ fontSize: '20px' }} />
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '14px' }}>
                     Template WhatsApp {waSavedAlert === 'invoice' ? 'Invoice' : 'Reminder (Pengingat)'} Berhasil Diperbarui!
@@ -704,11 +705,11 @@ export default function SettingsPage() {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    <i className="fa-solid fa-file-invoice" style={{ marginRight: '6px', color: 'var(--brand-primary)' }}></i>
+                    <Icon fa="fa-solid fa-file-invoice" style={{ marginRight: '6px', color: 'var(--brand-primary)' }} />
                     Format Pesan WhatsApp Invoice Transaksi
                   </div>
                   <button className="btn btn-secondary btn-sm" onClick={handleResetWaInvoiceTemplate}>
-                    <i className="fa-solid fa-rotate-left" style={{ marginRight: '4px' }}></i> Reset Default Invoice
+                    <Icon fa="fa-solid fa-rotate-left" style={{ marginRight: '4px' }} /> Reset Default Invoice
                   </button>
                 </div>
 
@@ -771,7 +772,7 @@ export default function SettingsPage() {
 
                   <div style={{ marginTop: '16px' }}>
                     <button type="submit" className="btn btn-success" style={{ width: '100%', background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff', fontWeight: 700 }}>
-                      <i className="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }}></i> Simpan Template Invoice WA
+                      <Icon fa="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }} /> Simpan Template Invoice WA
                     </button>
                   </div>
                 </form>
@@ -783,11 +784,11 @@ export default function SettingsPage() {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    <i className="fa-solid fa-bell" style={{ marginRight: '6px', color: '#1E40AF' }}></i>
+                    <Icon fa="fa-solid fa-bell" style={{ marginRight: '6px', color: '#1E40AF' }} />
                     Format Pesan WhatsApp Reminder (Tracking Sewa)
                   </div>
                   <button className="btn btn-secondary btn-sm" onClick={handleResetWaReminderTemplate}>
-                    <i className="fa-solid fa-rotate-left" style={{ marginRight: '4px' }}></i> Reset Default Reminder
+                    <Icon fa="fa-solid fa-rotate-left" style={{ marginRight: '4px' }} /> Reset Default Reminder
                   </button>
                 </div>
 
@@ -844,7 +845,7 @@ export default function SettingsPage() {
 
                   <div style={{ marginTop: '16px' }}>
                     <button type="submit" className="btn btn-success" style={{ width: '100%', background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff', fontWeight: 700 }}>
-                      <i className="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }}></i> Simpan Template Reminder WA
+                      <Icon fa="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }} /> Simpan Template Reminder WA
                     </button>
                   </div>
                 </form>
@@ -860,7 +861,7 @@ export default function SettingsPage() {
         <div style={{ maxWidth: '100%' }}>
           <div className="card">
             <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '6px' }}>
-              <i className="fa-solid fa-lock" style={{ marginRight: '8px', color: 'var(--brand-primary-light)' }}></i>
+              <Icon fa="fa-solid fa-lock" style={{ marginRight: '8px', color: 'var(--brand-primary-light)' }} />
               Ubah Password Administrator
             </h3>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px' }}>
@@ -870,7 +871,7 @@ export default function SettingsPage() {
             <form onSubmit={handleChangePassword}>
               <div className="form-group">
                 <label className="form-label" htmlFor="sec-new-pass">
-                  <i className="fa-solid fa-key" style={{ marginRight: '6px' }}></i> Password Baru <span className="required">*</span>
+                  <Icon fa="fa-solid fa-key" style={{ marginRight: '6px' }} /> Password Baru <span className="required">*</span>
                 </label>
                 <div style={{ position: 'relative' }}>
                   <input
@@ -887,14 +888,14 @@ export default function SettingsPage() {
                     onClick={() => setShowPass(!showPass)}
                     style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
                   >
-                    <i className={`fa-solid ${showPass ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                    <Icon fa={`fa-solid ${showPass ? 'fa-eye-slash' : 'fa-eye'}`} />
                   </button>
                 </div>
               </div>
 
               <div className="form-group">
                 <label className="form-label" htmlFor="sec-confirm-pass">
-                  <i className="fa-solid fa-shield-halved" style={{ marginRight: '6px' }}></i> Konfirmasi Password Baru <span className="required">*</span>
+                  <Icon fa="fa-solid fa-shield-halved" style={{ marginRight: '6px' }} /> Konfirmasi Password Baru <span className="required">*</span>
                 </label>
                 <input
                   id="sec-confirm-pass"
@@ -910,9 +911,9 @@ export default function SettingsPage() {
               <div style={{ marginTop: '24px' }}>
                 <button type="submit" className="btn btn-primary" disabled={savingPass} style={{ width: '100%' }}>
                   {savingPass ? (
-                    <><i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '6px' }}></i> Menyimpan Password...</>
+                    <><Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '6px' }} /> Menyimpan Password...</>
                   ) : (
-                    <><i className="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }}></i> Simpan Password Baru</>
+                    <><Icon fa="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }} /> Simpan Password Baru</>
                   )}
                 </button>
               </div>
@@ -926,15 +927,15 @@ export default function SettingsPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '14px' }}>
-              <h3 style={{ margin: 0 }}><i className="fa-solid fa-database" style={{ marginRight: '8px' }}></i> Jumlah Data</h3>
+              <h3 style={{ margin: 0 }}><Icon fa="fa-solid fa-database" style={{ marginRight: '8px' }} /> Jumlah Data</h3>
               <button type="button" className="btn btn-secondary btn-sm" onClick={fetchStats} disabled={loadingStats}>
-                <i className={`fa-solid fa-rotate${loadingStats ? ' fa-spin' : ''}`}></i> Muat ulang
+                <Icon fa={`fa-solid fa-rotate${loadingStats ? ' fa-spin' : ''}`} /> Muat ulang
               </button>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px' }}>
               {DATA_TABLES.map(t => (
                 <div key={t.key} style={{ padding: '12px 14px', borderRadius: 'var(--radius-md)', background: 'var(--bg-elevated)', border: '1px solid var(--bg-border)' }}>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}><i className={t.icon} style={{ marginRight: '6px' }}></i>{t.label}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}><Icon fa={t.icon} style={{ marginRight: '6px' }} />{t.label}</div>
                   <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', marginTop: '4px' }}>
                     {loadingStats ? '…' : stats[t.key] === null ? '—' : (stats[t.key] ?? 0).toLocaleString('id-ID')}
                   </div>
@@ -945,21 +946,21 @@ export default function SettingsPage() {
 
           {legacyPhotoCount > 0 && (
             <div className="card" style={{ borderLeft: '4px solid var(--status-warning)' }}>
-              <h3 style={{ margin: '0 0 6px' }}><i className="fa-solid fa-images" style={{ marginRight: '8px' }}></i> Pindahkan Foto Lama ke Storage</h3>
+              <h3 style={{ margin: '0 0 6px' }}><Icon fa="fa-solid fa-images" style={{ marginRight: '8px' }} /> Pindahkan Foto Lama ke Storage</h3>
               <p style={{ margin: '0 0 14px', fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
                 Ada {legacyPhotoCount} foto serah terima lama yang masih tersimpan di dalam database (beberapa MB per foto).
                 Pindahkan sekali saja: foto dikompres ulang, disimpan di Supabase Storage, dan database hanya menyimpan tautannya.
               </p>
               <button type="button" className="btn btn-primary" onClick={handleMigrateLegacyPhotos} disabled={migratingPhotos}>
                 {migratingPhotos
-                  ? <><i className="fa-solid fa-spinner fa-spin"></i> {migrateProgress || 'Memproses…'}</>
-                  : <><i className="fa-solid fa-truck-arrow-right"></i> Pindahkan {legacyPhotoCount} Foto</>}
+                  ? <><Icon fa="fa-solid fa-spinner fa-spin" /> {migrateProgress || 'Memproses…'}</>
+                  : <><Icon fa="fa-solid fa-truck-arrow-right" /> Pindahkan {legacyPhotoCount} Foto</>}
               </button>
             </div>
           )}
 
           <div className="card">
-            <h3 style={{ margin: '0 0 6px' }}><i className="fa-solid fa-cloud-arrow-down" style={{ marginRight: '8px' }}></i> Backup Data</h3>
+            <h3 style={{ margin: '0 0 6px' }}><Icon fa="fa-solid fa-cloud-arrow-down" style={{ marginRight: '8px' }} /> Backup Data</h3>
             <p style={{ margin: '0 0 14px', fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
               Paket gratis Supabase tidak menyediakan backup otomatis. Unduh backup lengkap (.json) secara berkala,
               mis. seminggu sekali, dan simpan di Google Drive. Ukuran file = kuota transfer Supabase yang terpakai,
@@ -967,8 +968,8 @@ export default function SettingsPage() {
             </p>
             <button type="button" className="btn btn-primary" onClick={handleFullBackupDownload} disabled={backupLoading}>
               {backupLoading
-                ? <><i className="fa-solid fa-spinner fa-spin"></i> Menyiapkan backup…</>
-                : <><i className="fa-solid fa-download"></i> Unduh Backup Lengkap</>}
+                ? <><Icon fa="fa-solid fa-spinner fa-spin" /> Menyiapkan backup…</>
+                : <><Icon fa="fa-solid fa-download" /> Unduh Backup Lengkap</>}
             </button>
           </div>
         </div>
@@ -980,7 +981,7 @@ export default function SettingsPage() {
           <div className="modal modal-md" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <div className="modal-title">
-                <i className="fa-solid fa-credit-card" style={{ marginRight: '6px', color: 'var(--brand-primary-light)' }}></i>
+                <Icon fa="fa-solid fa-credit-card" style={{ marginRight: '6px', color: 'var(--brand-primary-light)' }} />
                 {editPayment ? 'Edit Metode Pembayaran' : 'Tambah Metode Pembayaran Baru'}
               </div>
               <button className="modal-close" onClick={() => setShowPaymentModal(false)}>✕</button>
@@ -989,7 +990,7 @@ export default function SettingsPage() {
             <form onSubmit={handleSavePaymentMethod}>
               <div className="form-group">
                 <label className="form-label" htmlFor="pm-label">
-                  <i className="fa-solid fa-tag" style={{ marginRight: '6px' }}></i> Nama Metode Pembayaran <span className="required">*</span>
+                  <Icon fa="fa-solid fa-tag" style={{ marginRight: '6px' }} /> Nama Metode Pembayaran <span className="required">*</span>
                 </label>
                 <input
                   id="pm-label"
@@ -1004,7 +1005,7 @@ export default function SettingsPage() {
 
               <div className="form-group">
                 <label className="form-label">
-                  <i className="fa-solid fa-icons" style={{ marginRight: '6px' }}></i> Pilih Ikon Font Awesome
+                  <Icon fa="fa-solid fa-icons" style={{ marginRight: '6px' }} /> Pilih Ikon Font Awesome
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
                   {FA_ICON_OPTIONS.map((item) => (
@@ -1026,7 +1027,7 @@ export default function SettingsPage() {
                         gap: '4px'
                       }}
                     >
-                      <i className={item.icon}></i>
+                      <Icon fa={item.icon} />
                       <span style={{ fontSize: '10px' }}>{item.label}</span>
                     </button>
                   ))}
@@ -1035,7 +1036,7 @@ export default function SettingsPage() {
 
               <div className="form-group">
                 <label className="form-label">
-                  <i className="fa-solid fa-palette" style={{ marginRight: '6px' }}></i> Warna Aksentuasi Badge
+                  <Icon fa="fa-solid fa-palette" style={{ marginRight: '6px' }} /> Warna Aksentuasi Badge
                 </label>
                 <div style={{ display: 'flex', gap: '10px' }}>
                   {COLOR_OPTIONS.map(c => (
@@ -1056,7 +1057,7 @@ export default function SettingsPage() {
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowPaymentModal(false)}>Batal</button>
                 <button type="submit" className="btn btn-primary">
-                  <i className="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }}></i> Simpan Metode
+                  <Icon fa="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }} /> Simpan Metode
                 </button>
               </div>
             </form>

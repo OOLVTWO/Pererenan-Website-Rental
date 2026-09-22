@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BOTTOM_NAV, isActivePath } from '@/components/layout/navConfig';
+import Icon from '@/components/ui/Icon';
 
 /** Bar navigasi bawah (HP): Beranda · Transaksi · Tracking · Menu. */
 export default function BottomNav({ trackingAlerts = 0 }) {
@@ -23,7 +24,7 @@ export default function BottomNav({ trackingAlerts = 0 }) {
             aria-current={active ? 'page' : undefined}
           >
             <span className="shell-bottom-icon">
-              <i className={item.icon} aria-hidden="true"></i>
+              <Icon fa={item.icon} aria-hidden="true" />
               {badge > 0 && <span className="shell-bottom-badge">{badge}</span>}
             </span>
             <span>{item.label}</span>

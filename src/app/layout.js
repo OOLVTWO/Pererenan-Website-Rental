@@ -1,5 +1,4 @@
 import { Plus_Jakarta_Sans } from "next/font/google";
-import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@/styles/globals.css";
 import "@/styles/flat.css";
 

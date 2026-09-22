@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { compressImage } from '@/lib/imageCompressor';
 import { createClient } from '@/lib/supabase/client';
 import PageTabs from '@/components/ui/PageTabs';
+import Icon from '@/components/ui/Icon';
 
 const VALID_OWNERSHIP_TABS = ['all', 'internal', 'investor', 'investor_recap'];
 
@@ -30,9 +31,9 @@ function formatRupiah(amount) {
 
 const statusBadge = (status) => {
   const map = {
-    available: <span className="badge badge-success"><i className="fa-solid fa-circle-check" style={{ marginRight: '4px' }}></i> Tersedia</span>,
-    rented: <span className="badge badge-info"><i className="fa-solid fa-key" style={{ marginRight: '4px' }}></i> Disewa</span>,
-    maintenance: <span className="badge badge-warning"><i className="fa-solid fa-wrench" style={{ marginRight: '4px' }}></i> Perawatan</span>,
+    available: <span className="badge badge-success"><Icon fa="fa-solid fa-circle-check" style={{ marginRight: '4px' }} /> Tersedia</span>,
+    rented: <span className="badge badge-info"><Icon fa="fa-solid fa-key" style={{ marginRight: '4px' }} /> Disewa</span>,
+    maintenance: <span className="badge badge-warning"><Icon fa="fa-solid fa-wrench" style={{ marginRight: '4px' }} /> Perawatan</span>,
   };
   return map[status] || <span className="badge badge-muted">{status}</span>;
 };
@@ -160,7 +161,7 @@ function ImageAdjusterModal({ isOpen, imageSrc, onConfirm, onCancel }) {
         <div className="modal-header">
           <div>
             <div className="modal-title">
-              <i className="fa-solid fa-crop-simple" style={{ marginRight: '6px', color: 'var(--brand-primary-light)' }}></i>
+              <Icon fa="fa-solid fa-crop-simple" style={{ marginRight: '6px', color: 'var(--brand-primary-light)' }} />
               Sesuaikan Foto Motor & Geser Kursor (Grid 9 Kotak)
             </div>
             <div className="modal-subtitle">Klik & tahan kursor mouse untuk menggeser posisi foto motor ke arah mana saja</div>
@@ -255,7 +256,7 @@ function ImageAdjusterModal({ isOpen, imageSrc, onConfirm, onCancel }) {
               pointerEvents: 'none',
               zIndex: 15
             }}>
-              <i className={`fa-solid ${isDragging ? 'fa-hand-grabbing' : 'fa-up-down-left-right'}`}></i>
+              <Icon fa={`fa-solid ${isDragging ? 'fa-hand-grabbing' : 'fa-up-down-left-right'}`} />
               <span>{isDragging ? 'Sedang menggeser foto motor...' : 'Tahan & Geser Kursor Mouse Untuk Atur Posisi'}</span>
             </div>
           </div>
@@ -267,7 +268,7 @@ function ImageAdjusterModal({ isOpen, imageSrc, onConfirm, onCancel }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
                 <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <span><i className="fa-solid fa-magnifying-glass-plus" style={{ marginRight: '6px' }}></i> Zoom Perbesaran</span>
+                  <span><Icon fa="fa-solid fa-magnifying-glass-plus" style={{ marginRight: '6px' }} /> Zoom Perbesaran</span>
                   <strong style={{ color: 'var(--text-primary)' }}>{Math.round(scale * 100)}%</strong>
                 </label>
                 <input
@@ -282,7 +283,7 @@ function ImageAdjusterModal({ isOpen, imageSrc, onConfirm, onCancel }) {
               </div>
               <div>
                 <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <span><i className="fa-solid fa-sun" style={{ marginRight: '6px' }}></i> Kecerahan (Brightness)</span>
+                  <span><Icon fa="fa-solid fa-sun" style={{ marginRight: '6px' }} /> Kecerahan (Brightness)</span>
                   <strong style={{ color: 'var(--text-primary)' }}>{brightness}%</strong>
                 </label>
                 <input
@@ -297,7 +298,7 @@ function ImageAdjusterModal({ isOpen, imageSrc, onConfirm, onCancel }) {
               </div>
               <div>
                 <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <span><i className="fa-solid fa-circle-half-stroke" style={{ marginRight: '6px' }}></i> Kontras</span>
+                  <span><Icon fa="fa-solid fa-circle-half-stroke" style={{ marginRight: '6px' }} /> Kontras</span>
                   <strong style={{ color: 'var(--text-primary)' }}>{contrast}%</strong>
                 </label>
                 <input
@@ -315,7 +316,7 @@ function ImageAdjusterModal({ isOpen, imageSrc, onConfirm, onCancel }) {
             {/* 9-Box Grid Mini Map Selector */}
             <div style={{ background: 'var(--bg-elevated)', padding: '12px', borderRadius: '10px', border: '1px solid var(--bg-border)' }}>
               <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
-                <i className="fa-solid fa-grip" style={{ marginRight: '4px', color: 'var(--brand-primary-light)' }}></i> Grid 9 Kotak Presets
+                <Icon fa="fa-solid fa-grip" style={{ marginRight: '4px', color: 'var(--brand-primary-light)' }} /> Grid 9 Kotak Presets
               </div>
               <div style={{
                 display: 'grid',
@@ -344,7 +345,7 @@ function ImageAdjusterModal({ isOpen, imageSrc, onConfirm, onCancel }) {
                         transition: 'all 0.15s ease'
                       }}
                     >
-                      <i className={`fa-solid ${cell.icon}`}></i>
+                      <Icon fa={`fa-solid ${cell.icon}`} />
                     </button>
                   );
                 })}
@@ -358,11 +359,11 @@ function ImageAdjusterModal({ isOpen, imageSrc, onConfirm, onCancel }) {
 
         <div className="modal-footer">
           <button className="btn btn-secondary" onClick={() => { setScale(1); setBrightness(100); setContrast(100); setPanOffset({ x: 0, y: 0 }); setFocalPoint('center'); }}>
-            <i className="fa-solid fa-rotate-left" style={{ marginRight: '6px' }}></i> Reset Posisi
+            <Icon fa="fa-solid fa-rotate-left" style={{ marginRight: '6px' }} /> Reset Posisi
           </button>
           <button className="btn btn-secondary" onClick={onCancel}>Batal</button>
           <button className="btn btn-primary" onClick={applyAndConfirm}>
-            <i className="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }}></i> Terapkan & Gunakan Gambar
+            <Icon fa="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }} /> Terapkan & Gunakan Gambar
           </button>
         </div>
       </div>
@@ -474,9 +475,9 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
           <div>
             <div className="modal-title">
               {editData ? (
-                <><i className="fa-solid fa-pen-to-square" style={{ marginRight: '6px' }}></i> Edit Data Motor</>
+                <><Icon fa="fa-solid fa-pen-to-square" style={{ marginRight: '6px' }} /> Edit Data Motor</>
               ) : (
-                <><i className="fa-solid fa-motorcycle" style={{ marginRight: '6px' }}></i> Tambah Motor Baru</>
+                <><Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '6px' }} /> Tambah Motor Baru</>
               )}
             </div>
             <div className="modal-subtitle">Isi informasi kendaraan rental</div>
@@ -487,7 +488,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label" htmlFor="v-name">
-              <i className="fa-solid fa-motorcycle" style={{ marginRight: '6px' }}></i> Nama Motor <span className="required">*</span>
+              <Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '6px' }} /> Nama Motor <span className="required">*</span>
             </label>
             <input id="v-name" name="name" type="text" className="form-control" placeholder="e.g. Honda Beat 2022" value={form.name} onChange={handleChange} required />
           </div>
@@ -495,13 +496,13 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
           <div className="form-row cols-2">
             <div className="form-group">
               <label className="form-label" htmlFor="v-plate">
-                <i className="fa-solid fa-id-card" style={{ marginRight: '6px' }}></i> Plat Nomor <span className="required">*</span>
+                <Icon fa="fa-solid fa-id-card" style={{ marginRight: '6px' }} /> Plat Nomor <span className="required">*</span>
               </label>
               <input id="v-plate" name="plate_number" type="text" className="form-control" placeholder="DK 1234 AB" value={form.plate_number} onChange={handleChange} required />
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="v-cat">
-                <i className="fa-solid fa-motorcycle" style={{ marginRight: '6px' }}></i> Merek / Kategori Motor <span className="required">*</span>
+                <Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '6px' }} /> Merek / Kategori Motor <span className="required">*</span>
               </label>
               <select
                 id="v-cat"
@@ -528,7 +529,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
 
               {!['honda', 'yamaha', 'suzuki', 'kawasaki', 'vespa'].includes(form.category?.toLowerCase()) && (
                 <div style={{ position: 'relative', marginTop: '8px' }}>
-                  <i className="fa-solid fa-pen-to-square" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#1D4ED8', fontSize: '13px' }}></i>
+                  <Icon fa="fa-solid fa-pen-to-square" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#1D4ED8', fontSize: '13px' }} />
                   <input
                     type="text"
                     className="form-control"
@@ -546,7 +547,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
           <div className="form-row cols-2">
             <div className="form-group">
               <label className="form-label" htmlFor="v-year">
-                <i className="fa-solid fa-calendar-days" style={{ marginRight: '6px' }}></i> Tahun <span className="required">*</span>
+                <Icon fa="fa-solid fa-calendar-days" style={{ marginRight: '6px' }} /> Tahun <span className="required">*</span>
               </label>
               <input id="v-year" name="year" type="number" className="form-control" min="2000" max="2030" value={form.year} onChange={handleChange} required />
             </div>
@@ -555,7 +556,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
           <div className="form-row">
             <div className="form-group">
               <label className="form-label" htmlFor="v-color">
-                <i className="fa-solid fa-palette" style={{ marginRight: '6px' }}></i> Warna <span className="required">*</span>
+                <Icon fa="fa-solid fa-palette" style={{ marginRight: '6px' }} /> Warna <span className="required">*</span>
               </label>
               <input id="v-color" name="color" type="text" className="form-control" placeholder="Hitam, Putih, Merah..." value={form.color} onChange={handleChange} required />
             </div>
@@ -564,13 +565,13 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
           {/* ── 3-Tier Pricing ── */}
           <div className="pricing-tier-section">
             <div className="pricing-tier-header">
-              <i className="fa-solid fa-tags"></i>
+              <Icon fa="fa-solid fa-tags" />
               <span>Pricing Tiers</span>
               <span className="pricing-tier-hint">Tarif harian, mingguan & bulanan</span>
             </div>
             <div className="pricing-tier-grid">
               <div className="pricing-tier-card daily-tier">
-                <div className="tier-icon"><i className="fa-solid fa-sun"></i></div>
+                <div className="tier-icon"><Icon fa="fa-solid fa-sun" /></div>
                 <label className="form-label" htmlFor="v-rate">
                   Daily Rate (Rp) <span className="required">*</span>
                 </label>
@@ -593,7 +594,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
               </div>
 
               <div className="pricing-tier-card weekly-tier">
-                <div className="tier-icon"><i className="fa-solid fa-calendar-week"></i></div>
+                <div className="tier-icon"><Icon fa="fa-solid fa-calendar-week" /></div>
                 <label className="form-label" htmlFor="v-rate-week">
                   Weekly Rate (Rp)
                 </label>
@@ -614,14 +615,14 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                 )}
                 {form.rate_per_day > 0 && form.rate_per_week > 0 && (
                   <div className="tier-saving">
-                    <i className="fa-solid fa-arrow-trend-down"></i>
+                    <Icon fa="fa-solid fa-arrow-trend-down" />
                     Save {Math.round((1 - (parseInt(form.rate_per_week) / (parseInt(form.rate_per_day) * 7))) * 100)}% vs daily
                   </div>
                 )}
               </div>
 
               <div className="pricing-tier-card monthly-tier">
-                <div className="tier-icon"><i className="fa-solid fa-calendar-days"></i></div>
+                <div className="tier-icon"><Icon fa="fa-solid fa-calendar-days" /></div>
                 <label className="form-label" htmlFor="v-rate-month">
                   Monthly Rate (Rp)
                 </label>
@@ -642,7 +643,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                 )}
                 {form.rate_per_day > 0 && form.rate_per_month > 0 && (
                   <div className="tier-saving">
-                    <i className="fa-solid fa-arrow-trend-down"></i>
+                    <Icon fa="fa-solid fa-arrow-trend-down" />
                     Save {Math.round((1 - (parseInt(form.rate_per_month) / (parseInt(form.rate_per_day) * 30))) * 100)}% vs daily
                   </div>
                 )}
@@ -652,10 +653,10 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
 
           <div className="form-group">
               <label className="form-label">
-                <i className="fa-solid fa-camera" style={{ marginRight: '6px' }}></i> Upload Foto Motor
+                <Icon fa="fa-solid fa-camera" style={{ marginRight: '6px' }} /> Upload Foto Motor
               </label>
               <label htmlFor="v-file-input" className="custom-file-btn">
-                <i className="fa-solid fa-cloud-arrow-up" style={{ color: 'var(--brand-primary-light)', fontSize: '16px' }}></i>
+                <Icon fa="fa-solid fa-cloud-arrow-up" style={{ color: 'var(--brand-primary-light)', fontSize: '16px' }} />
                 <span>Pilih Foto dari Perangkat</span>
               </label>
               <input
@@ -668,21 +669,21 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
               />
               {uploading && (
                 <div style={{ fontSize: '11px', color: 'var(--brand-primary-light)', marginTop: '6px' }}>
-                  <i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '4px' }}></i> Mengompresi gambar...
+                  <Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '4px' }} /> Mengompresi gambar...
                 </div>
               )}
               {form.image_url && !uploading && (
                 <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <img src={form.image_url} alt="Preview" style={{ width: '40px', height: '40px', borderRadius: '6px', objectFit: 'cover' }} />
                   <span style={{ fontSize: '11px', color: '#1D4ED8', fontWeight: 600 }}>
-                    <i className="fa-solid fa-circle-check" style={{ marginRight: '4px' }}></i> Foto Berhasil Dimuat
+                    <Icon fa="fa-solid fa-circle-check" style={{ marginRight: '4px' }} /> Foto Berhasil Dimuat
                   </span>
                   <button
                     type="button"
                     className="btn btn-secondary btn-sm"
                     onClick={() => onOpenAdjuster(form.image_url, (adjusted) => setForm(p => ({ ...p, image_url: adjusted })))}
                   >
-                    <i className="fa-solid fa-sliders" style={{ marginRight: '4px' }}></i> Adjust Foto
+                    <Icon fa="fa-solid fa-sliders" style={{ marginRight: '4px' }} /> Adjust Foto
                   </button>
                   <button type="button" className="btn btn-secondary btn-sm" onClick={() => setForm(p => ({ ...p, image_url: '' }))}>Hapus</button>
                 </div>
@@ -692,7 +693,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
           {/* 🔒 OWNERSHIP & INVESTOR SECTION (PRIVACY MANAGEMENT ONLY) */}
           <div style={{ background: 'rgba(29,78,216, 0.07)', border: '1px solid rgba(29,78,216, 0.28)', padding: '16px', borderRadius: '14px', marginBottom: '20px' }}>
             <div style={{ fontSize: '13px', fontWeight: 800, color: '#1D4ED8', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <i className="fa-solid fa-user-shield"></i>
+              <Icon fa="fa-solid fa-user-shield" />
               <span>Kepemilikan & Investor (Privasi Management)</span>
             </div>
 
@@ -710,7 +711,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                     onChange={e => setForm(p => ({ ...p, owner_type: e.target.value }))}
                     style={{ accentColor: '#1D4ED8' }}
                   />
-                  <span><i className="fa-solid fa-building" style={{ marginRight: '4px', color: 'var(--brand-primary)' }}></i> Milik Internal Boss Rent</span>
+                  <span><Icon fa="fa-solid fa-building" style={{ marginRight: '4px', color: 'var(--brand-primary)' }} /> Milik Internal Boss Rent</span>
                 </label>
                 <label style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-primary)', background: 'var(--bg-card)', padding: '8px 14px', borderRadius: '8px', border: '1px solid var(--bg-border)' }}>
                   <input
@@ -721,7 +722,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                     onChange={e => setForm(p => ({ ...p, owner_type: e.target.value }))}
                     style={{ accentColor: '#1D4ED8' }}
                   />
-                  <span><i className="fa-solid fa-crown" style={{ marginRight: '4px', color: '#1D4ED8' }}></i> Titipan Investor (Bagi Hasil)</span>
+                  <span><Icon fa="fa-solid fa-crown" style={{ marginRight: '4px', color: '#1D4ED8' }} /> Titipan Investor (Bagi Hasil)</span>
                 </label>
               </div>
             </div>
@@ -731,7 +732,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                 <div className="form-row cols-2">
                   <div className="form-group">
                     <label className="form-label" htmlFor="v-owner-name">
-                      <i className="fa-solid fa-user-tie" style={{ marginRight: '6px', color: '#1D4ED8' }}></i> Nama Investor / Pemilik <span className="required">*</span>
+                      <Icon fa="fa-solid fa-user-tie" style={{ marginRight: '6px', color: '#1D4ED8' }} /> Nama Investor / Pemilik <span className="required">*</span>
                     </label>
                     <input
                       id="v-owner-name"
@@ -746,7 +747,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                   </div>
                   <div className="form-group">
                     <label className="form-label" htmlFor="v-owner-contact">
-                      <i className="fa-brands fa-whatsapp" style={{ marginRight: '6px', color: '#1D4ED8' }}></i> No. WA / HP Investor
+                      <Icon fa="fa-brands fa-whatsapp" style={{ marginRight: '6px', color: '#1D4ED8' }} /> No. WA / HP Investor
                     </label>
                     <input
                       id="v-owner-contact"
@@ -763,7 +764,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                 <div className="form-row cols-2">
                   <div className="form-group">
                     <label className="form-label" htmlFor="v-share-pct">
-                      <i className="fa-solid fa-percent" style={{ marginRight: '6px', color: '#1D4ED8' }}></i> Bagi Hasil Investor (%)
+                      <Icon fa="fa-solid fa-percent" style={{ marginRight: '6px', color: '#1D4ED8' }} /> Bagi Hasil Investor (%)
                     </label>
                     <input
                       id="v-share-pct"
@@ -786,7 +787,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
 
           <div className="form-group">
             <label className="form-label" htmlFor="v-status">
-              <i className="fa-solid fa-list-check" style={{ marginRight: '6px' }}></i> Status Kendaraan
+              <Icon fa="fa-solid fa-list-check" style={{ marginRight: '6px' }} /> Status Kendaraan
             </label>
             <select id="v-status" name="status" className="form-control" value={form.status} onChange={handleChange}>
               <option value="available">Tersedia</option>
@@ -797,7 +798,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
 
           <div className="form-group">
             <label className="form-label" htmlFor="v-notes">
-              <i className="fa-regular fa-note-sticky" style={{ marginRight: '6px' }}></i> Catatan Kondisi Motor
+              <Icon fa="fa-regular fa-note-sticky" style={{ marginRight: '6px' }} /> Catatan Kondisi Motor
             </label>
             <textarea id="v-notes" name="notes" className="form-control" rows={3} placeholder="Catatan kondisi motor, barang bawaan, helm, dll." value={form.notes} onChange={handleChange} style={{ resize: 'vertical' }} />
           </div>
@@ -806,11 +807,11 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
             <button type="button" className="btn btn-secondary" onClick={onClose}>Batal</button>
             <button id="btn-vehicle-submit" type="submit" className="btn btn-primary" disabled={loading || uploading}>
               {loading ? (
-                <><i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '6px' }}></i> Menyimpan...</>
+                <><Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '6px' }} /> Menyimpan...</>
               ) : editData ? (
-                <><i className="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }}></i> Simpan</>
+                <><Icon fa="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }} /> Simpan</>
               ) : (
-                <><i className="fa-solid fa-plus" style={{ marginRight: '6px' }}></i> Tambah Motor</>
+                <><Icon fa="fa-solid fa-plus" style={{ marginRight: '6px' }} /> Tambah Motor</>
               )}
             </button>
           </div>
@@ -829,7 +830,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, onForceDelete, onSetMaintena
       <div className="modal modal-md" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <div className="modal-title">
-            <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: '6px', color: historyError ? '#1E40AF' : '#1E3A8A' }}></i>
+            <Icon fa="fa-solid fa-triangle-exclamation" style={{ marginRight: '6px', color: historyError ? '#1E40AF' : '#1E3A8A' }} />
             {historyError ? 'Motor Memiliki Riwayat Transaksi' : 'Hapus Motor?'}
           </div>
           <button className="modal-close" onClick={onClose}>✕</button>
@@ -851,7 +852,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, onForceDelete, onSetMaintena
                 onClick={() => { onSetMaintenance(); onClose(); }}
                 style={{ justifyContent: 'flex-start', padding: '10px 14px' }}
               >
-                <i className="fa-solid fa-wrench" style={{ marginRight: '8px' }}></i>
+                <Icon fa="fa-solid fa-wrench" style={{ marginRight: '8px' }} />
                 <div>
                   <div style={{ fontWeight: 700 }}>Ubah Status ke &apos;Perawatan&apos; (Direkomendasikan)</div>
                   <div style={{ fontSize: '11px', opacity: 0.8, fontWeight: 400 }}>Motor disembunyikan dari sewa aktif, histori laporan tetap aman</div>
@@ -862,7 +863,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, onForceDelete, onSetMaintena
                 onClick={() => { onForceDelete(); onClose(); }}
                 style={{ justifyContent: 'flex-start', padding: '10px 14px' }}
               >
-                <i className="fa-solid fa-trash-can" style={{ marginRight: '8px' }}></i>
+                <Icon fa="fa-solid fa-trash-can" style={{ marginRight: '8px' }} />
                 <div>
                   <div style={{ fontWeight: 700 }}>Hapus Permanen & Hapus Seluruh Histori Transaksi</div>
                   <div style={{ fontSize: '11px', opacity: 0.8, fontWeight: 400 }}>Menghapus motor dan riwayat transaksinya dari database</div>
@@ -880,7 +881,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, onForceDelete, onSetMaintena
           <div className="modal-footer">
             <button className="btn btn-secondary" onClick={onClose}>Batal</button>
             <button id="btn-vehicle-delete-confirm" className="btn btn-danger" onClick={() => { onConfirm(); }}>
-              <i className="fa-solid fa-trash-can" style={{ marginRight: '6px' }}></i> Hapus Motor
+              <Icon fa="fa-solid fa-trash-can" style={{ marginRight: '6px' }} /> Hapus Motor
             </button>
           </div>
         )}
@@ -1056,7 +1057,7 @@ export default function VehiclesPage() {
       </Suspense>
 
       <div className="page-header">
-        <h2><i className="fa-solid fa-motorcycle" style={{ marginRight: '8px' }}></i> Data Motor</h2>
+        <h2><Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '8px' }} /> Data Motor</h2>
         <p>Kelola armada kendaraan rental Boss Rent Pererenan</p>
       </div>
 
@@ -1077,7 +1078,7 @@ export default function VehiclesPage() {
       <div className="page-actions">
         <div className="filter-bar">
           <div className="search-bar">
-            <span className="search-bar-icon"><i className="fa-solid fa-magnifying-glass"></i></span>
+            <span className="search-bar-icon"><Icon fa="fa-solid fa-magnifying-glass" /></span>
             <input
               id="vehicle-search"
               type="text"
@@ -1104,19 +1105,19 @@ export default function VehiclesPage() {
           className="btn btn-primary"
           onClick={() => { setEditData(null); setShowModal(true); }}
         >
-          <i className="fa-solid fa-plus" style={{ marginRight: '6px' }}></i> Tambah Motor
+          <Icon fa="fa-solid fa-plus" style={{ marginRight: '6px' }} /> Tambah Motor
         </button>
       </div>
 
       {loading ? (
-        <div className="table-empty card"><i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '8px' }}></i> Memuat data motor...</div>
+        <div className="table-empty card"><Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '8px' }} /> Memuat data motor...</div>
       ) : ownershipFilter === 'investor_recap' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {/* Investor Summary Cards */}
           <div className="grid-2">
             <div className="stat-card">
               <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8' }}>
-                <i className="fa-solid fa-users"></i>
+                <Icon fa="fa-solid fa-users" />
               </div>
               <div className="stat-info">
                 <div className="stat-label">Total Investor Aktif</div>
@@ -1127,7 +1128,7 @@ export default function VehiclesPage() {
 
             <div className="stat-card">
               <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8' }}>
-                <i className="fa-solid fa-hand-holding-dollar"></i>
+                <Icon fa="fa-solid fa-hand-holding-dollar" />
               </div>
               <div className="stat-info">
                 <div className="stat-label">Unit Titipan Investor (Bagi Hasil)</div>
@@ -1140,7 +1141,7 @@ export default function VehiclesPage() {
           {/* Directory Cards Grid */}
           {investorList.length === 0 ? (
             <div className="table-empty card">
-              <div className="table-empty-icon"><i className="fa-solid fa-crown" style={{ color: '#1D4ED8' }}></i></div>
+              <div className="table-empty-icon"><Icon fa="fa-solid fa-crown" style={{ color: '#1D4ED8' }} /></div>
               <p>Belum ada data investor terdaftar. Edit atau tambah motor baru lalu aktifkan status kepemilikan &apos;Titipan Investor&apos;.</p>
             </div>
           ) : (
@@ -1151,13 +1152,13 @@ export default function VehiclesPage() {
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span className="badge" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8', padding: '4px 10px', fontSize: '11px' }}>
-                          <i className="fa-solid fa-crown"></i> Investor #{idx + 1}
+                          <Icon fa="fa-solid fa-crown" /> Investor #{idx + 1}
                         </span>
                         <strong style={{ fontSize: '15.5px', color: 'var(--text-primary)' }}>{inv.name}</strong>
                       </div>
                       {inv.contact && inv.contact !== '-' && (
                         <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                          <i className="fa-brands fa-whatsapp" style={{ color: '#1D4ED8', marginRight: '6px' }}></i>{inv.contact}
+                          <Icon fa="fa-brands fa-whatsapp" style={{ color: '#1D4ED8', marginRight: '6px' }} />{inv.contact}
                         </div>
                       )}
                     </div>
@@ -1170,7 +1171,7 @@ export default function VehiclesPage() {
 
                   <div>
                     <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>
-                      <i className="fa-solid fa-motorcycle" style={{ marginRight: '6px', color: 'var(--brand-primary-light)' }}></i> Unit Motor Dititipkan ({inv.vehicles.length} Unit):
+                      <Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '6px', color: 'var(--brand-primary-light)' }} /> Unit Motor Dititipkan ({inv.vehicles.length} Unit):
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       {inv.vehicles.map(v => (
@@ -1191,7 +1192,7 @@ export default function VehiclesPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="table-empty card">
-          <div className="table-empty-icon"><i className="fa-solid fa-motorcycle"></i></div>
+          <div className="table-empty-icon"><Icon fa="fa-solid fa-motorcycle" /></div>
           <p>Tidak ada motor ditemukan. <button className="btn btn-primary btn-sm" onClick={() => { setEditData(null); setShowModal(true); }}>Tambah Motor</button></p>
         </div>
       ) : (
@@ -1211,7 +1212,7 @@ export default function VehiclesPage() {
                     />
                   ) : null}
                   <div style={{ display: vehicle.image_url ? 'none' : 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                    <i className="fa-solid fa-motorcycle" style={{ fontSize: '48px', color: 'var(--brand-primary)' }}></i>
+                    <Icon fa="fa-solid fa-motorcycle" style={{ fontSize: '48px', color: 'var(--brand-primary)' }} />
                   </div>
                   {vehicle.image_url && (
                     <button
@@ -1226,7 +1227,7 @@ export default function VehiclesPage() {
                         display: 'flex', alignItems: 'center', justifyContent: 'center'
                       }}
                     >
-                      <i className="fa-solid fa-sliders"></i>
+                      <Icon fa="fa-solid fa-sliders" />
                     </button>
                   )}
                   <div className="vehicle-card-status" style={{ position: 'absolute', top: '10px', right: '10px' }}>
@@ -1235,22 +1236,22 @@ export default function VehiclesPage() {
                 </div>
                 <div className="vehicle-card-body" style={{ flex: 1 }}>
                   <div className="vehicle-card-name">{vehicle.name}</div>
-                  <div className="vehicle-card-plate"><i className="fa-solid fa-id-card" style={{ marginRight: '4px' }}></i> {vehicle.plate_number}</div>
+                  <div className="vehicle-card-plate"><Icon fa="fa-solid fa-id-card" style={{ marginRight: '4px' }} /> {vehicle.plate_number}</div>
                   <div className="vehicle-card-rate">{formatRupiah(vehicle.rate_per_day)}<span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 400 }}>/hari</span></div>
                   <div className="vehicle-card-meta" style={{ marginTop: '8px' }}>
-                    <span><i className="fa-solid fa-calendar-days" style={{ marginRight: '4px' }}></i> {vehicle.year}</span>
-                    <span><i className="fa-solid fa-palette" style={{ marginRight: '4px' }}></i> {vehicle.color}</span>
+                    <span><Icon fa="fa-solid fa-calendar-days" style={{ marginRight: '4px' }} /> {vehicle.year}</span>
+                    <span><Icon fa="fa-solid fa-palette" style={{ marginRight: '4px' }} /> {vehicle.color}</span>
                   </div>
                   {isInvestorUnit && (
                     <div style={{ marginTop: '8px' }}>
                       <span className="badge" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8', borderColor: 'rgba(29,78,216, 0.35)', fontSize: '10.5px', padding: '3px 8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        <i className="fa-solid fa-crown"></i> Investor: {vehicle.owner_name || 'Bagi Hasil'} ({vehicle.revenue_share_percentage || 70}/{100 - Number(vehicle.revenue_share_percentage || 70)})
+                        <Icon fa="fa-solid fa-crown" /> Investor: {vehicle.owner_name || 'Bagi Hasil'} ({vehicle.revenue_share_percentage || 70}/{100 - Number(vehicle.revenue_share_percentage || 70)})
                       </span>
                     </div>
                   )}
                   {vehicle.notes && (
                     <div style={{ marginTop: '8px', fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
-                      <i className="fa-regular fa-note-sticky" style={{ marginRight: '4px' }}></i> {vehicle.notes}
+                      <Icon fa="fa-regular fa-note-sticky" style={{ marginRight: '4px' }} /> {vehicle.notes}
                     </div>
                   )}
                 </div>
@@ -1260,13 +1261,13 @@ export default function VehiclesPage() {
                     style={{ flex: 1 }}
                     onClick={() => { setEditData(vehicle); setShowModal(true); }}
                   >
-                    <i className="fa-solid fa-pen-to-square" style={{ marginRight: '4px' }}></i> Edit
+                    <Icon fa="fa-solid fa-pen-to-square" style={{ marginRight: '4px' }} /> Edit
                   </button>
                   <button
                     className="btn btn-danger btn-sm"
                     onClick={() => setDeleteModal({ open: true, id: vehicle.id, name: vehicle.name })}
                   >
-                    <i className="fa-solid fa-trash-can"></i>
+                    <Icon fa="fa-solid fa-trash-can" />
                   </button>
                 </div>
               </div>
