@@ -44,9 +44,15 @@ Aplikasi **tidak memakai secret / service role key**. Semua akses memakai sesi
 admin yang login, dilindungi RLS (hanya user yang login yang bisa membaca/menulis).
 
 ### Akun admin
-Buat di Supabase → Authentication → Users → Add user (centang Auto Confirm).
-Matikan pendaftaran publik: Authentication → Sign In / Providers → nonaktifkan
-"Allow new users to sign up" — setiap user yang login punya akses penuh.
+1. Supabase → Authentication → Users → Add user (centang Auto Confirm).
+2. Daftarkan sebagai admin (SQL Editor):
+   ```sql
+   insert into public.admin_users (user_id, note)
+   select id, 'admin' from auth.users where email = 'email@contoh.com';
+   ```
+Hanya user di `admin_users` yang bisa membaca/menulis data & foto (migration 004).
+User lain yang berhasil login hanya melihat data kosong. Tetap disarankan
+menonaktifkan signup publik: Authentication → Sign In / Providers.
 
 ## Database
 
@@ -55,6 +61,7 @@ Skema ada di `supabase/migrations/` (idempotent, aman dijalankan ulang):
 - `001_schema.sql` — tabel inti (vehicles, transactions, customers, expenses) + RLS admin-only
 - `002_service_logs.sql` — jejak servis motor
 - `003_handover_photo_storage.sql` — bucket privat `handover-photos`
+- `004_admin_allowlist.sql` — hanya akun di `admin_users` yang bisa akses data
 
 Jalankan lewat Supabase → SQL Editor bila membuat project baru.
 

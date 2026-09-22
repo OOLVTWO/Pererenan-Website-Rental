@@ -20,7 +20,8 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
 - Jangan commit secret (service role key, DB password, token GitHub).
 - Aplikasi sengaja TIDAK memakai service role key: `createAdminClient()` = sesi admin yang login (RLS).
   URL + publishable key project ada di `src/lib/supabase/config.js` (aman publik).
-- Akun admin dibuat manual di Supabase Auth; signup publik harus nonaktif (RLS memberi akses penuh ke user login).
+- Akun admin dibuat di Supabase Auth, lalu WAJIB didaftarkan ke `public.admin_users` (RLS memakai `private.is_admin()`).
+  User login yang tidak ada di `admin_users` tidak bisa melihat data apa pun.
 - Verifikasi minimal sebelum push: `npm run lint` (0 error), `npm test`, `npm run build`.
 - Perubahan skema = file baru di `supabase/migrations/NNN_*.sql`, idempotent, dengan RLS + grant eksplisit
   (Supabase mewajibkan grant eksplisit untuk tabel baru di Data API).
