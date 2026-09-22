@@ -1081,58 +1081,6 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {/* RESTORE CONFIRMATION MODAL */}
-      {restoreModalData && (
-        <div className="modal-overlay" onClick={() => setRestoreModalData(null)}>
-          <div className="modal modal-md" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <div>
-                <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1D4ED8' }}>
-                  <i className="fa-solid fa-cloud-arrow-up"></i> Confirm Restore Database Backup
-                </div>
-                <div className="modal-subtitle">
-                  File: <strong>boss_rent_backup.json</strong> ({restoreModalData._displayDate || '-'})
-                </div>
-              </div>
-              <button className="modal-close" onClick={() => setRestoreModalData(null)}>✕</button>
-            </div>
-
-            <div className="alert alert-warning" style={{ fontSize: '12px', lineHeight: 1.5, marginBottom: '16px' }}>
-              <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: '6px' }}></i>
-              Proses restore ini akan meng-update/menggabungkan record dari file backup ke Supabase database dan meng-update pengaturan lokal.
-            </div>
-
-            <div style={{ background: 'var(--bg-elevated)', borderRadius: '10px', padding: '16px', border: '1px solid var(--bg-border)', marginBottom: '20px' }}>
-              <div style={{ fontWeight: 700, fontSize: '13px', marginBottom: '10px', color: 'var(--brand-primary-light)' }}>
-                Rincian Data Yang Akan Dipulihkan:
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '12px' }}>
-                <div>🏍️ Armada Motor: <strong>{restoreModalData.data?.vehicles?.length || 0} unit</strong></div>
-                <div>📄 Transaksi: <strong>{restoreModalData.data?.transactions?.length || 0} record</strong></div>
-                <div>💸 Pengeluaran: <strong>{restoreModalData.data?.expenses?.length || 0} record</strong></div>
-                <div>⚙️ Setting Operasional: <strong>Termasuk ✅</strong></div>
-              </div>
-            </div>
-
-            <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setRestoreModalData(null)}>Batal</button>
-              <button
-                type="button"
-                className="btn btn-success"
-                onClick={handleExecuteRestore}
-                disabled={restoringData}
-                style={{ background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff', fontWeight: 700 }}
-              >
-                {restoringData ? (
-                  <><i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '6px' }}></i> Memulihkan Data...</>
-                ) : (
-                  <><i className="fa-solid fa-check-double" style={{ marginRight: '6px' }}></i> Ya, Pulihkan Data Sekarang</>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );
