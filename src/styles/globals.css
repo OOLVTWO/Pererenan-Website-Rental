@@ -2,6 +2,70 @@
    (see the --font-inter CSS variable applied to <html>) — no runtime
    CDN request needed here anymore. */
 
+/* =========================================
+   DESIGN SYSTEM — Boss Rent Pererenan
+   Light theme default · Dark mode via [data-theme="dark"]
+   ========================================= */
+
+/* ── LIGHT MODE (default) ── */
+:root {
+  /* Brand — clean admin-dashboard blue */
+  --brand-primary:       #2563EB;
+  --brand-primary-dark:  #1D4ED8;
+  --brand-primary-light: #60A5FA;
+  --brand-accent:        #1E40AF; /* amber — used for highlights/warnings */
+  --shadow-glow:         0 0 32px rgba(37,99,235, 0.16);
+
+  /* Sidebar — dark slate-navy, standard admin-dashboard dark sidebar */
+  --sidebar-bg:    #0F172A;
+  --sidebar-width: 260px;
+  --header-height: 64px;
+
+  /* Background — cool white/light-gray base */
+  --bg-base:     #F1F5F9;
+  --bg-surface:  #FFFFFF;
+  --bg-elevated: #E9EFF6;
+  --bg-card:     #FFFFFF;
+  --bg-hover:    #EAF2FE;
+  --bg-border:   #E2E8F0;
+  --bg-border-strong: #CBD5E1;
+
+  /* Text */
+  --text-primary:   #1E293B;
+  --text-secondary: #64748B;
+  --text-muted:     #64748B;
+  --text-inverse:   #FFFFFF;
+
+  /* Status — clear, slightly vivid to match a dashboard-style palette */
+  --status-success:    #1D4ED8;
+  --status-success-bg: #EEF3FF;
+  --status-warning:    #1E40AF;
+  --status-warning-bg: #EEF3FF;
+  --status-danger:     #1E3A8A;
+  --status-danger-bg:  #E8EEFB;
+  --status-info:       #2563EB;
+  --status-info-bg:    #DBEAFE;
+
+  /* Spacing */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px;
+  --space-10: 40px; --space-12: 48px;
+
+  /* Radius — soft, generous */
+  --radius-sm: 8px; --radius-md: 14px; --radius-lg: 20px;
+  --radius-xl: 28px; --radius-full: 9999px;
+
+  /* Shadows — soft neutral diffusion instead of colored glow */
+  --shadow-sm: 0 1px 2px rgba(15,23,42, 0.05), 0 1px 3px rgba(15,23,42,0.04);
+  --shadow-md: 0 4px 12px rgba(15,23,42, 0.06), 0 2px 4px rgba(15,23,42,0.04);
+  --shadow-lg: 0 16px 40px rgba(15,23,42, 0.10), 0 4px 12px rgba(15,23,42,0.05);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.25s ease;
+  --transition-slow: 0.4s ease;
+}
+
 /* ── DARK MODE ── */
 
 
@@ -220,7 +284,7 @@ a:hover {
   font-size: 16px;
   color: #fff;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(37, 99, 235,0.45);
+  box-shadow: 0 4px 14px rgba(37,99,235,0.45);
 }
 
 .sidebar-logo h1 {
@@ -261,7 +325,7 @@ a:hover {
   font-weight: 800;
   color: #fff;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(37, 99, 235,0.4);
+  box-shadow: 0 2px 8px rgba(37,99,235,0.4);
 }
 
 .sidebar-user-info {
@@ -357,7 +421,7 @@ a:hover {
   background: #2563EB;
   color: #ffffff;
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(37, 99, 235,0.4);
+  box-shadow: 0 4px 14px rgba(37,99,235,0.4);
   border-color: transparent;
 }
 
@@ -464,7 +528,7 @@ a:hover {
 }
 
 .card:hover {
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255,255,255, 0.12);
   box-shadow: var(--shadow-md);
 }
 
@@ -534,8 +598,8 @@ a:hover {
 }
 
 .stat-card:hover {
-  border-color: rgba(37, 99, 235, 0.25);
-  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.1);
+  border-color: rgba(37,99,235, 0.25);
+  box-shadow: 0 4px 20px rgba(37,99,235, 0.1);
   transform: translateY(-2px);
 }
 
@@ -627,7 +691,7 @@ a:hover {
 
 .btn-secondary:hover:not(:disabled) {
   background: var(--bg-hover);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255,255,255, 0.15);
   color: var(--text-primary);
 }
 
@@ -739,7 +803,7 @@ textarea.form-control {
 
 .form-control:focus {
   border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px rgba(37,99,235, 0.15);
   background: var(--bg-card);
 }
 
@@ -782,7 +846,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .custom-file-btn:hover {
   background: var(--bg-hover);
   border-color: var(--brand-primary-light);
-  box-shadow: 0 0 12px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 0 12px rgba(37,99,235, 0.2);
   color: var(--brand-primary-light);
 }
 
@@ -816,7 +880,117 @@ input[type="date"]::-webkit-calendar-picker-indicator {
      appears on whichever side still has more columns to scroll to,
      and disappears once you've scrolled all the way there. */
   background:
-    var(--bg-surface) instead of squeezed into one row */
+    linear-gradient(to right, var(--bg-surface) 30%, rgba(255,255,255,0)) 0 0,
+    linear-gradient(to right, rgba(255,255,255,0), var(--bg-surface) 70%) 100% 0,
+    linear-gradient(to right, rgba(31,42,40,0.10), rgba(255,255,255,0)) 0 0,
+    linear-gradient(to left, rgba(31,42,40,0.10), rgba(255,255,255,0)) 100% 0;
+  background-repeat: no-repeat;
+  background-color: var(--bg-surface);
+  background-size: 48px 100%, 48px 100%, 16px 100%, 16px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.table thead th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--bg-elevated);
+  color: var(--brand-primary);
+  font-weight: 700;
+  border-bottom: 1px solid var(--bg-border);
+  white-space: nowrap;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid var(--bg-border);
+  transition: background var(--transition-fast);
+}
+
+.table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: var(--bg-hover);
+}
+
+.table tbody td {
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-secondary);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.table tbody td strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ── Mobile-responsive table → stacked cards ──
+   Opt-in via .table--stack-mobile on the <table> (alongside .table).
+   Below the breakpoint, each row becomes its own card and each cell
+   shows a label (from data-label on the <td>) instead of a header
+   row + horizontal scroll — much easier to actually read on a phone
+   for glanceable summary widgets than scrolling a cramped table. */
+@media (max-width: 680px) {
+  .table.table--stack-mobile {
+    min-width: 0 !important;
+    width: 100% !important;
+    display: block !important;
+  }
+  .table--stack-mobile thead {
+    display: none;
+  }
+  .table--stack-mobile tbody,
+  .table--stack-mobile tr,
+  .table--stack-mobile td {
+    display: block;
+    width: 100%;
+  }
+  .table--stack-mobile tr {
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-surface);
+  }
+  .table--stack-mobile tr:last-child {
+    margin-bottom: 0;
+  }
+  .table--stack-mobile td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--bg-border);
+    text-align: right;
+  }
+  .table--stack-mobile td:last-child {
+    border-bottom: none;
+  }
+  .table--stack-mobile td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: left;
+    flex-shrink: 0;
+  }
+  /* Cells with richer multi-line content read better stacked (label
+     above content) instead of squeezed into one row */
   .table--stack-mobile td[data-label-align="left"] {
     text-align: left;
     flex-direction: column;
@@ -869,7 +1043,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .badge-muted {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255,255,255, 0.06);
   color: var(--text-muted);
 }
 
@@ -879,7 +1053,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0,0,0, 0.7);
   backdrop-filter: blur(8px);
   z-index: 1000;
   display: flex;
@@ -1090,7 +1264,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .vehicle-card:hover {
-  border-color: rgba(37, 99, 235, 0.3);
+  border-color: rgba(37,99,235, 0.3);
   box-shadow: var(--shadow-md);
   transform: translateY(-3px);
 }
@@ -1192,7 +1366,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .alert-info {
   background: var(--status-info-bg);
-  border-color: rgba(37, 99, 235, 0.3);
+  border-color: rgba(37,99,235, 0.3);
   color: var(--status-info);
 }
 
@@ -1206,8 +1380,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   justify-content: center;
   padding: var(--space-6);
   background:
-    radial-gradient(ellipse at 30% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 70% 80%, rgba(96, 165, 250, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 30% 20%, rgba(37,99,235, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(96,165,250, 0.1) 0%, transparent 50%),
     var(--bg-base);
 }
 
@@ -1531,7 +1705,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .btn-refresh:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255,255,255, 0.15);
 }
 
 /* =========================================
@@ -1593,11 +1767,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .upcoming-stat {
-  border-color: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59,130,246, 0.2);
 }
 
 .upcoming-stat .tracking-stat-icon {
-  background: rgba(59, 130, 246, 0.12);
+  background: rgba(59,130,246, 0.12);
   color: #3B82F6;
 }
 
@@ -1606,11 +1780,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .total-stat {
-  border-color: rgba(37, 99, 235, 0.2);
+  border-color: rgba(37,99,235, 0.2);
 }
 
 .total-stat .tracking-stat-icon {
-  background: rgba(37, 99, 235, 0.12);
+  background: rgba(37,99,235, 0.12);
   color: var(--brand-primary);
 }
 
@@ -1669,9 +1843,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .tracking-filter-tab.active {
-  background: rgba(37, 99, 235, 0.12);
+  background: rgba(37,99,235, 0.12);
   color: var(--brand-primary-light);
-  border-color: rgba(37, 99, 235, 0.3);
+  border-color: rgba(37,99,235, 0.3);
 }
 
 .filter-count {
@@ -2629,7 +2803,7 @@ textarea {
 .mobile-sidebar-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0,0,0, 0.75);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   z-index: 998;
@@ -2670,7 +2844,7 @@ textarea {
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 999;
     width: 280px !important;
-    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 8px 0 32px rgba(0,0,0, 0.5);
   }
 
   .sidebar.mobile-active {
@@ -2713,28 +2887,28 @@ textarea {
 }
 
 .bento-card {
-  background: rgba(18, 18, 26, 0.75);
+  background: rgba(18,18,26, 0.75);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255,255,255, 0.08);
   border-radius: var(--radius-xl);
   padding: var(--space-6);
   position: relative;
   overflow: hidden;
   transition: all var(--transition-base);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0,0,0, 0.3);
 }
 
 .bento-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(37, 99, 235, 0.3);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 24px rgba(37, 99, 235, 0.15);
+  border-color: rgba(37,99,235, 0.3);
+  box-shadow: 0 16px 48px rgba(0,0,0, 0.5), 0 0 24px rgba(37,99,235, 0.15);
 }
 
 /* ── BENTO HERO CARD — v4 style (light bg, purple accent) ── */
 .bento-hero-card {
   background: var(--bg-elevated);
-  border: 1.5px solid rgba(37, 99, 235,0.2);
+  border: 1.5px solid rgba(37,99,235,0.2);
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -2834,7 +3008,7 @@ textarea {
   justify-content: center;
   font-size: 17px;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(37, 99, 235,0.3);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.3);
 }
 
 .bento-vault-title {
@@ -2921,8 +3095,8 @@ textarea {
   font-size: 11px;
   font-weight: 700;
   color: var(--brand-primary-light);
-  background: rgba(37, 99, 235, 0.1);
-  border: 1.5px solid rgba(37, 99, 235, 0.25);
+  background: rgba(37,99,235, 0.1);
+  border: 1.5px solid rgba(37,99,235, 0.25);
   padding: 4px 12px;
   border-radius: var(--radius-full);
   margin-bottom: var(--space-3);
@@ -2956,11 +3130,11 @@ textarea {
 .bento-table-card {
   padding: var(--space-6);
   border-radius: var(--radius-xl);
-  background: rgba(18, 18, 26, 0.75);
+  background: rgba(18,18,26, 0.75);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255,255,255, 0.08);
+  box-shadow: 0 8px 32px rgba(0,0,0, 0.3);
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -2977,8 +3151,8 @@ textarea {
 
 /* Bento Pill Tags & Chart Stack */
 .bento-pill-tag {
-  background: rgba(37, 99, 235, 0.12);
-  border: 1px solid rgba(37, 99, 235, 0.3);
+  background: rgba(37,99,235, 0.12);
+  border: 1px solid rgba(37,99,235, 0.3);
   padding: 6px 14px;
   border-radius: var(--radius-full);
   font-size: 12px;
@@ -2988,8 +3162,8 @@ textarea {
 }
 
 .bento-pill-tag.info {
-  background: rgba(59, 130, 246, 0.12);
-  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(59,130,246, 0.12);
+  border-color: rgba(59,130,246, 0.3);
   color: #60A5FA;
 }
 
@@ -3020,7 +3194,7 @@ textarea {
 
 .bento-metric-pill:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(0,0,0, 0.3);
 }
 
 .bento-metric-pill.available {
@@ -3029,8 +3203,8 @@ textarea {
 }
 
 .bento-metric-pill.rented {
-  background: rgba(59, 130, 246, 0.12);
-  border: 1px solid rgba(59, 130, 246, 0.35);
+  background: rgba(59,130,246, 0.12);
+  border: 1px solid rgba(59,130,246, 0.35);
 }
 
 .bento-metric-pill.maintenance {
@@ -3131,14 +3305,14 @@ textarea {
 .scrollable-tab-btn:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255,255,255, 0.2);
 }
 
 .scrollable-tab-btn.active {
   background: var(--brand-primary);
   color: #ffffff;
   border-color: var(--brand-primary);
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 16px rgba(37,99,235, 0.3);
 }
 
 /* Enhanced Hero Bento Card Aesthetics */
@@ -3200,15 +3374,15 @@ textarea {
   width: 44px;
   height: 44px;
   border-radius: 14px;
-  background: rgba(37, 99, 235, 0.2);
-  border: 1px solid rgba(37, 99, 235, 0.35);
+  background: rgba(37,99,235, 0.2);
+  border: 1px solid rgba(37,99,235, 0.35);
   color: var(--brand-primary-light);
   font-size: 19px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 4px 16px rgba(37,99,235, 0.2);
 }
 
 .bento-card-subtitle {
@@ -3236,7 +3410,7 @@ textarea {
 
 .bento-deposit-box:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 24px rgba(0,0,0, 0.25);
 }
 
 .bento-deposit-box.held {
@@ -3246,7 +3420,7 @@ textarea {
 
 .bento-deposit-box.held:hover {
   border-color: rgba(30,64,175, 0.5);
-  box-shadow: 0 8px 24px rgba(96, 165, 250, 0.15);
+  box-shadow: 0 8px 24px rgba(96,165,250, 0.15);
 }
 
 .bento-deposit-box.damage {
@@ -3260,13 +3434,13 @@ textarea {
 }
 
 .bento-deposit-box.returned {
-  background: rgba(59, 130, 246, 0.07);
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  background: rgba(59,130,246, 0.07);
+  border: 1px solid rgba(59,130,246, 0.25);
 }
 
 .bento-deposit-box.returned:hover {
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+  border-color: rgba(59,130,246, 0.5);
+  box-shadow: 0 8px 24px rgba(59,130,246, 0.15);
 }
 
 .dep-box-top {
@@ -3519,7 +3693,7 @@ textarea {
   border: none;
   cursor: pointer;
   transition: all var(--transition-base);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 14px rgba(0,0,0, 0.2);
 }
 
 .fin-btn-income {
@@ -3608,14 +3782,14 @@ textarea {
   font-weight: 800;
   letter-spacing: 0.2px;
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0,0,0, 0.15);
   border: 1px solid transparent;
 }
 
 .tx-status-pill.active {
-  background: rgba(59, 130, 246, 0.15);
+  background: rgba(59,130,246, 0.15);
   color: #60A5FA;
-  border-color: rgba(59, 130, 246, 0.35);
+  border-color: rgba(59,130,246, 0.35);
 }
 
 .tx-status-pill.completed {
@@ -3846,8 +4020,8 @@ textarea {
 
 .star-rating-chip {
   color: #96631F;
-  background: rgba(192, 138, 52, 0.12);
-  border: 1px solid rgba(192, 138, 52, 0.35);
+  background: rgba(192,138,52, 0.12);
+  border: 1px solid rgba(192,138,52, 0.35);
   border-radius: var(--radius-full);
   padding: 3px 10px;
   display: inline-flex;
@@ -3953,7 +4127,7 @@ textarea {
   background: #2563EB;
   color: #FFFFFF;
   border-color: #1D4ED8;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 4px 14px rgba(37,99,235, 0.4);
 }
 
 /* ── Sidebar: Child items ── */
@@ -4001,8 +4175,8 @@ textarea {
 
 .sidebar-child-item.active {
   color: var(--brand-primary-light);
-  background: rgba(37, 99, 235, 0.08);
-  border-color: rgba(37, 99, 235, 0.2);
+  background: rgba(37,99,235, 0.08);
+  border-color: rgba(37,99,235, 0.2);
   font-weight: 600;
 }
 
@@ -4066,7 +4240,7 @@ body { background-color: var(--bg-base); color: var(--text-primary); }
   border: 1px solid var(--bg-border) !important;
   box-shadow: var(--shadow-sm) !important;
 }
-.stat-card:hover { box-shadow: var(--shadow-md) !important; border-color: rgba(37, 99, 235,0.25) !important; }
+.stat-card:hover { box-shadow: var(--shadow-md) !important; border-color: rgba(37,99,235,0.25) !important; }
 .stat-label { color: var(--text-muted) !important; }
 .stat-value { color: var(--text-primary) !important; }
 .stat-change { color: var(--text-muted) !important; }
@@ -4075,13 +4249,13 @@ body { background-color: var(--bg-base); color: var(--text-primary); }
 .stat-card-hero {
   background: #2563EB;
   border: none !important;
-  box-shadow: 0 8px 32px rgba(37, 99, 235,0.4) !important;
+  box-shadow: 0 8px 32px rgba(37,99,235,0.4) !important;
 }
 .stat-card-hero .stat-label { color: rgba(255,255,255,0.7) !important; }
 .stat-card-hero .stat-value { color: #ffffff !important; }
 .stat-card-hero .stat-change { color: rgba(255,255,255,0.65) !important; }
 .stat-card-hero::before { display: none !important; }
-.stat-card-hero:hover { transform: translateY(-3px) !important; box-shadow: 0 12px 40px rgba(37, 99, 235,0.5) !important; }
+.stat-card-hero:hover { transform: translateY(-3px) !important; box-shadow: 0 12px 40px rgba(37,99,235,0.5) !important; }
 
 /* Bento cards */
 .bento-card {
@@ -4091,12 +4265,12 @@ body { background-color: var(--bg-base); color: var(--text-primary); }
   -webkit-backdrop-filter: none !important;
   box-shadow: var(--shadow-sm) !important;
 }
-.bento-card:hover { box-shadow: var(--shadow-md) !important; border-color: rgba(37, 99, 235,0.25) !important; }
+.bento-card:hover { box-shadow: var(--shadow-md) !important; border-color: rgba(37,99,235,0.25) !important; }
 
 /* Bento hero card */
 .bento-hero-card {
   background: var(--bg-elevated) !important;
-  border: 1.5px solid rgba(37, 99, 235,0.25) !important;
+  border: 1.5px solid rgba(37,99,235,0.25) !important;
 }
 .bento-hero-value { color: var(--text-primary) !important; }
 .bento-hero-label { color: var(--text-muted) !important; }
@@ -4116,11 +4290,11 @@ body { background-color: var(--bg-base); color: var(--text-primary); }
   background: #2563EB;
   color: #ffffff !important;
   border-color: #1D4ED8 !important;
-  box-shadow: 0 4px 14px rgba(37, 99, 235,0.35) !important;
+  box-shadow: 0 4px 14px rgba(37,99,235,0.35) !important;
 }
 .btn-primary:hover:not(:disabled) {
   background: #60A5FA;
-  box-shadow: 0 6px 20px rgba(37, 99, 235,0.45) !important;
+  box-shadow: 0 6px 20px rgba(37,99,235,0.45) !important;
 }
 .btn-secondary {
   background: var(--bg-elevated) !important;
@@ -4140,7 +4314,7 @@ body { background-color: var(--bg-base); color: var(--text-primary); }
 }
 .form-control:focus {
   border-color: var(--brand-primary) !important;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235,0.15) !important;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15) !important;
 }
 .form-label { color: var(--text-secondary) !important; }
 .form-control::placeholder { color: var(--text-muted) !important; }
@@ -4156,6 +4330,17 @@ select.form-control {
 }
 select.form-control option { background: var(--bg-surface); color: var(--text-primary); }
 
+/* Dark mode: the chevron above is a fixed dark navy stroke, which
+   disappears against the dark select background once [data-theme="dark"]
+   flips things. Re-assert with a light stroke color for dark mode.
+   Also re-assert repeat/position/size explicitly (not just the image) -
+   a later dark-mode rule sets the `background` shorthand on
+   .form-control, which resets these sub-properties to their browser
+   defaults (repeat/auto/0% 0%) for that specific property competition
+   even though this rule's specificity still wins for background-image
+   itself. Without repeating them here, the chevron visibly tiles
+   across the whole select instead of showing once. */
+
 /* Scrollable tabs */
 .scrollable-tabs-bar { border-bottom: 1px solid var(--bg-border) !important; }
 .scrollable-tab-btn {
@@ -4168,7 +4353,7 @@ select.form-control option { background: var(--bg-surface); color: var(--text-pr
   background: #2563EB !important;
   color: #ffffff !important;
   border-color: #1D4ED8 !important;
-  box-shadow: 0 4px 12px rgba(37, 99, 235,0.35) !important;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.35) !important;
 }
 
 /* Tracking & availability cards */
@@ -4178,7 +4363,7 @@ select.form-control option { background: var(--bg-surface); color: var(--text-pr
 }
 .tracking-card:hover, .avail-card:hover {
   box-shadow: var(--shadow-md) !important;
-  border-color: rgba(37, 99, 235,0.2) !important;
+  border-color: rgba(37,99,235,0.2) !important;
 }
 
 /* Page header */
@@ -4210,8 +4395,8 @@ select.form-control option { background: var(--bg-surface); color: var(--text-pr
 /* Auth page */
 .auth-page {
   background:
-    radial-gradient(ellipse at 30% 20%, rgba(37, 99, 235,0.12) 0%, transparent 50%),
-    radial-gradient(ellipse at 70% 80%, rgba(96, 165, 250,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 30% 20%, rgba(37,99,235,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(96,165,250,0.08) 0%, transparent 50%),
     var(--bg-base) !important;
 }
 .auth-card {
@@ -4256,7 +4441,7 @@ select.form-control option { background: var(--bg-surface); color: var(--text-pr
   background: var(--brand-primary);
   border-color: var(--brand-primary-dark);
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(37, 99, 235,0.35);
+  box-shadow: 0 4px 14px rgba(37,99,235,0.35);
 }
 
 /* Rotating chevron */
@@ -4314,7 +4499,7 @@ select.form-control option { background: var(--bg-surface); color: var(--text-pr
 }
 
 .theme-dropdown-item.active {
-  background: rgba(37, 99, 235,0.1);
+  background: rgba(37,99,235,0.1);
   color: var(--brand-primary);
   font-weight: 700;
 }
@@ -4403,7 +4588,7 @@ select.form-control option { background: var(--bg-surface); color: var(--text-pr
   background: #2563EB;
   color: #ffffff;
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(37, 99, 235,0.4);
+  box-shadow: 0 4px 14px rgba(37,99,235,0.4);
 }
 
 /* Child items — indented */
@@ -4436,7 +4621,7 @@ select.form-control option { background: var(--bg-surface); color: var(--text-pr
 }
 .sidebar-child-item.active {
   color: #60A5FA;
-  background: rgba(37, 99, 235,0.15);
+  background: rgba(37,99,235,0.15);
 }
 
 /* =========================================
@@ -4475,7 +4660,7 @@ select.form-control option { background: var(--bg-surface); color: var(--text-pr
 .ptab-v4.on {
   background: var(--brand-primary);
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(37, 99, 235,0.3);
+  box-shadow: 0 2px 8px rgba(37,99,235,0.3);
 }
 .ptab-v4:not(.on):hover {
   background: var(--bg-elevated);
@@ -4675,7 +4860,7 @@ select.form-control option { background: var(--bg-surface); color: var(--text-pr
 .dash-ptab.active {
   background: var(--brand-primary);
   color: #fff;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 2px 8px rgba(37,99,235, 0.3);
 }
 .dash-period-select {
   font-size: 12px;
