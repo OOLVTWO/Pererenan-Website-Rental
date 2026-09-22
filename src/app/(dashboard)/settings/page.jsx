@@ -11,9 +11,6 @@ import {
   getWaReminderTemplate,
   saveWaReminderTemplate,
   DEFAULT_WA_REMINDER_TEMPLATE,
-  getWaGatewayConfig,
-  saveWaGatewayConfig,
-  sendWhatsAppGateway
 } from '@/lib/countryCodes';
 import { updateFavicon } from '@/lib/favicon';
 import { fetchAllRows } from '@/lib/queryColumns';
@@ -108,14 +105,11 @@ export default function SettingsPage() {
   const [bizForm, setBizForm] = useState(DEFAULT_BIZ_FORM);
 
   // WhatsApp Template State
-  const [waSubTab, setWaSubTab] = useState('invoice'); // 'invoice' | 'reminder' | 'gateway'
+  const [waSubTab, setWaSubTab] = useState('invoice'); // 'invoice' | 'reminder'
   const [waInvoiceText, setWaInvoiceText] = useState('');
   const [waReminderText, setWaReminderText] = useState('');
   const [waSavedAlert, setWaSavedAlert] = useState(null);
 
-  const [waGatewayForm, setWaGatewayForm] = useState({ provider: 'fonnte', token: '', enabled: false, endpoint: '' });
-  const [testGatewayPhone, setTestGatewayPhone] = useState('');
-  const [testingGateway, setTestingGateway] = useState(false);
 
   // Backup State
   const [backupLoading, setBackupLoading] = useState(false);
@@ -130,7 +124,6 @@ export default function SettingsPage() {
     Promise.resolve().then(() => {
       setWaInvoiceText(getWaTemplate());
       setWaReminderText(getWaReminderTemplate());
-      setWaGatewayForm(getWaGatewayConfig());
     });
   }, []);
 
@@ -160,32 +153,6 @@ export default function SettingsPage() {
     setWaReminderText(DEFAULT_WA_REMINDER_TEMPLATE);
     saveWaReminderTemplate(DEFAULT_WA_REMINDER_TEMPLATE);
     showAlert('Template WhatsApp Reminder dikembalikan ke standar default!');
-  };
-
-  const handleSaveWaGateway = (e) => {
-    e.preventDefault();
-    saveWaGatewayConfig(waGatewayForm);
-    showAlert('Konfigurasi WhatsApp Gateway API berhasil disimpan!');
-  };
-
-  const handleTestWaGateway = async () => {
-    if (!testGatewayPhone) {
-      showAlert('Masukkan nomor HP penerima pesan tes (misal: 628123456789).', 'danger');
-      return;
-    }
-    setTestingGateway(true);
-    const testMsg = `🛵 *BOSS RENT BALI — WA GATEWAY TEST*\n\nHello! This is a test message sent from Boss Rent Pererenan System Gateway API (${waGatewayForm.provider.toUpperCase()}).\n\n✅ Gateway connection is working properly!`;
-    const res = await sendWhatsAppGateway(testGatewayPhone, testMsg);
-    setTestingGateway(false);
-
-    if (res.success) {
-      showAlert(`✓ Tes WA Gateway Berhasil! Pesan terkirim via ${waGatewayForm.provider.toUpperCase()}.`);
-    } else if (res.mode === 'direct_link') {
-      window.open(res.url, '_blank');
-      showAlert('Gateway API tidak aktif / token kosong. Mengalihkan ke WhatsApp Direct Link.');
-    } else {
-      showAlert(`❌ Gagal mengirim tes WA Gateway: ${res.error || res.message || 'Periksa API Key / Status Gateway.'}`, 'danger');
-    }
   };
 
   const handleInsertInvoiceTag = (tag) => {
@@ -318,7 +285,6 @@ export default function SettingsPage() {
             biz: readSavedBiz(),
             wa_invoice: localStorage.getItem('boss_rent_wa_template') || '',
             wa_reminder: localStorage.getItem('boss_rent_wa_reminder_template') || '',
-            wa_gateway: JSON.parse(localStorage.getItem('boss_rent_wa_gateway') || '{}'),
             payment_methods: JSON.parse(localStorage.getItem('boss_rent_payment_methods') || '[]'),
           }
         }
@@ -742,13 +708,6 @@ export default function SettingsPage() {
               >
                 <i className="fa-solid fa-bell"></i> 2. Template Reminder WA (Pengingat)
               </button>
-              <button
-                type="button"
-                className={`scrollable-tab-btn ${waSubTab === 'gateway' ? 'active' : ''}`}
-                onClick={() => setWaSubTab('gateway')}
-              >
-                <i className="fa-solid fa-robot"></i> 3. 🤖 WhatsApp Gateway API Config
-              </button>
             </div>
 
             {/* Alert Banner */}
@@ -918,116 +877,6 @@ export default function SettingsPage() {
               </div>
             )}
 
-            {/* SUB-TAB 3: GATEWAY API CONFIG */}
-            {waSubTab === 'gateway' && (
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <i className="fa-solid fa-robot" style={{ color: 'var(--brand-primary)' }}></i>
-                  Konfigurasi WhatsApp Gateway API (Auto-Send Pesan)
-                </div>
-
-                <form onSubmit={handleSaveWaGateway}>
-                  <div className="form-group" style={{ marginBottom: '16px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>
-                      <input
-                        type="checkbox"
-                        checked={waGatewayForm.enabled}
-                        onChange={e => setWaGatewayForm(p => ({ ...p, enabled: e.target.checked }))}
-                        style={{ width: '18px', height: '18px', accentColor: 'var(--brand-primary)' }}
-                      />
-                      <span>Aktifkan Pengiriman Otomatis via WA Gateway API</span>
-                    </label>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', marginLeft: '28px' }}>
-                      Jika tidak diaktifkan, sistem akan mengalihkan ke WhatsApp Web/App Direct Link.
-                    </div>
-                  </div>
-
-                  <div className="form-row cols-2">
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="wa-provider">
-                        <i className="fa-solid fa-server" style={{ marginRight: '6px' }}></i> Provider Gateway
-                      </label>
-                      <select
-                        id="wa-provider"
-                        className="form-control"
-                        value={waGatewayForm.provider}
-                        onChange={e => setWaGatewayForm(p => ({ ...p, provider: e.target.value }))}
-                      >
-                        <option value="fonnte">Fonnte API (Indonesia / Recommended)</option>
-                        <option value="wablas">Wablas Gateway API</option>
-                        <option value="webhook">Custom Webhook Endpoint API</option>
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="wa-token">
-                        <i className="fa-solid fa-key" style={{ marginRight: '6px' }}></i> API Key / Token <span className="required">*</span>
-                      </label>
-                      <input
-                        id="wa-token"
-                        type="password"
-                        className="form-control"
-                        placeholder="e.g. fonnte_token_xyz"
-                        value={waGatewayForm.token}
-                        onChange={e => setWaGatewayForm(p => ({ ...p, token: e.target.value }))}
-                      />
-                    </div>
-                  </div>
-
-                  {waGatewayForm.provider !== 'fonnte' && (
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="wa-endpoint">
-                        <i className="fa-solid fa-link" style={{ marginRight: '6px' }}></i> Target Endpoint URL
-                      </label>
-                      <input
-                        id="wa-endpoint"
-                        type="url"
-                        className="form-control"
-                        placeholder="https://api.custom-gateway.com/send"
-                        value={waGatewayForm.endpoint}
-                        onChange={e => setWaGatewayForm(p => ({ ...p, endpoint: e.target.value }))}
-                      />
-                    </div>
-                  )}
-
-                  <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
-                    <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
-                      <i className="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }}></i> Simpan Konfigurasi Gateway
-                    </button>
-                  </div>
-                </form>
-
-                {/* TEST SENDER PANEL */}
-                <div style={{ marginTop: '24px', background: 'var(--bg-elevated)', padding: '16px', borderRadius: '12px', border: '1px dashed var(--brand-primary)' }}>
-                  <div style={{ fontWeight: 700, fontSize: '13px', color: 'var(--brand-primary-light)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <i className="fa-solid fa-vial"></i> Uji Coba (Test Send) WA Gateway
-                  </div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Nomor HP Tes (e.g. 628123456789)"
-                      value={testGatewayPhone}
-                      onChange={e => setTestGatewayPhone(e.target.value)}
-                      style={{ flex: 1 }}
-                    />
-                    <button
-                      type="button"
-                      className="btn btn-success"
-                      onClick={handleTestWaGateway}
-                      disabled={testingGateway}
-                      style={{ background: '#25D366', borderColor: '#25D366', color: '#fff' }}
-                    >
-                      {testingGateway ? (
-                        <><i className="fa-solid fa-spinner fa-spin"></i> Mengirim...</>
-                      ) : (
-                        <><i className="fa-paper-plane fa-solid"></i> Kirim Tes WA</>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       )}
