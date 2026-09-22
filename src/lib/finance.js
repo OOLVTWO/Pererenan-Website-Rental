@@ -11,10 +11,9 @@
 //       (PERUBAHAN: null TIDAK lagi dianggap lunas — data lama tanpa
 //        payment_status tidak lagi menggelembungkan revenue)
 //     - status 'cancelled' → tidak pernah diakui
-//  2. Bagi hasil investor dihitung per motor dari basis NET:
-//     payout = max(0, sharePct% × (omset motor − biaya servis motor tsb))
-//     (PERUBAHAN: payout tidak pernah negatif — rugi operasional motor
-//      tidak menjadi "hutang investor" yang mengurangi laba usaha)
+//  2. Bagi hasil investor = sharePct% × OMSET KOTOR motor investor.
+//     Semua pengeluaran (termasuk servis motor investor) ditanggung owner:
+//     tidak memotong bagian investor, hanya mengurangi laba bersih owner.
 //  3. Penalty/denda dicatat manual sebagai pemasukan di menu Keuangan
 //     (fitur denda di transaksi dihapus — tidak pernah dipakai).
 //  4. Laba Bersih Boss Rent = Total Pemasukan − Pengeluaran − Bagi Hasil Investor
@@ -117,47 +116,35 @@ export function calcVehicleRevenue(vehicle, transactions) {
     .reduce((s, t) => s + Number(t.total_price || 0), 0);
 }
 
-// Kalkulasi bagi hasil SEMUA motor investor, per motor (basis NET).
-export function calcInvestorPayouts({ transactions, expenses, vehicles }) {
+// Kalkulasi bagi hasil SEMUA motor investor, per motor.
+//
+// ATURAN (dikonfirmasi owner): hak investor = persentase bagi hasil × OMSET
+// KOTOR motor investor. Pengeluaran apa pun — termasuk biaya servis motor
+// investor dari menu Servis Motor — TIDAK memotong bagian investor; semuanya
+// ditanggung owner dan mengurangi laba bersih owner (lihat calcFinancialSummary).
+// Parameter `expenses` sengaja diabaikan (tetap diterima demi kompatibilitas).
+export function calcInvestorPayouts({ transactions, vehicles }) {
   const safeTx = Array.isArray(transactions) ? transactions : [];
-  const safeExp = Array.isArray(expenses) ? expenses : [];
   const safeVeh = Array.isArray(vehicles) ? vehicles : [];
-
-  const realExpenses = safeExp.filter(e => !isIncomeEntry(e));
   const investorVehicles = safeVeh.filter(isInvestorVehicle);
 
   let totalPayout = 0;
   let totalRevenue = 0;
-  let totalExpenses = 0;
-  let totalLoss = 0;
 
   const perVehicle = investorVehicles.map(v => {
     const revenue = calcVehicleRevenue(v, safeTx);
-    const vehicleExpenses = realExpenses
-      .filter(e => expenseMatchesVehicle(e, v))
-      .reduce((s, e) => s + Number(e.amount || 0), 0);
-    const net = revenue - vehicleExpenses;
     const sharePct = getVehicleSharePct(v);
-    // PERUBAHAN (C2): payout di-clamp di 0 — kerugian motor tidak menjadi
-    // "hutang investor". Rugi dicatat terpisah di field `loss` / `totalLoss`.
-    const loss = net < 0 ? Math.abs(net) : 0;
-    const payout = Math.max(0, Math.round(net * (sharePct / 100)));
-
+    const payout = Math.round(revenue * (sharePct / 100));
     totalPayout += payout;
     totalRevenue += revenue;
-    totalExpenses += vehicleExpenses;
-    totalLoss += loss;
-
-    return { vehicle: v, revenue, expenses: vehicleExpenses, net, sharePct, payout, loss };
+    return { vehicle: v, revenue, sharePct, payout, ownerShare: revenue - payout };
   });
 
   return {
     perVehicle,
     totalPayout,
     totalRevenue,
-    totalExpenses,
-    totalNet: totalRevenue - totalExpenses,
-    totalLoss,
+    totalOwnerShare: totalRevenue - totalPayout,
   };
 }
 
@@ -171,11 +158,16 @@ export function calcFinancialSummary({ transactions, expenses, vehicles }) {
   const unpaidTx = safeTx.filter(t => t.status === 'active' && t.payment_status === 'unpaid');
 
   const rentalRevenue = paidTx.reduce((s, t) => s + Number(t.total_price || 0), 0);
+  const investorVehicleIds = new Set((Array.isArray(vehicles) ? vehicles : []).filter(isInvestorVehicle).map(v => v.id));
+  const investorRevenue = paidTx
+    .filter(t => investorVehicleIds.has(t.vehicle_id) || investorVehicleIds.has(t.vehicles?.id))
+    .reduce((s, t) => s + Number(t.total_price || 0), 0);
+  const ownerVehicleRevenue = rentalRevenue - investorRevenue;
   const otherIncome = safeExp.filter(isIncomeEntry).reduce((s, e) => s + Number(e.amount || 0), 0);
   const totalRevenue = rentalRevenue + otherIncome;
   const totalExpenses = safeExp.filter(e => !isIncomeEntry(e)).reduce((s, e) => s + Number(e.amount || 0), 0);
 
-  const { totalPayout: investorPayout } = calcInvestorPayouts({ transactions: safeTx, expenses: safeExp, vehicles });
+  const { totalPayout: investorPayout } = calcInvestorPayouts({ transactions: safeTx, vehicles });
 
   const netProfit = totalRevenue - totalExpenses - investorPayout;
 
@@ -184,6 +176,8 @@ export function calcFinancialSummary({ transactions, expenses, vehicles }) {
     completedTx,
     unpaidTx,
     rentalRevenue,
+    ownerVehicleRevenue,
+    investorRevenue,
     otherIncome,
     totalRevenue,
     totalExpenses,

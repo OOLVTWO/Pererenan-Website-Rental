@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { exportTransactionsToExcel, exportExpensesToExcel, exportInvestorReportToExcel, formatRupiah } from '@/lib/excel';
 import {
   calcFinancialSummary, calcInvestorPayouts, isIncomeEntry, isPaidTransaction,
-  isInvestorVehicle, expenseMatchesVehicle, getLocalDateStr,
+  isInvestorVehicle, getLocalDateStr,
 } from '@/lib/finance';
 import { createClient } from '@/lib/supabase/client';
 import { TX_LIGHT_SELECT, VEHICLE_LIGHT_COLUMNS } from '@/lib/queryColumns';
@@ -159,17 +159,13 @@ export default function ReportsPage() {
   const targetInvestorTx = safeTx.filter(t => targetVehicleIds.includes(t.vehicle_id) || targetVehicleIds.includes(t.vehicles?.id));
   const targetPaidTx = targetInvestorTx.filter(isPaidTransaction);
 
-  // Expenses for investor vehicles (untuk export & KPI)
-  const targetInvestorExp = realExpenses.filter(e => targetInvestorVehicles.some(v => expenseMatchesVehicle(e, v)));
-
   // Kalkulasi bagi hasil per motor (payout dibulatkan per motor — akurat
   // meskipun tiap motor punya persentase bagi hasil berbeda)
-  const inv = calcInvestorPayouts({ transactions: safeTx, expenses: safeExp, vehicles: targetInvestorVehicles });
+  // Hak investor = % × omset kotor; biaya motor investor ditanggung owner.
+  const inv = calcInvestorPayouts({ transactions: safeTx, vehicles: targetInvestorVehicles });
   const invTotalRevenue = inv.totalRevenue;
-  const invTotalExpenses = inv.totalExpenses;
-  const invNetIncome = inv.totalNet;
   const investorPayout = inv.totalPayout;
-  const bossRentShare = invNetIncome - investorPayout;
+  const bossRentShare = inv.totalOwnerShare;
 
   // Persentase rata-rata hanya untuk label tampilan
   const avgSharePct = targetInvestorVehicles.length > 0
@@ -191,10 +187,7 @@ export default function ReportsPage() {
       sharePct: investorSharePct,
       vehicles: targetInvestorVehicles,
       transactions: targetInvestorTx,
-      expenses: targetInvestorExp,
       totalRevenue: invTotalRevenue,
-      totalExpenses: invTotalExpenses,
-      netIncome: invNetIncome,
       investorPayout: investorPayout,
       bossRentShare: bossRentShare
     }, `laporan-bagi-hasil-investor-${invName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`);
@@ -518,29 +511,19 @@ export default function ReportsPage() {
           <div className="card-header">
             <div className="card-title"><i className="fa-solid fa-calculator" style={{ marginRight: '6px' }}></i> Laporan Ringkasan Laba Rugi</div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '600px', margin: '20px 0' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(29,78,216, 0.1)', borderRadius: '8px', border: '1px solid rgba(29,78,216, 0.2)' }}>
-              <span>Total Pemasukan (Sewa + Lainnya):</span>
-              <strong style={{ color: '#1D4ED8', fontSize: '16px' }}>{formatRupiah(totalRevenue)}</strong>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(30,58,138, 0.1)', borderRadius: '8px', border: '1px solid rgba(30,58,138, 0.2)' }}>
-              <span>Total Pengeluaran Operasional:</span>
-              <strong style={{ color: '#1E3A8A', fontSize: '16px' }}>-{formatRupiah(totalExpenses)}</strong>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(29,78,216, 0.08)', borderRadius: '8px', border: '1px solid rgba(29,78,216, 0.25)' }}>
-              <span>Bagi Hasil Investor (basis NET per motor):</span>
-              <strong style={{ color: '#1D4ED8', fontSize: '16px' }}>-{formatRupiah(summary.investorPayout)}</strong>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--bg-card-hover)', borderRadius: '10px', border: '2px solid var(--brand-primary)', marginTop: '8px' }}>
-              <span style={{ fontWeight: 700, fontSize: '16px' }}>Laba Bersih (Net Profit):</span>
-              <strong style={{ color: netProfit >= 0 ? '#3B82F6' : '#1E3A8A', fontSize: '20px' }}>
-                {formatRupiah(netProfit)}
-              </strong>
-            </div>
+          <div className="list-card" style={{ maxWidth: '640px', margin: '8px 0 4px' }}>
+            <div className="dash2-row"><span>Omset sewa motor milik sendiri</span><strong>{formatRupiah(summary.ownerVehicleRevenue)}</strong></div>
+            <div className="dash2-row"><span>Omset sewa motor investor</span><strong>{formatRupiah(summary.investorRevenue)}</strong></div>
+            <div className="dash2-row"><span>Pemasukan lain</span><strong>{formatRupiah(summary.otherIncome)}</strong></div>
+            <div className="dash2-row total"><span>Total pemasukan</span><strong>{formatRupiah(totalRevenue)}</strong></div>
+            <div className="dash2-row"><span>Bagi hasil investor (% × omset motor investor)</span><strong>− {formatRupiah(summary.investorPayout)}</strong></div>
+            <div className="dash2-row"><span>Pengeluaran (semua ditanggung owner)</span><strong>− {formatRupiah(totalExpenses)}</strong></div>
+            <div className="dash2-row total"><span>Laba bersih owner</span><strong>{formatRupiah(netProfit)}</strong></div>
           </div>
+          <p className="dash2-muted" style={{ maxWidth: '640px', lineHeight: 1.6 }}>
+            Pengeluaran apa pun — termasuk biaya servis motor investor — hanya mengurangi keuntungan owner.
+            Bagian investor selalu dihitung dari omset kotor motornya.
+          </p>
         </div>
       )}
 
@@ -560,25 +543,14 @@ export default function ReportsPage() {
               </div>
             </div>
 
-            <div className="stat-card">
-              <div className="stat-icon" style={{ background: 'rgba(30,58,138, 0.15)', color: '#1E3A8A' }}>
-                <i className="fa-solid fa-wrench"></i>
-              </div>
-              <div className="stat-info">
-                <div className="stat-label">Biaya Servis / Perawatan (-)</div>
-                <div className="stat-value" style={{ color: '#1E3A8A' }}>{formatRupiah(invTotalExpenses)}</div>
-                <div className="stat-change">{targetInvestorExp.length} item servis motor</div>
-              </div>
-            </div>
-
             <div className="stat-card" style={{ border: '2px solid rgba(29,78,216, 0.4)', background: 'rgba(29,78,216, 0.06)' }}>
               <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.2)', color: '#1D4ED8' }}>
                 <i className="fa-solid fa-crown"></i>
               </div>
               <div className="stat-info">
-                <div className="stat-label" style={{ color: '#1D4ED8', fontWeight: 800 }}>TRANSFER NET INVESTOR ({investorSharePct}%)</div>
+                <div className="stat-label" style={{ color: '#1D4ED8', fontWeight: 800 }}>HAK INVESTOR ({investorSharePct}% dari omset kotor)</div>
                 <div className="stat-value" style={{ color: '#1D4ED8', fontSize: '20px', fontWeight: 900 }}>{formatRupiah(investorPayout)}</div>
-                <div className="stat-change" style={{ color: '#1D4ED8', fontWeight: 600 }}>Hak Bersih Investor ({selectedInvestor === 'all' ? 'Gabungan' : selectedInvestor})</div>
+                <div className="stat-change" style={{ color: '#1D4ED8', fontWeight: 600 }}>Tanpa potongan biaya · {selectedInvestor === 'all' ? 'Gabungan' : selectedInvestor}</div>
               </div>
             </div>
 
@@ -587,9 +559,9 @@ export default function ReportsPage() {
                 <i className="fa-solid fa-building"></i>
               </div>
               <div className="stat-info">
-                <div className="stat-label">Komisi Boss Rent ({bossRentSharePct}%)</div>
+                <div className="stat-label">Bagian Owner ({bossRentSharePct}%)</div>
                 <div className="stat-value" style={{ color: '#3B82F6' }}>{formatRupiah(bossRentShare)}</div>
-                <div className="stat-change">Hak Pengelolaan Boss Rent</div>
+                <div className="stat-change">Masuk ke keuntungan owner</div>
               </div>
             </div>
           </div>
@@ -622,14 +594,13 @@ export default function ReportsPage() {
                       <th>Investor / Pemilik</th>
                       <th>Kontak WA</th>
                       <th>Bagi Hasil (%)</th>
-                      <th>Omset Sewa (+)</th>
-                      <th>Biaya Servis (-)</th>
-                      <th>Laba Bersih Motor</th>
+                      <th>Omset Sewa</th>
                       <th>Hak Investor</th>
+                      <th>Bagian Owner</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {inv.perVehicle.map(({ vehicle: v, revenue: vRev, expenses: vExp, net: vNet, sharePct, payout: vPayout }, idx) => {
+                    {inv.perVehicle.map(({ vehicle: v, revenue: vRev, sharePct, payout: vPayout, ownerShare }, idx) => {
                       return (
                         <tr key={v.id}>
                           <td style={{ fontWeight: 700, color: 'var(--text-muted)' }}>{idx + 1}</td>
@@ -644,10 +615,9 @@ export default function ReportsPage() {
                           <td>
                             <span className="badge badge-success" style={{ fontSize: '11px' }}>{sharePct}% / {100 - sharePct}%</span>
                           </td>
-                          <td><strong style={{ color: '#1D4ED8' }}>+{formatRupiah(vRev)}</strong></td>
-                          <td><strong style={{ color: '#1E3A8A' }}>-{formatRupiah(vExp)}</strong></td>
-                          <td><strong style={{ color: 'var(--text-primary)' }}>{formatRupiah(vNet)}</strong></td>
+                          <td><strong style={{ color: 'var(--text-primary)' }}>{formatRupiah(vRev)}</strong></td>
                           <td><strong style={{ color: '#1D4ED8', fontSize: '14px' }}>{formatRupiah(vPayout)}</strong></td>
+                          <td><strong style={{ color: 'var(--text-primary)' }}>{formatRupiah(ownerShare)}</strong></td>
                         </tr>
                       );
                     })}

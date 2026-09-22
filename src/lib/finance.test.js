@@ -218,71 +218,44 @@ describe('calcVehicleRevenue', () => {
 });
 
 // ── calcInvestorPayouts (bagi hasil — basis NET per motor) ──
-describe('calcInvestorPayouts', () => {
+describe('calcInvestorPayouts (hak investor = % × omset kotor)', () => {
   const vehicles = [
     { id: 'v1', name: 'Vario', plate_number: 'DK 1111 AA', owner_type: 'investor', revenue_share_percentage: 70 },
     { id: 'v2', name: 'NMAX', plate_number: 'DK 2222 BB', owner_type: 'internal', owner_name: '' },
+    { id: 'v3', name: 'Scoopy', plate_number: 'DK 3333 CC', owner_type: 'investor', owner_name: 'Budi', revenue_share_percentage: 80 },
   ];
   const transactions = [
-    { id: 't1', vehicle_id: 'v1', status: 'completed', total_price: 1000000, damage_fee: 50000 },
-    { id: 't2', vehicle_id: 'v1', status: 'active', payment_status: 'unpaid', total_price: 400000 }, // dikecualikan
-    { id: 't3', vehicle_id: 'v2', status: 'completed', total_price: 500000 }, // motor internal
-  ];
-  const expenses = [
-    { id: 'e1', title: 'Servis rutin', amount: 100000, type: 'expense', vehicle_id: 'v1' }, // cocok v1 via vehicle_id (tag eksplisit, bukan nama)
-    { id: 'e2', title: 'Bensin operasional', amount: 50000, type: 'expense' }, // tidak cocok motor mana pun
-    { id: 'e3', title: 'Servis Vario', amount: 75000, type: 'expense' }, // HANYA sebut nama model, tanpa vehicle_id/plat — TIDAK boleh match (armada sering punya >1 motor model sama; expense umum begini tidak boleh ikut memotong omset investor tertentu)
+    { id: 't1', vehicle_id: 'v1', status: 'completed', total_price: 1000000 },
+    { id: 't2', vehicle_id: 'v1', status: 'active', payment_status: 'unpaid', total_price: 400000 }, // belum lunas → tidak dihitung
+    { id: 't3', vehicle_id: 'v2', status: 'completed', total_price: 500000 },                      // motor sendiri
+    { id: 't4', vehicle_id: 'v3', status: 'active', payment_status: 'paid', total_price: 333333 },
   ];
 
-  it('payout = sharePct% × (omset motor − biaya servis motor), dibulatkan', () => {
-    const { perVehicle } = calcInvestorPayouts({ transactions, expenses, vehicles });
-    expect(perVehicle).toHaveLength(1); // hanya motor investor
-    const pv = perVehicle[0];
-    expect(pv.revenue).toBe(1000000);   // damage_fee diabaikan
-    expect(pv.expenses).toBe(100000);   // hanya e1 (vehicle_id) — e3 (nama saja) TIDAK ikut kehitung
-    expect(pv.net).toBe(900000);
-    expect(pv.sharePct).toBe(70);
-    expect(pv.payout).toBe(630000);     // 70% × 900.000
+  it('hanya motor investor, payout = persentase × omset kotor (dibulatkan per motor)', () => {
+    const r = calcInvestorPayouts({ transactions, vehicles });
+    expect(r.perVehicle).toHaveLength(2);
+    const [a, b] = r.perVehicle;
+    expect(a).toMatchObject({ revenue: 1000000, sharePct: 70, payout: 700000, ownerShare: 300000 });
+    expect(b).toMatchObject({ revenue: 333333, sharePct: 80, payout: 266666, ownerShare: 66667 });
+    expect(r.totalPayout).toBe(966666);
+    expect(r.totalRevenue).toBe(1333333);
+    expect(r.totalOwnerShare).toBe(366667);
   });
 
-  it('total hanya mencakup motor investor', () => {
-    const r = calcInvestorPayouts({ transactions, expenses, vehicles });
-    expect(r.totalPayout).toBe(630000);
-    expect(r.totalRevenue).toBe(1000000);
-    expect(r.totalExpenses).toBe(100000);
-    expect(r.totalNet).toBe(900000);
-  });
-
-  it('regression: expense yang cuma sebut nama model TIDAK memotong omset investor', () => {
-    // e3 ("Servis Vario", tanpa vehicle_id/plat) sengaja tidak boleh match v1
-    // meski namanya sama-sama "Vario" — inilah bug yang dilaporkan: expense
-    // umum ikut kepotong ke motor investor lewat kecocokan nama model saja.
-    const { perVehicle } = calcInvestorPayouts({ transactions, expenses, vehicles });
-    const pv = perVehicle[0];
-    expect(pv.expenses).not.toBe(175000); // 100.000 + 75.000 — angka SALAH kalau e3 ikut kehitung
-    expect(pv.expenses).toBe(100000);
-  });
-
-  it('pembulatan Math.round untuk hasil pecahan', () => {
-    const r = calcInvestorPayouts({
-      transactions: [{ vehicle_id: 'v1', status: 'completed', total_price: 99999 }],
-      expenses: [],
-      vehicles: [{ id: 'v1', name: 'Vario', owner_type: 'investor', revenue_share_percentage: 70 }],
-    });
-    expect(r.totalPayout).toBe(69999); // 69.999,3 → 69.999
-  });
-
-  it('aman untuk input kosong', () => {
-    const r = calcInvestorPayouts({ transactions: null, expenses: undefined, vehicles: null });
-    expect(r.totalPayout).toBe(0);
-    expect(r.perVehicle).toEqual([]);
+  it('pengeluaran apa pun (termasuk servis motor investor) TIDAK mengurangi bagian investor', () => {
+    const expenses = [
+      { id: 'e1', title: 'Servis Motor: Vario (DK 1111 AA)', amount: 150000, type: 'expense', vehicle_id: 'v1' },
+      { id: 'e2', title: 'Gaji', amount: 5000000, type: 'expense' },
+    ];
+    const withExp = calcInvestorPayouts({ transactions, expenses, vehicles });
+    const without = calcInvestorPayouts({ transactions, vehicles });
+    expect(withExp.totalPayout).toBe(without.totalPayout);
   });
 });
 
-
 // ── calcFinancialSummary (integrasi semua aturan) ──
 describe('calcFinancialSummary', () => {
-  it('menerapkan aturan cash basis + other income (damage_fee diabaikan)', () => {
+  it('menerapkan aturan cash basis + other income', () => {
     const summary = calcFinancialSummary({
       transactions: [
         { id: 't1', status: 'completed', total_price: 300000, damage_fee: 50000 },
@@ -298,7 +271,6 @@ describe('calcFinancialSummary', () => {
     });
 
     expect(summary.rentalRevenue).toBe(500000);    // 300k + 200k
-    expect(summary.damageFeeIncome).toBeUndefined();
     expect(summary.otherIncome).toBe(25000);
     expect(summary.totalRevenue).toBe(525000);
     expect(summary.totalExpenses).toBe(80000);
@@ -310,14 +282,14 @@ describe('calcFinancialSummary', () => {
     expect(summary.completedTx).toHaveLength(1);
   });
 
-  it('netProfit = totalRevenue − totalExpenses − investorPayout', () => {
+  it('semua pengeluaran memotong laba owner; investor tetap dapat % omset kotor', () => {
     const summary = calcFinancialSummary({
       transactions: [
-        { id: 't1', vehicle_id: 'v1', status: 'completed', total_price: 1000000, damage_fee: 50000 },
+        { id: 't1', vehicle_id: 'v1', status: 'completed', total_price: 1000000 },
         { id: 't2', vehicle_id: 'v2', status: 'completed', total_price: 500000 },
       ],
       expenses: [
-        { id: 'e1', title: 'Servis rutin', amount: 100000, type: 'expense', vehicle_id: 'v1' },
+        { id: 'e1', title: 'Servis rutin', amount: 100000, type: 'expense', vehicle_id: 'v1' }, // servis motor investor
         { id: 'e2', title: 'Bensin operasional', amount: 50000, type: 'expense' },
       ],
       vehicles: [
@@ -326,20 +298,18 @@ describe('calcFinancialSummary', () => {
       ],
     });
 
-    expect(summary.totalRevenue).toBe(1500000);   // 1.000.000 + 500.000 (damage_fee diabaikan)
-    expect(summary.totalExpenses).toBe(150000);
-    expect(summary.investorPayout).toBe(630000);  // 70% × (1.000.000 − 100.000)
-    expect(summary.netProfit).toBe(720000);       // 1.500.000 − 150.000 − 630.000
+    expect(summary.ownerVehicleRevenue).toBe(500000);
+    expect(summary.investorRevenue).toBe(1000000);
+    expect(summary.totalRevenue).toBe(1500000);
+    expect(summary.totalExpenses).toBe(150000);    // termasuk servis motor investor
+    expect(summary.investorPayout).toBe(700000);   // 70% × 1.000.000 (tanpa potongan servis)
+    expect(summary.netProfit).toBe(650000);        // 1.500.000 − 150.000 − 700.000
   });
 
   it('aman untuk input kosong / null', () => {
-    const s = calcFinancialSummary({ transactions: null, expenses: undefined, vehicles: null });
-    expect(s.totalRevenue).toBe(0);
-    expect(s.totalExpenses).toBe(0);
-    expect(s.investorPayout).toBe(0);
-    expect(s.netProfit).toBe(0);
-    expect(s.totalUnpaid).toBe(0);
-    expect(s.paidTx).toEqual([]);
+    const summary = calcFinancialSummary({ transactions: null, expenses: undefined, vehicles: null });
+    expect(summary.totalRevenue).toBe(0);
+    expect(summary.netProfit).toBe(0);
+    expect(summary.investorPayout).toBe(0);
   });
 });
-

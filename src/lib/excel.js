@@ -255,7 +255,8 @@ export function exportFinancesToExcel(records, mode = 'all', filename = '') {
 
 /**
  * Export Laporan Bagi Hasil Investor Resmi ke File Excel (.xlsx)
- * @param {Object} investorData - { investorName, contact, sharePct, vehicles, transactions, expenses, totalRevenue, totalExpenses, netIncome, investorPayout, bossRentShare }
+ * @param {Object} investorData - { investorName, contact, sharePct, vehicles, transactions, totalRevenue, investorPayout, bossRentShare }
+ * Hak investor = % × omset kotor. Biaya servis/perawatan ditanggung Boss Rent.
  * @param {String} filename - Nama file
  */
 export function exportInvestorReportToExcel(investorData, filename = '') {
@@ -278,12 +279,11 @@ export function exportInvestorReportToExcel(investorData, filename = '') {
     ['Skema Bagi Hasil', `${sharePct}% Investor / ${bossSharePct}% Boss Rent`],
     [''],
     ['RINGKASAN REKAPITULASI FINANSIAL', ''],
-    ['Total Omset Kotor Sewa Motor (+)', formatRupiah(investorData.totalRevenue || 0)],
-    ['Total Biaya Perawatan & Servis (-)', formatRupiah(investorData.totalExpenses || 0)],
-    ['Laba Bersih Operasional Motor', formatRupiah(investorData.netIncome || 0)],
+    ['Total Omset Kotor Sewa Motor', formatRupiah(investorData.totalRevenue || 0)],
     [''],
-    [`TRANSFER NET PAYOUT KE INVESTOR (${sharePct}%)`, formatRupiah(investorData.investorPayout || 0)],
-    [`BAGIAN KOMISI BOSS RENT (${bossSharePct}%)`, formatRupiah(investorData.bossRentShare || 0)],
+    [`HAK INVESTOR (${sharePct}% DARI OMSET KOTOR)`, formatRupiah(investorData.investorPayout || 0)],
+    [`BAGIAN BOSS RENT (${bossSharePct}%)`, formatRupiah(investorData.bossRentShare || 0)],
+    ['Catatan', 'Biaya servis & perawatan motor ditanggung Boss Rent — tidak memotong hak investor.'],
     [''],
     ['DAFTAR UNIT MOTOR TITIPAN INVESTOR', '', '', '', ''],
     ['No', 'Nama Unit Motor', 'Plat Nomor', 'Tahun', 'Status Bagi Hasil']
@@ -329,21 +329,6 @@ export function exportInvestorReportToExcel(investorData, filename = '') {
   autoFitSheet(txSheet, txRows);
   XLSX.utils.book_append_sheet(workbook, txSheet, 'Detail Transaksi Sewa');
 
-  // ── SHEET 3: DETAIL BIAYA PERAWATAN & SERVIS MOTOR ──
-  const expRows = (investorData.expenses || []).map((e, idx) => ({
-    'No': idx + 1,
-    'Tanggal Servis': new Date(e.expense_date).toLocaleDateString('id-ID'),
-    'Unit Motor': e.vehicle_name || e.vehicles?.name || 'Armada Investor',
-    'Plat Nomor': e.plate_number || e.vehicles?.plate_number || '-',
-    'Keterangan Servis': e.title,
-    'Kategori': e.category || 'Servis & Perawatan',
-    'Biaya Servis (-)': formatRupiah(e.amount || 0),
-    'Catatan': e.notes || '-'
-  }));
-
-  const expSheet = XLSX.utils.json_to_sheet(expRows.length ? expRows : [{'Keterangan': 'Belum ada data pengeluaran servis'}]);
-  autoFitSheet(expSheet, expRows);
-  XLSX.utils.book_append_sheet(workbook, expSheet, 'Detail Biaya Servis');
 
   const cleanInvName = invName.toLowerCase().replace(/[^a-z0-9]/g, '-');
   const outName = filename || `laporan-bagi-hasil-investor-${cleanInvName}-${dateStr}.xlsx`;
