@@ -507,3 +507,24 @@ textarea.form-control { min-height: 88px; }
 .mlist-menu button:first-child { border-top: 0; }
 .mlist-menu button:hover { background: var(--bg-hover); }
 .mlist-menu button.danger { color: var(--status-danger); }
+
+/* ── Dropdown: panah digambar sendiri + ruang teks dijamin ──
+   Sebelumnya panah bawaan browser menimpa teks (mis. "September" terpotong). */
+select.form-control {
+  appearance: none; -webkit-appearance: none;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235B6474' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  text-overflow: ellipsis;
+}
+.dash2-select { min-width: 132px; }
+@media (max-width: 680px) {
+  .dash2-period { grid-template-columns: auto minmax(0, 1.4fr) minmax(0, 0.9fr); }
+  .dash2-select { min-width: 0; padding-right: 34px; background-position: right 10px center; }
+}
+
+/* ── Daftar Transaksi: tombol proporsional (tidak memenuhi lebar) ── */
+.mlist-actions { gap: 8px; align-items: center; }
+.mlist-actions .btn { flex: 0 0 auto; min-height: 40px; padding: 0 16px; font-size: 14px; }
+.mlist-actions .mlist-more { flex: 0 0 44px; padding: 0; margin-left: auto; }

@@ -67,5 +67,8 @@ export async function proxy(request) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/login'],
+  // Hanya /login yang diperiksa di proxy. Halaman dashboard sudah diperiksa di
+    // (dashboard)/layout.jsx — memeriksa dua kali berarti dua panggilan jaringan
+    // ke Supabase untuk setiap kali halaman dibuka.
+    matcher: ['/login'],
 };
