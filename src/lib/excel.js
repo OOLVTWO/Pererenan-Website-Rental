@@ -1,4 +1,11 @@
-import * as XLSX from 'xlsx';
+// xlsx (~1 MB) TIDAK diimpor statis: dulu ikut terunduh di halaman Laporan/
+// Keuangan/Customer walau tombol export tidak pernah ditekan. Sekarang dimuat
+// saat dibutuhkan saja.
+let xlsxPromise = null;
+function loadXLSX() {
+  if (!xlsxPromise) xlsxPromise = import('xlsx');
+  return xlsxPromise;
+}
 import { formatRupiah } from '@/lib/finance';
 
 // Re-export agar import lama dari '@/lib/excel' tetap berfungsi
@@ -7,7 +14,8 @@ export { formatRupiah };
 /**
  * Export transaksi ke file Excel (.xlsx)
  */
-export function exportTransactionsToExcel(transactions, filename = 'laporan-boss-rent') {
+export async function exportTransactionsToExcel(transactions, filename = 'laporan-boss-rent') {
+  const XLSX = await loadXLSX();
   const rows = transactions.map((t, index) => ({
     'No': index + 1,
     'Tanggal Transaksi': new Date(t.created_at).toLocaleDateString('id-ID'),
@@ -61,7 +69,8 @@ export function exportTransactionsToExcel(transactions, filename = 'laporan-boss
 /**
  * Export pengeluaran ke file Excel (.xlsx)
  */
-export function exportExpensesToExcel(expenses, filename = 'laporan-pengeluaran-boss-rent') {
+export async function exportExpensesToExcel(expenses, filename = 'laporan-pengeluaran-boss-rent') {
+  const XLSX = await loadXLSX();
   const rows = expenses.map((e, index) => ({
     'No': index + 1,
     'Tanggal': new Date(e.expense_date).toLocaleDateString('id-ID'),
@@ -149,7 +158,8 @@ const autoFitSheet = (sheet, rows) => {
  * @param {String} mode - 'all' | 'income' | 'expense'
  * @param {String} filename - Nama file hasil export
  */
-export function exportFinancesToExcel(records, mode = 'all', filename = '') {
+export async function exportFinancesToExcel(records, mode = 'all', filename = '') {
+  const XLSX = await loadXLSX();
   const workbook = XLSX.utils.book_new();
   const dateStr = new Date().toISOString().split('T')[0];
 
@@ -259,7 +269,8 @@ export function exportFinancesToExcel(records, mode = 'all', filename = '') {
  * Hak investor = % × omset kotor. Biaya servis/perawatan ditanggung Boss Rent.
  * @param {String} filename - Nama file
  */
-export function exportInvestorReportToExcel(investorData, filename = '') {
+export async function exportInvestorReportToExcel(investorData, filename = '') {
+  const XLSX = await loadXLSX();
   const workbook = XLSX.utils.book_new();
   const dateStr = new Date().toISOString().split('T')[0];
 
@@ -340,7 +351,8 @@ export function exportInvestorReportToExcel(investorData, filename = '') {
  * @param {Array} customers - Array object customer
  * @param {String} filename - Nama file yang dihasilkan
  */
-export function exportCustomersToExcel(customers, filename = '') {
+export async function exportCustomersToExcel(customers, filename = '') {
+  const XLSX = await loadXLSX();
   const workbook = XLSX.utils.book_new();
   const dateStr = new Date().toISOString().split('T')[0];
 

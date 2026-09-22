@@ -274,7 +274,7 @@ export default function CustomersPage() {
       alert('Belum ada data customer untuk di-export.');
       return;
     }
-    exportCustomersToExcel(customers);
+    exportCustomersToExcel(customers).catch(err => console.error("Export gagal:", err));
     showNotification('File backup Excel Data Customer berhasil di-download!');
   };
 

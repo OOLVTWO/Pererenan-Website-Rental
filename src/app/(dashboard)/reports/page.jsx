@@ -198,11 +198,11 @@ export default function ReportsPage() {
     setExporting(true);
     const dateRange = `${startDate}-sd-${endDate}`;
     if (activeReportTab === 'expenses') {
-      exportExpensesToExcel(realExpenses, `laporan-pengeluaran-${dateRange}`);
+      exportExpensesToExcel(realExpenses, `laporan-pengeluaran-${dateRange}`).catch(err => console.error("Export gagal:", err));
     } else if (activeReportTab === 'investor') {
       handleExportInvestorExcel();
     } else {
-      exportTransactionsToExcel(paidTx, `laporan-pemasukan-${dateRange}`);
+      exportTransactionsToExcel(paidTx, `laporan-pemasukan-${dateRange}`).catch(err => console.error("Export gagal:", err));
     }
     setTimeout(() => setExporting(false), 1000);
   };
@@ -373,7 +373,7 @@ export default function ReportsPage() {
             ) : paidTx.length === 0 ? (
               <div className="table-empty"><p>Tidak ada transaksi terbayar untuk periode ini</p></div>
             ) : (
-              <table className="table">
+              <table className="table table--stack-mobile">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -393,14 +393,14 @@ export default function ReportsPage() {
 
                     return (
                       <tr key={tx.id}>
-                        <td style={{ fontWeight: 700, color: 'var(--text-muted)' }}>{idx + 1}</td>
-                        <td>
+                        <td data-label="#" style={{ fontWeight: 700, color: 'var(--text-muted)' }}>{idx + 1}</td>
+                        <td data-label="Tgl Transaksi">
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12.5px', color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
                             <i className="fa-solid fa-calendar-day" style={{ color: 'var(--brand-primary-light)', fontSize: '11px' }}></i>
                             {new Date(tx.created_at || tx.start_date).toLocaleDateString('id-ID')}
                           </div>
                         </td>
-                        <td>
+                        <td data-label="Penyewa">
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                             <strong style={{ fontSize: '13.5px', color: 'var(--text-primary)' }}>{tx.renter_name}</strong>
                             {tx.renter_phone && (
@@ -410,7 +410,7 @@ export default function ReportsPage() {
                             )}
                           </div>
                         </td>
-                        <td>
+                        <td data-label="Motor">
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', minWidth: '180px' }}>
                             <strong style={{ fontSize: '13.5px', color: 'var(--text-primary)', lineHeight: 1.35 }}>{tx.vehicles?.name || '-'}</strong>
                             {tx.vehicles?.plate_number && (
@@ -423,7 +423,7 @@ export default function ReportsPage() {
                             )}
                           </div>
                         </td>
-                        <td>
+                        <td data-label="Durasi">
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '120px' }}>
                             <div>
                               <span className="tx-info-pill" style={{ color: '#60A5FA', borderColor: 'rgba(59, 130, 246, 0.35)', background: 'rgba(59, 130, 246, 0.15)', padding: '5px 12px', fontWeight: 700, fontSize: '11.5px', borderRadius: '50px' }}>
@@ -438,13 +438,13 @@ export default function ReportsPage() {
                             )}
                           </div>
                         </td>
-                        <td>
+                        <td data-label="Tarif Sewa">
                           <span style={{ fontSize: '13.5px', color: 'var(--text-primary)', fontWeight: 600 }}>{formatRupiah(totalPrice)}</span>
                         </td>
-                        <td>
+                        <td data-label="Total Pemasukan">
                           <strong style={{ fontSize: '14px', color: '#1D4ED8' }}>{formatRupiah(grandTotalIncome)}</strong>
                         </td>
-                        <td style={{ verticalAlign: 'middle' }}>{statusBadge(tx.status)}</td>
+                        <td data-label="Status" style={{ verticalAlign: 'middle' }}>{statusBadge(tx.status)}</td>
                       </tr>
                     );
                   })}
@@ -478,7 +478,7 @@ export default function ReportsPage() {
             ) : realExpenses.length === 0 ? (
               <div className="table-empty"><p>Tidak ada pengeluaran untuk periode ini</p></div>
             ) : (
-              <table className="table">
+              <table className="table table--stack-mobile">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -491,11 +491,11 @@ export default function ReportsPage() {
                 <tbody>
                   {realExpenses.map((exp, idx) => (
                     <tr key={exp.id}>
-                      <td>{idx + 1}</td>
-                      <td>{new Date(exp.expense_date).toLocaleDateString('id-ID')}</td>
-                      <td><strong>{exp.title}</strong></td>
-                      <td><span className="badge badge-muted">{exp.category}</span></td>
-                      <td><strong style={{ color: '#1E3A8A' }}>-{formatRupiah(exp.amount)}</strong></td>
+                      <td data-label="#">{idx + 1}</td>
+                      <td data-label="Tanggal">{new Date(exp.expense_date).toLocaleDateString('id-ID')}</td>
+                      <td data-label="Keterangan"><strong>{exp.title}</strong></td>
+                      <td data-label="Kategori"><span className="badge badge-muted">{exp.category}</span></td>
+                      <td data-label="Jumlah"><strong style={{ color: '#1E3A8A' }}>-{formatRupiah(exp.amount)}</strong></td>
                     </tr>
                   ))}
                 </tbody>
@@ -586,7 +586,7 @@ export default function ReportsPage() {
               {targetInvestorVehicles.length === 0 ? (
                 <div className="table-empty"><p>Tidak ada motor investor ditemukan untuk filter ini.</p></div>
               ) : (
-                <table className="table">
+                <table className="table table--stack-mobile">
                   <thead>
                     <tr>
                       <th>#</th>
@@ -603,21 +603,21 @@ export default function ReportsPage() {
                     {inv.perVehicle.map(({ vehicle: v, revenue: vRev, sharePct, payout: vPayout, ownerShare }, idx) => {
                       return (
                         <tr key={v.id}>
-                          <td style={{ fontWeight: 700, color: 'var(--text-muted)' }}>{idx + 1}</td>
-                          <td>
+                          <td data-label="#" style={{ fontWeight: 700, color: 'var(--text-muted)' }}>{idx + 1}</td>
+                          <td data-label="Motor & Plat">
                             <strong style={{ fontSize: '13.5px', color: 'var(--text-primary)' }}>{v.name}</strong>
                             <div style={{ fontSize: '11px', color: 'var(--brand-primary-light)', fontWeight: 600 }}>{v.plate_number}</div>
                           </td>
-                          <td>
+                          <td data-label="Investor / Pemilik">
                             <strong style={{ fontSize: '13px', color: '#1D4ED8' }}>{v.owner_name || 'Bagi Hasil'}</strong>
                           </td>
-                          <td style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{v.owner_contact || '-'}</td>
-                          <td>
+                          <td data-label="Kontak WA" style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{v.owner_contact || '-'}</td>
+                          <td data-label="Bagi Hasil (%)">
                             <span className="badge badge-success" style={{ fontSize: '11px' }}>{sharePct}% / {100 - sharePct}%</span>
                           </td>
-                          <td><strong style={{ color: 'var(--text-primary)' }}>{formatRupiah(vRev)}</strong></td>
-                          <td><strong style={{ color: '#1D4ED8', fontSize: '14px' }}>{formatRupiah(vPayout)}</strong></td>
-                          <td><strong style={{ color: 'var(--text-primary)' }}>{formatRupiah(ownerShare)}</strong></td>
+                          <td data-label="Omset Sewa"><strong style={{ color: 'var(--text-primary)' }}>{formatRupiah(vRev)}</strong></td>
+                          <td data-label="Hak Investor"><strong style={{ color: '#1D4ED8', fontSize: '14px' }}>{formatRupiah(vPayout)}</strong></td>
+                          <td data-label="Bagian Owner"><strong style={{ color: 'var(--text-primary)' }}>{formatRupiah(ownerShare)}</strong></td>
                         </tr>
                       );
                     })}

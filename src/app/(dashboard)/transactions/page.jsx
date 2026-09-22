@@ -2173,7 +2173,7 @@ const handleSubmit = async (formData) => {
               <p>Tidak ada transaksi ditemukan</p>
             </div>
           ) : (
-            <table className="table">
+            <table className="table table--stack-mobile">
               <thead>
                 <tr>
                   <th>#</th>
@@ -2189,8 +2189,8 @@ const handleSubmit = async (formData) => {
               <tbody>
                 {filtered.map((tx, idx) => (
                   <tr key={tx.id}>
-                    <td style={{ fontWeight: 700, color: 'var(--text-muted)' }}>{idx + 1}</td>
-                    <td>
+                    <td data-label="#" style={{ fontWeight: 700, color: 'var(--text-muted)' }}>{idx + 1}</td>
+                    <td data-label="Customer">
                       <div className="tx-customer-cell">
                         <div style={{ display: 'flex', position: 'relative', flexShrink: 0 }}>
                           <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'var(--bg-card-hover)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--bg-border)' }}>
@@ -2223,7 +2223,7 @@ const handleSubmit = async (formData) => {
                         </div>
                       </div>
                     </td>
-                    <td>
+                    <td data-label="Motor">
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: '180px' }}>
                         <strong style={{ fontSize: '13.5px', color: 'var(--text-primary)', lineHeight: 1.35 }}>
                           {tx.vehicles?.name || '-'}
@@ -2236,7 +2236,7 @@ const handleSubmit = async (formData) => {
                         </div>
                       </div>
                     </td>
-                    <td>
+                    <td data-label="Mulai / Selesai">
                       <div className="tx-date-cell">
                         <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>
                           <i className="fa-solid fa-calendar-plus" style={{ marginRight: '6px', fontSize: '11px', color: '#1D4ED8' }}></i>
@@ -2251,7 +2251,7 @@ const handleSubmit = async (formData) => {
                         </div>
                       </div>
                     </td>
-                    <td>
+                    <td data-label="Total & Diskon">
                       <div className="tx-price-cell">
                         <strong style={{ fontSize: '14px', color: '#1D4ED8' }}>{formatRupiah(tx.total_price)}</strong>
                         {tx.discount > 0 && (
@@ -2263,12 +2263,12 @@ const handleSubmit = async (formData) => {
                         )}
                       </div>
                     </td>
-                    <td>
+                    <td data-label="Denda / Deposit">
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', fontSize: '12px' }}>
                         <div>Dep: <strong>{formatRupiah(tx.deposit)}</strong></div>
                       </div>
                     </td>
-                    <td style={{ verticalAlign: 'middle' }}>
+                    <td data-label="Status" style={{ verticalAlign: 'middle' }}>
                       {statusBadge(tx.status, tx.payment_status)}
                       {tx.status === 'active' && tx.payment_status !== 'unpaid' && (
                         <div style={{ marginTop: '4px' }}>
@@ -2278,7 +2278,7 @@ const handleSubmit = async (formData) => {
                         </div>
                       )}
                     </td>
-                    <td style={{ verticalAlign: 'middle' }}>
+                    <td data-label="Aksi" style={{ verticalAlign: 'middle' }}>
                       <div className="tx-actions-cell">
                         {/* WhatsApp Invoice Button */}
                         <button

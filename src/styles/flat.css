@@ -284,3 +284,43 @@ html, body {
 
 /* Halaman yang membungkus dirinya lagi dengan .page-content (mis. Tracking) — cegah padding ganda */
 .page-content .page-content { padding: 0 !important; max-width: none !important; margin: 0 !important; }
+
+/* ════════════ RESPONSIF: tidak boleh ada yang terpotong ════════════ */
+html, body { max-width: 100%; overflow-x: hidden; }
+img, svg, video, canvas, iframe { max-width: 100%; height: auto; }
+.shell, .shell-main, .page-content, .card, .list-card, .stat-card, [class*="bento-card"] {
+  min-width: 0; max-width: 100%; box-sizing: border-box;
+}
+/* Elemen flex/grid tidak boleh memaksa induknya melebar */
+.card > *, .list-card > *, .page-content > *, .dash2-col > * { min-width: 0; }
+.table-wrapper { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+pre, code { white-space: pre-wrap; word-break: break-word; }
+
+@media (max-width: 680px) {
+  /* Form selalu satu kolom di HP */
+  .form-row, .form-row.cols-2, .form-row.cols-3 { grid-template-columns: minmax(0, 1fr) !important; }
+  .form-group { min-width: 0; }
+  .form-control, select.form-control, textarea.form-control { width: 100% !important; max-width: 100%; }
+
+  /* Header halaman & kartu boleh turun baris */
+  .page-header, .card-header, .page-actions { flex-wrap: wrap !important; gap: 10px; }
+  .page-actions .btn, .card-header .btn { flex: 1 1 auto; }
+
+  /* Modal: lembar penuh, isi tidak mepet */
+  .modal { padding: 18px 16px calc(18px + env(safe-area-inset-bottom, 0px)) !important; }
+  .modal-footer { flex-wrap: wrap; gap: 8px; }
+  .modal-footer .btn { flex: 1 1 140px; }
+
+  /* Tabel yang belum jadi kartu tetap bisa digeser di dalam kotaknya */
+  .table { min-width: 0; }
+  .table:not(.table--stack-mobile) { min-width: 560px; }
+
+  /* Grid statistik jadi 2 kolom, bukan memaksa 4 */
+  .stats-grid, .grid-3, .grid-4, .dash2-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .stat-value, .dash2-big { font-size: 20px; word-break: break-word; }
+}
+
+@media (max-width: 400px) {
+  .stats-grid, .grid-3, .grid-4 { grid-template-columns: minmax(0, 1fr) !important; }
+  .page-tab { font-size: 13px; padding: 0 12px; }
+}
