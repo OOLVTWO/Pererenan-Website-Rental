@@ -203,12 +203,12 @@ describe('calcVehicleRevenue', () => {
     expect(calcVehicleRevenue(v, tx)).toBe(500000);
   });
 
-  it('damage_fee hanya dihitung untuk transaksi completed', () => {
+  it('damage_fee (fitur dihapus) tidak lagi menambah omset', () => {
     const tx = [
       { vehicle_id: 'v1', status: 'completed', total_price: 100000, damage_fee: 50000 },
       { vehicle_id: 'v1', status: 'active', payment_status: 'paid', total_price: 100000, damage_fee: 30000 },
     ];
-    expect(calcVehicleRevenue(v, tx)).toBe(250000); // 100k+50k + 100k (damage active tidak dihitung)
+    expect(calcVehicleRevenue(v, tx)).toBe(200000); // 100k + 100k, damage_fee diabaikan
   });
 
   it('cocok juga via relasi vehicles.id', () => {
@@ -238,19 +238,19 @@ describe('calcInvestorPayouts', () => {
     const { perVehicle } = calcInvestorPayouts({ transactions, expenses, vehicles });
     expect(perVehicle).toHaveLength(1); // hanya motor investor
     const pv = perVehicle[0];
-    expect(pv.revenue).toBe(1050000);   // 1.000.000 + damage 50.000
+    expect(pv.revenue).toBe(1000000);   // damage_fee diabaikan
     expect(pv.expenses).toBe(100000);   // hanya e1 (vehicle_id) — e3 (nama saja) TIDAK ikut kehitung
-    expect(pv.net).toBe(950000);
+    expect(pv.net).toBe(900000);
     expect(pv.sharePct).toBe(70);
-    expect(pv.payout).toBe(665000);     // 70% × 950.000
+    expect(pv.payout).toBe(630000);     // 70% × 900.000
   });
 
   it('total hanya mencakup motor investor', () => {
     const r = calcInvestorPayouts({ transactions, expenses, vehicles });
-    expect(r.totalPayout).toBe(665000);
-    expect(r.totalRevenue).toBe(1050000);
+    expect(r.totalPayout).toBe(630000);
+    expect(r.totalRevenue).toBe(1000000);
     expect(r.totalExpenses).toBe(100000);
-    expect(r.totalNet).toBe(950000);
+    expect(r.totalNet).toBe(900000);
   });
 
   it('regression: expense yang cuma sebut nama model TIDAK memotong omset investor', () => {
@@ -282,7 +282,7 @@ describe('calcInvestorPayouts', () => {
 
 // ── calcFinancialSummary (integrasi semua aturan) ──
 describe('calcFinancialSummary', () => {
-  it('menerapkan aturan cash basis + damage fee + other income', () => {
+  it('menerapkan aturan cash basis + other income (damage_fee diabaikan)', () => {
     const summary = calcFinancialSummary({
       transactions: [
         { id: 't1', status: 'completed', total_price: 300000, damage_fee: 50000 },
@@ -298,12 +298,12 @@ describe('calcFinancialSummary', () => {
     });
 
     expect(summary.rentalRevenue).toBe(500000);    // 300k + 200k
-    expect(summary.damageFeeIncome).toBe(50000);
+    expect(summary.damageFeeIncome).toBeUndefined();
     expect(summary.otherIncome).toBe(25000);
-    expect(summary.totalRevenue).toBe(575000);
+    expect(summary.totalRevenue).toBe(525000);
     expect(summary.totalExpenses).toBe(80000);
     expect(summary.investorPayout).toBe(0);
-    expect(summary.netProfit).toBe(495000);        // 575k − 80k − 0
+    expect(summary.netProfit).toBe(445000);        // 525k − 80k − 0
     expect(summary.totalUnpaid).toBe(400000);
     expect(summary.paidTx).toHaveLength(2);
     expect(summary.unpaidTx).toHaveLength(1);
@@ -326,10 +326,10 @@ describe('calcFinancialSummary', () => {
       ],
     });
 
-    expect(summary.totalRevenue).toBe(1550000);   // 1.050.000 + 500.000
+    expect(summary.totalRevenue).toBe(1500000);   // 1.000.000 + 500.000 (damage_fee diabaikan)
     expect(summary.totalExpenses).toBe(150000);
-    expect(summary.investorPayout).toBe(665000);  // 70% × (1.050.000 − 100.000)
-    expect(summary.netProfit).toBe(735000);       // 1.550.000 − 150.000 − 665.000
+    expect(summary.investorPayout).toBe(630000);  // 70% × (1.000.000 − 100.000)
+    expect(summary.netProfit).toBe(720000);       // 1.500.000 − 150.000 − 630.000
   });
 
   it('aman untuk input kosong / null', () => {

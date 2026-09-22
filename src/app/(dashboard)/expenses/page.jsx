@@ -5,7 +5,6 @@ import { useSearchParams } from 'next/navigation';
 import { exportFinancesToExcel } from '@/lib/excel';
 import { getLocalDateStr } from '@/lib/finance';
 import { createClient } from '@/lib/supabase/client';
-import { TX_LIGHT_SELECT } from '@/lib/queryColumns';
 
 const VALID_TYPE_TABS = ['all', 'income', 'expense'];
 
@@ -462,55 +461,27 @@ export default function FinancesPage() {
   const fetchRecords = useCallback(async () => {
     setLoading(true);
     try {
-      const [expRes, txRes] = await Promise.all([
-        fetch('/api/expenses').then(r => r.json()).catch(() => []),
-        // Hanya transaksi selesai yang punya klaim denda (bukan seluruh transaksi)
-        fetch('/api/transactions?status=completed&damage_only=1').then(r => r.json()).catch(() => [])
-      ]);
-
+      // Keuangan hanya membaca tabel expenses. (Klaim denda otomatis dari
+      // transaksi dihapus — fitur denda tidak pernah dipakai; penalty dicatat
+      // manual sebagai pemasukan.)
+      const expRes = await fetch('/api/expenses').then(r => r.json()).catch(() => null);
       let manualRecords = Array.isArray(expRes) ? expRes : [];
-      let txRecords = Array.isArray(txRes) ? txRes : [];
 
       // Fallback: jika API gagal (non-array), ambil langsung dari Supabase
-      if (!Array.isArray(expRes) || !Array.isArray(txRes)) {
+      if (!Array.isArray(expRes)) {
         try {
           const supabase = createClient();
-          if (!Array.isArray(expRes)) {
-            const { data: expData } = await supabase
-              .from('expenses')
-              .select('*')
-              .order('expense_date', { ascending: false });
-            manualRecords = expData || [];
-          }
-          if (!Array.isArray(txRes)) {
-            const { data: txData } = await supabase
-              .from('transactions')
-              .select(TX_LIGHT_SELECT)
-              .eq('status', 'completed')
-              .gt('damage_fee', 0)
-              .order('created_at', { ascending: false });
-            txRecords = txData || [];
-          }
+          const { data: expData } = await supabase
+            .from('expenses')
+            .select('*')
+            .order('expense_date', { ascending: false });
+          manualRecords = expData || [];
         } catch (fbErr) {
           console.warn('Supabase fallback (expenses) gagal:', fbErr);
         }
       }
 
-      // Generate auto income rows for completed rental transactions with deposit damage fee > 0
-      const autoDepositIncomes = txRecords
-        .filter(t => t.status === 'completed' && Number(t.damage_fee || 0) > 0)
-        .map(t => ({
-          id: `damage_claim_${t.id}`,
-          type: 'income',
-          expense_date: t.end_date ? t.end_date.split('T')[0] : (t.created_at ? t.created_at.split('T')[0] : new Date().toISOString().split('T')[0]),
-          title: `Klaim Denda Kerusakan — ${t.renter_name} (${t.vehicles?.name || 'Motor'})`,
-          category: 'income_deposit_forfeit',
-          amount: Math.round(Number(t.damage_fee || 0)),
-          notes: `Otomatis dari denda ganti rugi fisik deposit (Plat: ${t.vehicles?.plate_number || '-'})`,
-          isAutoTransaction: true
-        }));
-
-      const combined = [...manualRecords, ...autoDepositIncomes].sort((a, b) => new Date(b.expense_date) - new Date(a.expense_date));
+      const combined = [...manualRecords].sort((a, b) => new Date(b.expense_date) - new Date(a.expense_date));
       setRecords(combined);
       setNeedsMigration(false);
     } catch (err) {

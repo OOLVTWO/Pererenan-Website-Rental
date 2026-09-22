@@ -376,16 +376,14 @@ export default function ReportsPage() {
                     <th>Motor</th>
                     <th>Durasi</th>
                     <th>Tarif Sewa</th>
-                    <th>Klaim Denda Kerusakan</th>
                     <th>Total Pemasukan</th>
                     <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paidTx.map((tx, idx) => {
-                    const damageFee = Number(tx.damage_fee || 0);
                     const totalPrice = Number(tx.total_price || 0);
-                    const grandTotalIncome = totalPrice + (tx.status === 'completed' ? damageFee : 0);
+                    const grandTotalIncome = totalPrice;
 
                     return (
                       <tr key={tx.id}>
@@ -436,15 +434,6 @@ export default function ReportsPage() {
                         </td>
                         <td>
                           <span style={{ fontSize: '13.5px', color: 'var(--text-primary)', fontWeight: 600 }}>{formatRupiah(totalPrice)}</span>
-                        </td>
-                        <td>
-                          {tx.status === 'completed' && damageFee > 0 ? (
-                            <span style={{ color: '#22C55E', fontWeight: 700, fontSize: '13px' }}>
-                              +{formatRupiah(damageFee)}
-                            </span>
-                          ) : (
-                            <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>-</span>
-                          )}
                         </td>
                         <td>
                           <strong style={{ fontSize: '14px', color: '#22C55E' }}>{formatRupiah(grandTotalIncome)}</strong>
@@ -518,7 +507,7 @@ export default function ReportsPage() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '600px', margin: '20px 0' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '8px', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
-              <span>Total Pemasukan (Sewa + Denda + Lainnya):</span>
+              <span>Total Pemasukan (Sewa + Lainnya):</span>
               <strong style={{ color: '#22C55E', fontSize: '16px' }}>{formatRupiah(totalRevenue)}</strong>
             </div>
 

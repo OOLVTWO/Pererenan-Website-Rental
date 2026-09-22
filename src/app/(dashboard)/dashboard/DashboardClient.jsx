@@ -245,10 +245,7 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
   const activeTx           = safeTx.filter(t => t.status === 'active');
   const completedTx        = filteredTx.filter(t => t.status === 'completed');
   const totalDepositHeld   = activeTx.reduce((s, t) => s + Number(t.deposit || 0), 0);
-  const totalDepositDamage = completedTx.reduce((s, t) => s + Number(t.damage_fee || 0), 0);
-  const totalDepositReturned = completedTx.reduce((s, t) => {
-    return s + Math.max(0, Number(t.deposit || 0) - Number(t.damage_fee || 0));
-  }, 0);
+  const totalDepositReturned = completedTx.reduce((s, t) => s + Number(t.deposit || 0), 0);
 
   const unpaidTx    = safeTx.filter(t => t.status === 'active' && t.payment_status === 'unpaid');
   const totalUnpaid = unpaidTx.reduce((s, t) => s + Number(t.total_price || 0), 0);
@@ -460,7 +457,7 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
               <i className="fa-solid fa-vault" style={{ color: 'var(--brand-primary)' }}></i>
               Rekap Deposit Jaminan
             </div>
-            <div className="dash-card-sub">Monitoring garansi &amp; klaim denda</div>
+            <div className="dash-card-sub">Monitoring deposit jaminan</div>
           </div>
           <div className="dash-deposit-list">
             <div className="dash-deposit-item dep-held">
@@ -470,14 +467,6 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
                 <div className="dep-count">{activeTx.length} sewa berjalan</div>
               </div>
               <div className="dep-amount" style={{ color: '#F59E0B' }}>{formatRupiah(totalDepositHeld)}</div>
-            </div>
-            <div className="dash-deposit-item dep-damage">
-              <div className="dep-dot"></div>
-              <div className="dep-info">
-                <div className="dep-name">Klaim Denda Ganti Rugi</div>
-                <div className="dep-count">Masuk sebagai pemasukan</div>
-              </div>
-              <div className="dep-amount" style={{ color: '#A855F7' }}>{formatRupiah(totalDepositDamage)}</div>
             </div>
             <div className="dash-deposit-item dep-returned">
               <div className="dep-dot"></div>

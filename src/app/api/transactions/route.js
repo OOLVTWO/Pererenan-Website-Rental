@@ -9,7 +9,6 @@ const VALID_PAYMENT = ['paid', 'unpaid'];
 // GET /api/transactions
 //   ?status=active|completed|cancelled
 //   ?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD   (filter created_at)
-//   ?damage_only=1                               (hanya yang ada klaim denda)
 //   ?view=photo_ids                              (hanya id transaksi yang punya foto serah terima)
 //
 // Default mengembalikan kolom RINGAN tanpa foto (lihat lib/queryColumns.js).
@@ -23,7 +22,6 @@ export async function GET(request) {
   const status = searchParams.get('status');
   const startDate = searchParams.get('start_date');
   const endDate = searchParams.get('end_date');
-  const damageOnly = searchParams.get('damage_only') === '1';
   const view = searchParams.get('view');
 
   if (view === 'photo_ids') {
@@ -49,7 +47,6 @@ export async function GET(request) {
     if (status && status !== 'all') query = query.eq('status', status);
     if (startDate) query = query.gte('created_at', startDate.includes('T') ? startDate : `${startDate}T00:00:00Z`);
     if (endDate) query = query.lte('created_at', endDate.includes('T') ? endDate : `${endDate}T23:59:59Z`);
-    if (damageOnly) query = query.gt('damage_fee', 0);
     return query;
   };
 

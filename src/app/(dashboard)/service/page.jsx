@@ -19,7 +19,6 @@ const LEVEL_META = {
 };
 
 const FIRST_YEAR = 2026;
-const ISSUE_LOOKBACK_DAYS = 120;
 
 function formatDateId(value) {
   if (!value) return '-';
@@ -230,7 +229,6 @@ function ServicePageInner() {
 
   const [vehicles, setVehicles] = useState([]);
   const [logs, setLogs] = useState([]);
-  const [issues, setIssues] = useState([]);
   const [loadingVehicles, setLoadingVehicles] = useState(true);
   const [loadingLogs, setLoadingLogs] = useState(true);
   const [needsMigration, setNeedsMigration] = useState(false);
@@ -256,20 +254,9 @@ function ServicePageInner() {
 
   const loadVehicles = useCallback(async () => {
     setLoadingVehicles(true);
-    const sinceIssues = getLocalDateStr(new Date(Date.now() - ISSUE_LOOKBACK_DAYS * 86400000));
-    const [vRes, iRes] = await Promise.all([
-      supabase.from('vehicles').select(VEHICLE_LIGHT_COLUMNS).order('name'),
-      // Keluhan penyewa saat pengembalian (kolom ringan saja, tanpa foto).
-      supabase.from('transactions')
-        .select('id, vehicle_id, renter_name, end_date, issues_reported')
-        .not('issues_reported', 'is', null).neq('issues_reported', '')
-        .gte('end_date', sinceIssues)
-        .order('end_date', { ascending: false })
-        .limit(200),
-    ]);
+    const vRes = await supabase.from('vehicles').select(VEHICLE_LIGHT_COLUMNS).order('name');
     if (vRes.error) showAlert('danger', `Gagal memuat data motor: ${vRes.error.message}`);
     setVehicles(vRes.data || []);
-    setIssues(iRes.data || []);
     setLoadingVehicles(false);
   }, [supabase]);
 
@@ -305,21 +292,17 @@ function ServicePageInner() {
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { loadLogs(); }, [loadLogs]);
 
-  // Status servis per motor + keluhan penyewa sejak servis terakhir
+  // Status servis per motor
   const vehicleRows = useMemo(() => {
     return vehicles.map(v => {
       const status = getServiceStatus(v, intervals);
-      const lastServiceDay = v.last_serviced_at ? String(v.last_serviced_at).slice(0, 10) : null;
-      const openIssues = issues.filter(i =>
-        i.vehicle_id === v.id && (!lastServiceDay || String(i.end_date).slice(0, 10) >= lastServiceDay)
-      );
-      return { vehicle: v, status, openIssues };
+      return { vehicle: v, status };
     }).sort((a, b) =>
       LEVEL_META[a.status.level].order - LEVEL_META[b.status.level].order
       || (b.status.kmSince ?? -1) - (a.status.kmSince ?? -1)
       || String(a.vehicle.name).localeCompare(String(b.vehicle.name))
     );
-  }, [vehicles, intervals, issues]);
+  }, [vehicles, intervals]);
 
   const counts = useMemo(() => {
     const c = { due: 0, soon: 0, unknown: 0, ok: 0 };
@@ -328,7 +311,7 @@ function ServicePageInner() {
   }, [vehicleRows]);
 
   const visibleRows = vehicleRows.filter(r => {
-    if (statusFilter === 'attention') return r.status.level === 'due' || r.status.level === 'soon' || r.openIssues.length > 0;
+    if (statusFilter === 'attention') return r.status.level === 'due' || r.status.level === 'soon';
     if (statusFilter === 'all') return true;
     return r.status.level === statusFilter;
   });
@@ -369,7 +352,7 @@ function ServicePageInner() {
   };
 
   const statusChips = [
-    { key: 'attention', label: 'Perlu perhatian', count: vehicleRows.filter(r => r.status.level === 'due' || r.status.level === 'soon' || r.openIssues.length > 0).length },
+    { key: 'attention', label: 'Perlu perhatian', count: vehicleRows.filter(r => r.status.level === 'due' || r.status.level === 'soon').length },
     { key: 'due', label: 'Perlu servis', count: counts.due },
     { key: 'soon', label: 'Segera', count: counts.soon },
     { key: 'unknown', label: 'Belum ada data', count: counts.unknown },
@@ -447,7 +430,7 @@ function ServicePageInner() {
             <div className="table-empty" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>
               {statusFilter === 'attention' ? 'Semua motor aman — tidak ada yang perlu perhatian.' : 'Tidak ada motor di kategori ini.'}
             </div>
-          ) : visibleRows.map(({ vehicle: v, status: s, openIssues }) => {
+          ) : visibleRows.map(({ vehicle: v, status: s }) => {
             const meta = LEVEL_META[s.level];
             return (
               <div key={v.id} style={{ display: 'flex', gap: '12px', alignItems: 'center', padding: '12px 16px', borderTop: '1px solid var(--bg-border)', flexWrap: 'wrap' }}>
@@ -470,13 +453,6 @@ function ServicePageInner() {
                     )}
                     <span style={{ color: 'var(--text-muted)' }}> · KM sekarang {formatKm(v.current_km)}</span>
                   </div>
-                  {openIssues.length > 0 && (
-                    <div style={{ fontSize: '12px', color: 'var(--status-warning)', marginTop: '4px' }}>
-                      <i className="fa-solid fa-comment-dots" style={{ marginRight: '4px' }}></i>
-                      Keluhan penyewa: {openIssues.slice(0, 2).map(i => `“${i.issues_reported}” (${formatDateId(i.end_date)})`).join('; ')}
-                      {openIssues.length > 2 && ` +${openIssues.length - 2} lagi`}
-                    </div>
-                  )}
                 </div>
                 <span className={`badge ${meta.badge}`}>{meta.label}</span>
                 <div style={{ display: 'flex', gap: '6px' }}>

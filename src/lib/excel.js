@@ -21,7 +21,6 @@ export function exportTransactionsToExcel(transactions, filename = 'laporan-boss
     'Tarif/Hari': t.vehicles?.rate_per_day || 0,
     'Diskon': t.discount || 0,
     'Total Harga': t.total_price,
-    'Biaya Kerusakan': t.damage_fee || 0,
     'Deposit': t.deposit || 0,
     'Metode Bayar': t.payment_method?.toUpperCase() || 'CASH',
     'Status': t.status === 'active' ? 'Aktif' : t.status === 'completed' ? 'Selesai' : 'Dibatalkan',
@@ -322,8 +321,7 @@ export function exportInvestorReportToExcel(investorData, filename = '') {
     'Plat Nomor': t.vehicles?.plate_number || '-',
     'Durasi (Hari)': t.duration_days,
     'Harga Sewa Pokok': formatRupiah(t.total_price || 0),
-    'Klaim Denda Kerusakan': Number(t.damage_fee || 0) > 0 ? formatRupiah(t.damage_fee) : '-',
-    'Total Omset Transaksi': formatRupiah(Number(t.total_price || 0) + Number(t.damage_fee || 0)),
+    'Total Omset Transaksi': formatRupiah(Number(t.total_price || 0)),
     'Status': t.status === 'completed' ? 'Selesai' : t.status === 'active' ? 'Aktif' : 'Batal'
   }));
 

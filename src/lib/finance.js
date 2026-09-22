@@ -15,7 +15,8 @@
 //     payout = max(0, sharePct% × (omset motor − biaya servis motor tsb))
 //     (PERUBAHAN: payout tidak pernah negatif — rugi operasional motor
 //      tidak menjadi "hutang investor" yang mengurangi laba usaha)
-//  3. Klaim denda kerusakan (damage_fee) diakui saat transaksi selesai.
+//  3. Penalty/denda dicatat manual sebagai pemasukan di menu Keuangan
+//     (fitur denda di transaksi dihapus — tidak pernah dipakai).
 //  4. Laba Bersih Boss Rent = Total Pemasukan − Pengeluaran − Bagi Hasil Investor
 // ─────────────────────────────────────────────────────────────
 
@@ -110,11 +111,10 @@ export function expenseMatchesVehicle(e, v) {
 }
 
 // Total omset sebuah motor dari transaksi yang sudah diakui (paid).
-// Klaim denda hanya dihitung untuk transaksi selesai.
 export function calcVehicleRevenue(vehicle, transactions) {
   return transactions
     .filter(t => (t.vehicle_id === vehicle.id || t.vehicles?.id === vehicle.id) && isPaidTransaction(t))
-    .reduce((s, t) => s + Number(t.total_price || 0) + (t.status === 'completed' ? Number(t.damage_fee || 0) : 0), 0);
+    .reduce((s, t) => s + Number(t.total_price || 0), 0);
 }
 
 // Kalkulasi bagi hasil SEMUA motor investor, per motor (basis NET).
@@ -171,9 +171,8 @@ export function calcFinancialSummary({ transactions, expenses, vehicles }) {
   const unpaidTx = safeTx.filter(t => t.status === 'active' && t.payment_status === 'unpaid');
 
   const rentalRevenue = paidTx.reduce((s, t) => s + Number(t.total_price || 0), 0);
-  const damageFeeIncome = completedTx.reduce((s, t) => s + Number(t.damage_fee || 0), 0);
   const otherIncome = safeExp.filter(isIncomeEntry).reduce((s, e) => s + Number(e.amount || 0), 0);
-  const totalRevenue = rentalRevenue + damageFeeIncome + otherIncome;
+  const totalRevenue = rentalRevenue + otherIncome;
   const totalExpenses = safeExp.filter(e => !isIncomeEntry(e)).reduce((s, e) => s + Number(e.amount || 0), 0);
 
   const { totalPayout: investorPayout } = calcInvestorPayouts({ transactions: safeTx, expenses: safeExp, vehicles });
@@ -185,7 +184,6 @@ export function calcFinancialSummary({ transactions, expenses, vehicles }) {
     completedTx,
     unpaidTx,
     rentalRevenue,
-    damageFeeIncome,
     otherIncome,
     totalRevenue,
     totalExpenses,

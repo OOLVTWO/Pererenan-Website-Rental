@@ -13,8 +13,8 @@
 
 export const TX_LIGHT_COLUMNS = [
   'id', 'vehicle_id', 'renter_name', 'renter_phone', 'renter_id_number', 'renter_address',
-  'start_date', 'end_date', 'duration_days', 'total_price', 'deposit', 'discount', 'damage_fee',
-  'km_start', 'km_end', 'payment_method', 'payment_status', 'status', 'issues_reported', 'notes',
+  'start_date', 'end_date', 'duration_days', 'total_price', 'deposit', 'discount',
+  'km_start', 'km_end', 'payment_method', 'payment_status', 'status', 'notes',
   'created_at', 'updated_at',
 ].join(', ');
 

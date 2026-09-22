@@ -386,156 +386,6 @@ function CountryCodePicker({ value, onChange }) {
   );
 }
 
-// ===== SMART PRICE RECOMMENDATION PANEL =====
-function SmartPriceRecommendationPanel({ vehicle, startDate, endDate, selectedOptionId, onSelectOption }) {
-  if (!vehicle || !startDate || !endDate) return null;
-
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  if (isNaN(start.getTime()) || isNaN(end.getTime()) || end < start) return null;
-
-  const durationDays = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
-  const dailyRate = Number(vehicle.rate_per_day) || 0;
-  const weeklyRate = Number(vehicle.rate_per_week) || 0;
-  const monthlyRate = Number(vehicle.rate_per_month) || 0;
-
-  // Option 1: Daily Rate
-  const dailyTotal = durationDays * dailyRate;
-
-  // Option 2: Weekly Hybrid Rate
-  let weeklyOption = null;
-  if (weeklyRate > 0) {
-    const weeks = Math.floor(durationDays / 7);
-    const remDays = durationDays % 7;
-    const mixCost = (weeks * weeklyRate) + (remDays * dailyRate);
-    const fullWeeksCeil = Math.ceil(durationDays / 7);
-    const flatWeeklyCost = fullWeeksCeil * weeklyRate;
-
-    const bestWeeklyCost = Math.min(mixCost, flatWeeklyCost);
-    const isFlatCheaper = flatWeeklyCost < mixCost;
-
-    weeklyOption = {
-      id: 'weekly',
-      name: 'Weekly Rate Tier',
-      badge: 'BEST VALUE (7+ DAYS)',
-      total: bestWeeklyCost,
-      savings: dailyTotal - bestWeeklyCost,
-      detail: isFlatCheaper
-        ? `${fullWeeksCeil} full week(s) @ ${formatRupiah(weeklyRate)}`
-        : weeks > 0
-          ? `${weeks} week(s) @ ${formatRupiah(weeklyRate)}${remDays > 0 ? ` + ${remDays} day(s) @ ${formatRupiah(dailyRate)}` : ''}`
-          : `${remDays} day(s) @ ${formatRupiah(dailyRate)}`
-    };
-  }
-
-  // Option 3: Monthly Hybrid Rate
-  let monthlyOption = null;
-  if (monthlyRate > 0) {
-    const months = Math.floor(durationDays / 30);
-    const remDaysMonth = durationDays % 30;
-    const remWeeks = Math.floor(remDaysMonth / 7);
-    const remDaysFinal = remDaysMonth % 7;
-
-    const effWeekly = weeklyRate > 0 ? weeklyRate : (dailyRate * 7);
-    const mixMonthCost = (months * monthlyRate) + (remWeeks * effWeekly) + (remDaysFinal * dailyRate);
-
-    const fullMonthsCeil = Math.max(1, Math.ceil(durationDays / 30));
-    const flatMonthCost = fullMonthsCeil * monthlyRate;
-
-    const bestMonthCost = Math.min(mixMonthCost, flatMonthCost);
-    const isFlatMonthCheaper = flatMonthCost < mixMonthCost;
-
-    monthlyOption = {
-      id: 'monthly',
-      name: 'Monthly Rate Tier',
-      badge: 'LONG TERM (30+ DAYS)',
-      total: bestMonthCost,
-      savings: dailyTotal - bestMonthCost,
-      detail: isFlatMonthCheaper
-        ? `${fullMonthsCeil} full month(s) @ ${formatRupiah(monthlyRate)}`
-        : months > 0
-          ? `${months} month(s) @ ${formatRupiah(monthlyRate)}${remDaysMonth > 0 ? ` + extra ${remDaysMonth} day(s)` : ''}`
-          : `1 month rate @ ${formatRupiah(monthlyRate)}`
-    };
-  }
-
-  const options = [
-    {
-      id: 'daily',
-      name: 'Standard Daily',
-      badge: 'DAILY RATE',
-      total: dailyTotal,
-      savings: 0,
-      detail: `${durationDays} day(s) × ${formatRupiah(dailyRate)}/day`
-    }
-  ];
-
-  if (weeklyOption) options.push(weeklyOption);
-  if (monthlyOption) options.push(monthlyOption);
-
-  // Find lowest price option
-  let recommendedId = 'daily';
-  let minTotal = dailyTotal;
-  options.forEach(opt => {
-    if (opt.total < minTotal) {
-      minTotal = opt.total;
-      recommendedId = opt.id;
-    }
-  });
-
-  const activeOptionId = selectedOptionId || recommendedId;
-
-  return (
-    <div className="smart-calc-panel" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--bg-border)', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
-      <div className="smart-calc-header" style={{ marginBottom: '12px' }}>
-        <div className="smart-calc-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>
-          <i className="fa-solid fa-wand-magic-sparkles" style={{ color: 'var(--brand-primary)' }}></i>
-          <span>Smart Price Calculator</span>
-          <span className="smart-calc-days" style={{ fontSize: '11px', color: 'var(--text-muted)', background: 'var(--bg-hover)', padding: '2px 8px', borderRadius: '12px' }}>{durationDays} Days Duration</span>
-        </div>
-      </div>
-
-      <div className="smart-calc-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
-        {options.map(opt => {
-          const isRec = opt.id === recommendedId;
-          const isSelected = activeOptionId === opt.id;
-
-          return (
-            <div
-              key={opt.id}
-              className={`smart-calc-card`}
-              onClick={() => onSelectOption(opt.id, opt.total)}
-              style={{
-                background: isSelected ? 'rgba(37, 99, 235, 0.1)' : 'var(--bg-elevated)',
-                border: `1px solid ${isSelected ? 'var(--brand-primary)' : 'var(--bg-border)'}`,
-                borderRadius: '8px',
-                padding: '12px',
-                cursor: 'pointer',
-                position: 'relative',
-                textAlign: 'center'
-              }}
-            >
-              {isRec && (
-                <div className="rec-ribbon" style={{ fontSize: '9px', fontWeight: 800, color: '#fff', background: 'var(--brand-primary)', padding: '2px 6px', borderRadius: '4px', marginBottom: '6px', display: 'inline-block' }}>
-                  <i className="fa-solid fa-crown" style={{ marginRight: '4px' }}></i> Recommended
-                </div>
-              )}
-              <div className="smart-card-name" style={{ fontWeight: 600, fontSize: '12px' }}>{opt.name}</div>
-              <div className="smart-card-price" style={{ fontWeight: 800, fontSize: '16px', color: 'var(--brand-primary-light)', margin: '4px 0' }}>{formatRupiah(opt.total)}</div>
-              <div className="smart-card-detail" style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '8px' }}>{opt.detail}</div>
-              {opt.savings > 0 && (
-                <div className="smart-card-savings" style={{ fontSize: '10px', color: '#22C55E', fontWeight: 700 }}>
-                  Saves {formatRupiah(opt.savings)}!
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 // ===== SEARCHABLE REGISTERED CUSTOMER PICKER COMBOBOX =====
 function CustomerPickerCombobox({ onSelectCustomer }) {
   const [customers, setCustomers] = useState([]);
@@ -1721,8 +1571,6 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
 // ===== MODAL COMPLETE / FINISH TRANSACTION =====
 function CompleteModal({ isOpen, onClose, onConfirm, tx }) {
   const [kmEnd, setKmEnd] = useState('');
-  const [damageFee, setDamageFee] = useState('');
-  const [issuesReported, setIssuesReported] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Prefill form saat modal dibuka — pola resmi React
@@ -1733,16 +1581,12 @@ function CompleteModal({ isOpen, onClose, onConfirm, tx }) {
     setPrevCompleteKey(completeKey);
     if (completeKey) {
       setKmEnd(tx.km_end || tx.km_start || '');
-      setDamageFee(tx.damage_fee || '');
-      setIssuesReported(tx.issues_reported || '');
     }
   }
 
   if (!isOpen || !tx) return null;
 
   const deposit = Number(tx.deposit) || 0;
-  const dmgFee = Number(damageFee) || 0;
-  const refundAmount = Math.max(0, deposit - dmgFee);
   const totalKmDriven = (Number(kmEnd) || 0) - (Number(tx.km_start) || 0);
 
   const handleSubmit = async (e) => {
@@ -1751,8 +1595,6 @@ function CompleteModal({ isOpen, onClose, onConfirm, tx }) {
     await onConfirm(tx.id, {
       vehicle_id: tx.vehicle_id,
       km_end: Number(kmEnd) || tx.km_start || 0,
-      damage_fee: dmgFee,
-      issues_reported: issuesReported,
     });
     setLoading(false);
     onClose();
@@ -1795,53 +1637,14 @@ function CompleteModal({ isOpen, onClose, onConfirm, tx }) {
             )}
           </div>
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="comp-damage">
-              <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: '6px' }}></i> Denda Kerusakan / Keterlambatan (Rp)
-            </label>
-            <input
-              id="comp-damage"
-              type="number"
-              className="form-control"
-              placeholder="0 (Potong dari deposit)"
-              value={damageFee}
-              onChange={e => setDamageFee(e.target.value)}
-              min="0"
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label" htmlFor="comp-issues">
-              <i className="fa-solid fa-robot" style={{ marginRight: '6px' }}></i> Keluhan / Kendala Kendaraan (Untuk AI Diagnostic)
-            </label>
-            <textarea
-              id="comp-issues"
-              className="form-control"
-              rows={2}
-              placeholder="e.g. Rem agak blong, bodi kanan lecet, oli mesin minta ganti..."
-              value={issuesReported}
-              onChange={e => setIssuesReported(e.target.value)}
-              style={{ resize: 'vertical' }}
-            />
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
-              *Catatan keluhan akan otomatis dianalisis oleh engine <strong>AI Maintenance & Diagnostic</strong>.
-            </div>
-          </div>
-
           <div className="alert alert-info" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Deposit Jaminan Awal:</span>
               <strong>{formatRupiah(deposit)}</strong>
             </div>
-            {dmgFee > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#EF4444' }}>
-                <span>Dipotong Denda / Kerusakan:</span>
-                <strong>-{formatRupiah(dmgFee)}</strong>
-              </div>
-            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '6px', fontSize: '15px', fontWeight: 800, color: '#22C55E' }}>
               <span>Deposit Yang Dikembalikan Ke Customer:</span>
-              <span>{formatRupiah(refundAmount)}</span>
+              <span>{formatRupiah(deposit)}</span>
             </div>
           </div>
 
@@ -2294,7 +2097,7 @@ const handleSubmit = async (formData) => {
   };
 
   const handleComplete = async (txId, completeData) => {
-    const { vehicle_id, km_end, damage_fee, issues_reported } = completeData;
+    const { vehicle_id, km_end } = completeData;
 
     // 1. Update Transaction status to 'completed'
     const txRes = await fetch(`/api/transactions/${txId}`, {
@@ -2303,8 +2106,6 @@ const handleSubmit = async (formData) => {
       body: JSON.stringify({
         status: 'completed',
         km_end,
-        damage_fee,
-        issues_reported,
       }),
     });
 
@@ -2323,7 +2124,7 @@ const handleSubmit = async (formData) => {
     if (txRes.ok) {
       const tx = transactions.find(t => t.id === txId);
       const deposit = Number(tx?.deposit) || 0;
-      const refund = Math.max(0, deposit - Number(damage_fee));
+      const refund = deposit;
       setSuccessModal({
         open: true,
         message: `Transaksi telah diselesaikan! Odometer motor diperbarui ke ${km_end.toLocaleString('id-ID')} KM. Deposit sebesar ${formatRupiah(refund)} dikembalikan ke customer.`
@@ -2518,13 +2319,6 @@ const handleSubmit = async (formData) => {
                     <td>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', fontSize: '12px' }}>
                         <div>Dep: <strong>{formatRupiah(tx.deposit)}</strong></div>
-                        {tx.damage_fee > 0 && (
-                          <div>
-                            <span className="tx-info-pill" style={{ color: '#EF4444', borderColor: 'rgba(239, 68, 68, 0.3)', background: 'rgba(239, 68, 68, 0.1)' }}>
-                              Denda: +{formatRupiah(tx.damage_fee)}
-                            </span>
-                          </div>
-                        )}
                       </div>
                     </td>
                     <td style={{ verticalAlign: 'middle' }}>
