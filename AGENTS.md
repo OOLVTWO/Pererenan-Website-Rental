@@ -43,11 +43,19 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
 - `compressImage` / `compressImageToBlob` di `src/lib/imageCompressor.js` (maks 1280px untuk foto serah terima).
 - Foto katalog motor (`vehicles.image_url`) masih base64 — hanya dimuat di halaman Data Motor.
 
+## Aturan bisnis (dikonfirmasi owner)
+- **Bagi hasil investor = persentase × OMSET KOTOR motor investor.** Pengeluaran apa pun — termasuk biaya
+  servis motor investor — TIDAK memotong bagian investor; semuanya ditanggung owner dan mengurangi laba
+  bersih owner (`calcInvestorPayouts` / `calcFinancialSummary` di `src/lib/finance.js`).
+- **Servis Motor = pencatatan manual saja.** Tidak ada deteksi jadwal servis, tidak ada interval, tidak ada KM.
+- **Kilometer (odometer) tidak dipakai di mana pun**: tidak di form transaksi, modal selesai, maupun data motor.
+- Pengaturan panel disimpan di localStorage + tabel `app_settings` (migration 005) lewat `src/lib/appSettings.js`,
+  supaya ikut ke semua perangkat admin.
+
 ## Data
 - Kategori pengeluaran default = `other`. Data lama berkategori `service` sebagian besar bukan servis motor.
-- Jejak servis ada di tabel `service_logs`; kolom `vehicles.last_service_km / last_serviced_at / current_km`
-  disinkronkan otomatis dari catatan servis terbaru (`src/lib/serviceLogServer.js`).
-- Interval servis (km / hari) disimpan di localStorage `boss_rent_biz_settings` (Pengaturan → Profil Bisnis).
+- Catatan servis ada di tabel `service_logs` (tanggal, pekerjaan, bengkel, biaya, catatan). Kolom KM di tabel
+  dibiarkan kosong; kolom `vehicles.current_km / last_service_km / last_serviced_at` tidak dipakai lagi.
 
 ## Desain (sejak redesign flat)
 - Flat & ringan: putih + satu biru (`--brand-primary` #1D4ED8), abu hanya untuk teks/garis. Tanpa gradient,

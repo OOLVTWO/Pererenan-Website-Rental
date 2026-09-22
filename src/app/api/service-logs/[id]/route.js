@@ -5,7 +5,6 @@ import {
   SERVICE_LOG_SELECT,
   getVehicleBasic,
   syncServiceExpense,
-  syncVehicleServiceInfo,
 } from '@/lib/serviceLogServer';
 import { NextResponse } from 'next/server';
 
@@ -57,11 +56,6 @@ export async function PUT(request, { params }) {
       .select(SERVICE_LOG_SELECT)
       .single();
     if (error) throw new Error(error.message);
-
-    await syncVehicleServiceInfo(supabase, input.vehicle_id);
-    if (existing.vehicle_id && existing.vehicle_id !== input.vehicle_id) {
-      await syncVehicleServiceInfo(supabase, existing.vehicle_id);
-    }
     return NextResponse.json(data);
   } catch (err) {
     console.error('PUT /api/service-logs error:', err.message);
@@ -88,8 +82,6 @@ export async function DELETE(request, { params }) {
       const { error: expErr } = await supabase.from('expenses').delete().eq('id', existing.expense_id);
       if (expErr) console.error('DELETE service-log: gagal hapus expense terkait:', expErr.message);
     }
-
-    await syncVehicleServiceInfo(supabase, existing.vehicle_id);
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('DELETE /api/service-logs error:', err.message);

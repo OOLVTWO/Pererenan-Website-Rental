@@ -14,8 +14,8 @@ import {
 } from '@/lib/countryCodes';
 import { updateFavicon } from '@/lib/favicon';
 import { fetchAllRows } from '@/lib/queryColumns';
+import { pushSettings, pullSettings } from '@/lib/appSettings';
 import { uploadHandoverPhoto } from '@/lib/handoverPhoto';
-import { DEFAULT_SERVICE_INTERVAL_KM, DEFAULT_SERVICE_INTERVAL_DAYS } from '@/lib/serviceLog';
 import PageTabs from '@/components/ui/PageTabs';
 
 // Panel Pengaturan difokuskan untuk ADMINISTRASI saja.
@@ -30,8 +30,6 @@ const DEFAULT_BIZ_FORM = {
   logoUrl: '/images/logoCompany.png',
   location: 'Jl. Pantai Pererenan No.119, Pererenan, Kec. Mengwi, Kabupaten Badung, Bali 80351',
   phone: '+62 812-3710-9751',
-  serviceIntervalKm: DEFAULT_SERVICE_INTERVAL_KM,
-  serviceIntervalDays: DEFAULT_SERVICE_INTERVAL_DAYS,
 };
 
 // Tabel yang ikut dihitung & di-backup. service_logs opsional (migration 002).
@@ -131,6 +129,7 @@ export default function SettingsPage() {
   const handleSaveWaInvoiceTemplate = (e) => {
     e.preventDefault();
     saveWaTemplate(waInvoiceText);
+    syncToCloud();
     showAlert('Format custom WhatsApp Invoice berhasil disimpan!');
     setWaSavedAlert('invoice');
     setTimeout(() => setWaSavedAlert(null), 5000);
@@ -145,6 +144,7 @@ export default function SettingsPage() {
   const handleSaveWaReminderTemplate = (e) => {
     e.preventDefault();
     saveWaReminderTemplate(waReminderText);
+    syncToCloud();
     showAlert('Format custom WhatsApp Reminder (Pengingat) berhasil disimpan!');
     setWaSavedAlert('reminder');
     setTimeout(() => setWaSavedAlert(null), 5000);
@@ -163,6 +163,10 @@ export default function SettingsPage() {
   const handleInsertReminderTag = (tag) => {
     setWaReminderText(prev => prev + ` ${tag}`);
   };
+
+  // Pengaturan disimpan di perangkat ini DAN di database, supaya ikut ke
+  // perangkat lain (HP ↔ laptop).
+  const syncToCloud = useCallback(() => { pushSettings(createClient()); }, []);
 
   const showAlert = (message, type = 'success', title = '') => {
     setAlert({
@@ -243,7 +247,8 @@ export default function SettingsPage() {
 
   useEffect(() => {
     // Defer ke microtask: hindari setState sinkron di dalam effect
-    Promise.resolve().then(() => {
+    Promise.resolve().then(async () => {
+      await pullSettings(createClient());
       fetchStats();
       setPaymentMethodsState(getPaymentMethods());
       const saved = readSavedBiz();
@@ -252,8 +257,6 @@ export default function SettingsPage() {
         logoUrl: saved.logoUrl || DEFAULT_BIZ_FORM.logoUrl,
         location: saved.location || DEFAULT_BIZ_FORM.location,
         phone: saved.phone || DEFAULT_BIZ_FORM.phone,
-        serviceIntervalKm: Number(saved.serviceIntervalKm ?? saved.oilInterval) || DEFAULT_SERVICE_INTERVAL_KM,
-        serviceIntervalDays: Number(saved.serviceIntervalDays) || DEFAULT_SERVICE_INTERVAL_DAYS,
       });
     });
   }, [fetchStats]);
@@ -338,6 +341,7 @@ export default function SettingsPage() {
 
     setPaymentMethodsState(updated);
     savePaymentMethods(updated);
+    syncToCloud();
     setShowPaymentModal(false);
     setEditPayment(null);
     showAlert('Metode pembayaran berhasil disimpan!');
@@ -348,6 +352,7 @@ export default function SettingsPage() {
     const updated = paymentMethods.map(m => m.id === id ? { ...m, active: !m.active } : m);
     setPaymentMethodsState(updated);
     savePaymentMethods(updated);
+    syncToCloud();
   };
 
   // Delete Payment Method
@@ -359,6 +364,7 @@ export default function SettingsPage() {
     const updated = paymentMethods.filter(m => m.id !== id);
     setPaymentMethodsState(updated);
     savePaymentMethods(updated);
+    syncToCloud();
     showAlert('Metode pembayaran dihapus.');
   };
 
@@ -401,14 +407,8 @@ export default function SettingsPage() {
   // Save Business Settings
   const handleSaveBizSettings = (e) => {
     e.preventDefault();
-    const km = Math.round(Number(bizForm.serviceIntervalKm));
-    const days = Math.round(Number(bizForm.serviceIntervalDays));
-    if (!(km > 0) || !(days > 0)) {
-      showAlert('Interval servis harus berupa angka lebih dari 0.', 'danger');
-      return;
-    }
     // Gabungkan dengan data lama supaya key lain di localStorage tidak hilang.
-    const merged = { ...readSavedBiz(), ...bizForm, serviceIntervalKm: km, serviceIntervalDays: days };
+    const merged = { ...readSavedBiz(), ...bizForm };
     try {
       localStorage.setItem(BIZ_SETTINGS_KEY, JSON.stringify(merged));
     } catch {
@@ -416,7 +416,8 @@ export default function SettingsPage() {
       return;
     }
     if (merged.logoUrl) updateFavicon(merged.logoUrl);
-    showAlert('Profil bisnis & interval servis tersimpan.');
+    syncToCloud();
+    showAlert('Profil bisnis tersimpan — ikut ke perangkat lain.');
   };
 
   return (
@@ -550,24 +551,6 @@ export default function SettingsPage() {
             <textarea className="form-control" rows={2} value={bizForm.location} onChange={e => setBizForm(p => ({ ...p, location: e.target.value }))} />
           </div>
 
-          <div>
-            <h4 style={{ margin: '4px 0 2px' }}><i className="fa-solid fa-screwdriver-wrench" style={{ marginRight: '6px' }}></i> Interval servis rutin</h4>
-            <p style={{ margin: '0 0 10px', fontSize: '12.5px', color: 'var(--text-muted)' }}>
-              Motor ditandai &quot;Perlu servis&quot; di halaman Servis Motor & Dashboard jika salah satu batas terlewati.
-            </p>
-            <div className="form-row cols-2">
-              <div className="form-group">
-                <label className="form-label">Setiap (km)</label>
-                <input type="number" min="1" inputMode="numeric" className="form-control" value={bizForm.serviceIntervalKm}
-                  onChange={e => setBizForm(p => ({ ...p, serviceIntervalKm: e.target.value }))} required />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Atau setiap (hari)</label>
-                <input type="number" min="1" inputMode="numeric" className="form-control" value={bizForm.serviceIntervalDays}
-                  onChange={e => setBizForm(p => ({ ...p, serviceIntervalDays: e.target.value }))} required />
-              </div>
-            </div>
-          </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <button type="submit" className="btn btn-primary">

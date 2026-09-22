@@ -464,7 +464,7 @@ export default function TrackingPage() {
       const txRes = await fetch(`/api/transactions/${txId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'completed', km_end: 0 }),
+        body: JSON.stringify({ status: 'completed' }),
       });
 
       if (!txRes.ok) {
@@ -473,7 +473,7 @@ export default function TrackingPage() {
         const supabase = createClient();
         const { error: txError } = await supabase
           .from('transactions')
-          .update({ status: 'completed', km_end: 0 })
+          .update({ status: 'completed' })
           .eq('id', txId);
         if (txError) throw txError;
         // Update vehicle status langsung

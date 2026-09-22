@@ -26,7 +26,6 @@ export const TX_LIGHT_SELECT = `${TX_LIGHT_COLUMNS}, ${TX_VEHICLE_JOIN}`;
 export const VEHICLE_LIGHT_COLUMNS = [
   'id', 'name', 'plate_number', 'year', 'color', 'category', 'status', 'notes',
   'rate_per_day', 'rate_per_week', 'rate_per_month',
-  'current_km', 'last_service_km', 'last_serviced_at',
   'owner_type', 'owner_name', 'owner_contact', 'revenue_share_percentage',
   'created_at', 'updated_at',
 ].join(', ');

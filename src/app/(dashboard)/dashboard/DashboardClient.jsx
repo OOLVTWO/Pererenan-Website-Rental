@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
-import { getServiceIntervals, getServiceStatus } from '@/lib/serviceLog';
 import { calcFinancialSummary, formatRupiah, getLocalMonthStr, getLocalDateStr, toLocalDateStr, isPaidTransaction, isIncomeEntry } from '@/lib/finance';
 
 const MONTH_NAMES = [
@@ -49,9 +48,6 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
   // datanya memang belum pernah diminta dari server.
   const [extraYearData, setExtraYearData] = useState(null); // { year, transactions, expenses }
   const [loadingYear, setLoadingYear] = useState(false);
-  const [serviceIntervals, setServiceIntervals] = useState(null);
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- baca localStorage setelah mount
-  useEffect(() => { setServiceIntervals(getServiceIntervals()); }, []);
 
   // Tahun mana yang SEDANG dilihat user, baik lewat mode Bulanan (tahun ikut
   // bagian dari selectedMonth) maupun mode Tahunan (selectedYear).
@@ -135,10 +131,6 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
   const viewingExtraYear = extraYearData?.year === viewingYear && viewingYear !== String(effectiveLoadedYear);
   const safeTx       = viewingExtraYear ? (extraYearData.transactions || []) : (Array.isArray(transactions) ? transactions : []);
   const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
-  // Pengingat servis: interval dibaca dari localStorage setelah mount (hindari hydration mismatch).
-  const serviceDueVehicles = serviceIntervals
-    ? safeVehicles.filter(v => getServiceStatus(v, serviceIntervals).level === 'due')
-    : [];
   const safeExpenses = viewingExtraYear ? (extraYearData.expenses || []) : (Array.isArray(expenses) ? expenses : []);
 
   const periodRange = useMemo(() => {
@@ -247,7 +239,6 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
     overdueTx.length > 0 && { href: '/tracking?tab=overdue', icon: 'fa-solid fa-circle-exclamation', title: `${overdueTx.length} sewa lewat jatuh tempo`, sub: 'Hubungi penyewa sekarang' },
     dueSoonTx.length > 0 && { href: '/tracking?tab=critical', icon: 'fa-regular fa-clock', title: `${dueSoonTx.length} sewa berakhir hari ini/besok`, sub: 'Kirim pengingat WhatsApp' },
     unpaidTx.length > 0 && { href: '/transactions', icon: 'fa-solid fa-money-bill-wave', title: `${unpaidTx.length} sewa belum dibayar`, sub: `Total ${formatRupiah(totalUnpaid)}` },
-    serviceDueVehicles.length > 0 && { href: '/service', icon: 'fa-solid fa-screwdriver-wrench', title: `${serviceDueVehicles.length} motor waktunya servis`, sub: serviceDueVehicles.slice(0, 3).map(v => v.name).join(', ') },
     maintenanceCount > 0 && { href: '/tracking?view=armada&tab=maintenance', icon: 'fa-solid fa-wrench', title: `${maintenanceCount} motor dalam perawatan`, sub: 'Belum bisa disewakan' },
   ].filter(Boolean);
 

@@ -6,7 +6,6 @@ import {
   SERVICE_LOG_SELECT,
   getVehicleBasic,
   syncServiceExpense,
-  syncVehicleServiceInfo,
   isMissingTableError,
 } from '@/lib/serviceLogServer';
 import { NextResponse } from 'next/server';
@@ -86,8 +85,6 @@ export async function POST(request) {
       }
       throw new Error(error.message);
     }
-
-    await syncVehicleServiceInfo(supabase, input.vehicle_id);
     return NextResponse.json(data, { status: 201 });
   } catch (err) {
     console.error('POST /api/service-logs error:', err.message);

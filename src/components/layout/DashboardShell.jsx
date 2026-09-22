@@ -7,6 +7,7 @@ import BottomNav from '@/components/layout/BottomNav';
 import { createClient } from '@/lib/supabase/client';
 import { startVisiblePolling } from '@/lib/visiblePolling';
 import { updateFavicon } from '@/lib/favicon';
+import { pullSettings } from '@/lib/appSettings';
 
 function daysLeft(endDate) {
   const today = new Date();
@@ -26,6 +27,13 @@ export default function DashboardShell({ user, children }) {
   const [trackingAlerts, setTrackingAlerts] = useState(0);
 
   useEffect(() => {
+    // Ambil pengaturan terbaru dari database (berlaku di semua perangkat)
+    pullSettings(createClient()).then(changed => {
+      try {
+        const biz = JSON.parse(localStorage.getItem('boss_rent_biz_settings') || '{}');
+        if (changed && biz.logoUrl) updateFavicon(biz.logoUrl);
+      } catch { /* ignore */ }
+    });
     try {
       const saved = JSON.parse(localStorage.getItem('boss_rent_biz_settings') || '{}');
       if (saved.logoUrl) updateFavicon(saved.logoUrl);

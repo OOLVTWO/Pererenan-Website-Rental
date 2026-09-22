@@ -383,7 +383,6 @@ function getDefaultVehicleForm() {
     rate_per_week: '',
     rate_per_month: '',
     image_url: '',
-    current_km: 15000,
     status: 'available',
     notes: '',
     // Investor & Ownership Fields
@@ -413,7 +412,6 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
           rate_per_week: editData.rate_per_week || '',
           rate_per_month: editData.rate_per_month || '',
           image_url: editData.image_url || '',
-          current_km: editData.current_km || 15000,
           status: editData.status || 'available',
           notes: editData.notes || '',
           owner_type: editData.owner_type || (editData.owner_name ? 'investor' : 'internal'),
@@ -429,7 +427,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const numericFields = ['rate_per_day', 'rate_per_week', 'rate_per_month', 'current_km', 'revenue_share_percentage'];
+    const numericFields = ['rate_per_day', 'rate_per_week', 'rate_per_month', 'revenue_share_percentage'];
     if (numericFields.includes(name)) {
       setForm({ ...form, [name]: value.replace(/[^0-9]/g, '') });
     } else {
@@ -462,7 +460,6 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
       rate_per_day:   safeInt(form.rate_per_day),
       rate_per_week:  safeInt(form.rate_per_week),
       rate_per_month: safeInt(form.rate_per_month),
-      current_km:     safeInt(form.current_km),
       revenue_share_percentage: safeInt(form.revenue_share_percentage) || 70,
     });
     setLoading(false);
@@ -482,7 +479,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                 <><i className="fa-solid fa-motorcycle" style={{ marginRight: '6px' }}></i> Tambah Motor Baru</>
               )}
             </div>
-            <div className="modal-subtitle">Isi informasi kendaraan rental & kilometer Odometer</div>
+            <div className="modal-subtitle">Isi informasi kendaraan rental</div>
           </div>
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
@@ -555,28 +552,12 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
             </div>
           </div>
 
-          <div className="form-row cols-2">
+          <div className="form-row">
             <div className="form-group">
               <label className="form-label" htmlFor="v-color">
                 <i className="fa-solid fa-palette" style={{ marginRight: '6px' }}></i> Warna <span className="required">*</span>
               </label>
               <input id="v-color" name="color" type="text" className="form-control" placeholder="Hitam, Putih, Merah..." value={form.color} onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="v-km">
-                <i className="fa-solid fa-gauge-high" style={{ marginRight: '6px' }}></i> Kilometer Saat Ini (Odometer)
-              </label>
-              <input
-                id="v-km"
-                name="current_km"
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                className="form-control"
-                placeholder="15000"
-                value={form.current_km}
-                onChange={handleChange}
-              />
             </div>
           </div>
 
@@ -1259,7 +1240,6 @@ export default function VehiclesPage() {
                   <div className="vehicle-card-meta" style={{ marginTop: '8px' }}>
                     <span><i className="fa-solid fa-calendar-days" style={{ marginRight: '4px' }}></i> {vehicle.year}</span>
                     <span><i className="fa-solid fa-palette" style={{ marginRight: '4px' }}></i> {vehicle.color}</span>
-                    <span><i className="fa-solid fa-gauge-high" style={{ marginRight: '4px' }}></i> {vehicle.current_km ? `${vehicle.current_km.toLocaleString('id-ID')} KM` : '-'}</span>
                   </div>
                   {isInvestorUnit && (
                     <div style={{ marginTop: '8px' }}>

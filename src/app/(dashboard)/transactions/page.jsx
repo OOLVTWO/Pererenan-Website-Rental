@@ -528,7 +528,6 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
     deposit: '',
     discount: '',
     handover_image_url: '',
-    km_start: '',
     payment_method: 'cash',
     payment_status: 'paid',
     status: 'active',
@@ -631,7 +630,6 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           deposit: editData.deposit || '',
           discount: editData.discount || '',
           handover_image_url: editData.handover_image_url || '',
-          km_start: editData.km_start || '',
           payment_method: editData.payment_method || 'cash',
           payment_status: editData.payment_status || 'paid',
           status: editData.status || 'active',
@@ -665,7 +663,6 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           deposit: '',
           discount: '',
           handover_image_url: '',
-          km_start: '',
           payment_method: 'cash',
           payment_status: 'paid',
           status: 'active',
@@ -693,10 +690,6 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
         const disc  = parseFloat(form.discount) || 0;
         setTotalPrice(Math.max(0, gross - disc));
 
-        // Auto-fill KM awal dari data motor jika belum diisi
-        if (!form.km_start && vehicle.current_km) {
-          setForm(prev => ({ ...prev, km_start: vehicle.current_km }));
-        }
       }
     } else {
       setTotalPrice(0);
@@ -859,8 +852,8 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
             </div>
           </div>
 
-          {/* ── Tanggal Mulai, Selesai & KM Awal ── */}
-          <div className="form-row cols-3">
+          {/* ── Tanggal Mulai & Selesai ── */}
+          <div className="form-row cols-2">
             <div className="form-group">
               <label className="form-label" htmlFor="tx-start">
                 <i className="fa-solid fa-calendar-plus" style={{ marginRight: '6px' }}></i> Tanggal Mulai <span className="required">*</span>
@@ -872,22 +865,6 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
                 <i className="fa-solid fa-calendar-check" style={{ marginRight: '6px' }}></i> Tanggal Selesai <span className="required">*</span>
               </label>
               <input id="tx-end" name="end_date" type="date" className="form-control" value={form.end_date} onChange={handleChange} min={form.start_date} required />
-            </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="tx-km-start">
-                <i className="fa-solid fa-gauge-high" style={{ marginRight: '6px' }}></i> KM Awal Odometer
-              </label>
-              <input
-                id="tx-km-start"
-                name="km_start"
-                type="number"
-                className="form-control"
-                placeholder="e.g. 18500"
-                value={form.km_start}
-                onChange={handleChange}
-                min="0"
-                style={{ MozAppearance: 'textfield' }}
-              />
             </div>
           </div>
 
@@ -1570,32 +1547,16 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
 
 // ===== MODAL COMPLETE / FINISH TRANSACTION =====
 function CompleteModal({ isOpen, onClose, onConfirm, tx }) {
-  const [kmEnd, setKmEnd] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Prefill form saat modal dibuka — pola resmi React
-  // "adjust state during render" (menggantikan useEffect + setState sinkron)
-  const [prevCompleteKey, setPrevCompleteKey] = useState(null);
-  const completeKey = isOpen && tx ? tx.id : null;
-  if (completeKey !== prevCompleteKey) {
-    setPrevCompleteKey(completeKey);
-    if (completeKey) {
-      setKmEnd(tx.km_end || tx.km_start || '');
-    }
-  }
 
   if (!isOpen || !tx) return null;
 
   const deposit = Number(tx.deposit) || 0;
-  const totalKmDriven = (Number(kmEnd) || 0) - (Number(tx.km_start) || 0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await onConfirm(tx.id, {
-      vehicle_id: tx.vehicle_id,
-      km_end: Number(kmEnd) || tx.km_start || 0,
-    });
+    await onConfirm(tx.id, { vehicle_id: tx.vehicle_id });
     setLoading(false);
     onClose();
   };
@@ -1615,27 +1576,9 @@ function CompleteModal({ isOpen, onClose, onConfirm, tx }) {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label" htmlFor="comp-km">
-              <i className="fa-solid fa-gauge-high" style={{ marginRight: '6px' }}></i> KM Akhir Odometer Kendaraan <span className="required">*</span>
-            </label>
-            <input
-              id="comp-km"
-              type="number"
-              className="form-control"
-              placeholder="e.g. 19200"
-              value={kmEnd}
-              onChange={e => setKmEnd(e.target.value)}
-              min={tx.km_start || 0}
-              required
-            />
-            {totalKmDriven > 0 && (
-              <div style={{ fontSize: '11px', color: 'var(--brand-primary-light)', marginTop: '4px' }}>
-                <i className="fa-solid fa-route" style={{ marginRight: '4px' }}></i>
-                Total jarak tempuh selama sewa: <strong>+{totalKmDriven.toLocaleString('id-ID')} KM</strong>
-              </div>
-            )}
-          </div>
+          <p style={{ margin: '0 0 12px', fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            Motor akan kembali berstatus <strong>Tersedia</strong> setelah sewa ini diselesaikan.
+          </p>
 
           <div className="alert alert-info" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -2112,27 +2055,21 @@ const handleSubmit = async (formData) => {
   };
 
   const handleComplete = async (txId, completeData) => {
-    const { vehicle_id, km_end } = completeData;
+    const { vehicle_id } = completeData;
 
     // 1. Update Transaction status to 'completed'
     const txRes = await fetch(`/api/transactions/${txId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        status: 'completed',
-        km_end,
-      }),
+      body: JSON.stringify({ status: 'completed' }),
     });
 
-    // 2. Update Vehicle odometer & set status back to 'available'
-    if (vehicle_id && km_end > 0) {
+    // 2. Motor kembali tersedia
+    if (vehicle_id) {
       await fetch(`/api/vehicles/${vehicle_id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          current_km: km_end,
-          status: 'available',
-        }),
+        body: JSON.stringify({ status: 'available' }),
       });
     }
 
@@ -2142,7 +2079,9 @@ const handleSubmit = async (formData) => {
       const refund = deposit;
       setSuccessModal({
         open: true,
-        message: `Transaksi telah diselesaikan! Odometer motor diperbarui ke ${km_end.toLocaleString('id-ID')} KM. Deposit sebesar ${formatRupiah(refund)} dikembalikan ke customer.`
+        message: refund > 0
+          ? `Transaksi telah diselesaikan. Deposit ${formatRupiah(refund)} dikembalikan ke customer.`
+          : 'Transaksi telah diselesaikan. Motor kembali tersedia.'
       });
       fetchAll();
     } else {
@@ -2241,7 +2180,6 @@ const handleSubmit = async (formData) => {
                   <th>Customer</th>
                   <th>Motor</th>
                   <th>Mulai / Selesai</th>
-                  <th>KM Odometer</th>
                   <th>Total & Diskon</th>
                   <th>Denda / Deposit</th>
                   <th>Status</th>
@@ -2311,12 +2249,6 @@ const handleSubmit = async (formData) => {
                         <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: 600 }}>
                           Durasi: {tx.duration_days} Hari
                         </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '12px' }}>
-                        <div>Start: <strong>{tx.km_start ? `${tx.km_start} KM` : '-'}</strong></div>
-                        <div>End: <strong>{tx.km_end ? `${tx.km_end} KM` : '-'}</strong></div>
                       </div>
                     </td>
                     <td>

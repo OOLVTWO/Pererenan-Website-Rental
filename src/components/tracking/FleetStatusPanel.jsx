@@ -145,12 +145,9 @@ function VehicleCard({ vehicle, activeTransaction }) {
         </div>
       )}
 
-      {/* KM Info */}
+      {/* Warna motor */}
       <div className="avail-km-row">
-        <i className="fa-solid fa-gauge" style={{ color: '#5B6474', fontSize: '11px' }}></i>
-        <span>{(vehicle.current_km || 0).toLocaleString('id-ID')} km</span>
-        <span className="avail-km-sep">·</span>
-        <i className="fa-solid fa-paint-roller" style={{ color: vehicle.color ? '#A78BFA' : '#5B6474', fontSize: '11px' }}></i>
+        <i className="fa-solid fa-paint-roller" style={{ color: '#5B6474', fontSize: '11px' }}></i>
         <span>{vehicle.color || '-'}</span>
       </div>
     </div>

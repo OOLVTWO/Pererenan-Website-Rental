@@ -15,7 +15,7 @@ Next.js 16 (App Router) + Supabase (Postgres, Auth, Storage), di-deploy di **Ver
 | Data Customer | Master data penyewa + riwayat |
 | Data Motor | Armada, tarif, motor investor |
 | Tracking Sewa | Sewa aktif, overdue, pengingat WhatsApp + tab Status Armada (tersedia/disewa/perawatan) |
-| Servis Motor | Jejak servis per motor, status "perlu servis" (km / hari) |
+| Servis Motor | Catatan servis per motor (tanggal, pekerjaan, bengkel, biaya) |
 | Keuangan | Pemasukan & pengeluaran |
 | Laporan | Laporan periode + export Excel, bagi hasil investor |
 | Pengaturan | Profil bisnis, metode pembayaran, template WA, password, backup |
@@ -62,6 +62,7 @@ Skema ada di `supabase/migrations/` (idempotent, aman dijalankan ulang):
 - `002_service_logs.sql` — jejak servis motor
 - `003_handover_photo_storage.sql` — bucket privat `handover-photos`
 - `004_admin_allowlist.sql` — hanya akun di `admin_users` yang bisa akses data
+- `005_app_settings.sql` — pengaturan panel tersimpan per akun (ikut ke semua perangkat)
 
 Jalankan lewat Supabase → SQL Editor bila membuat project baru.
 
