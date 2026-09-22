@@ -492,7 +492,7 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
               <div className="qbtn-label">Transaksi Baru</div>
               <div className="qbtn-sub">Catat sewa motor</div>
             </Link>
-            <Link href="/availability" className="dash-quick-btn q-blue">
+            <Link href="/tracking?view=armada" className="dash-quick-btn q-blue">
               <i className="fa-solid fa-circle-half-stroke"></i>
               <div className="qbtn-label">Cek Armada</div>
               <div className="qbtn-sub">Status real-time</div>
@@ -587,7 +587,7 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
               </div>
               <div className="dash-card-sub">{safeVehicles.length} unit terdaftar</div>
             </div>
-            <Link href="/availability" className="btn btn-secondary btn-sm">
+            <Link href="/tracking?view=armada" className="btn btn-secondary btn-sm">
               Selengkapnya <i className="fa-solid fa-arrow-right" style={{ marginLeft: '4px' }}></i>
             </Link>
           </div>

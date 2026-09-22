@@ -5,6 +5,12 @@
  * default ke project "Pererenan Website Rental"). Tidak ada secret key.
  */
 const nextConfig = {
+  // Halaman Ketersediaan digabung ke Tracking (tab "Status Armada").
+  async redirects() {
+    return [
+      { source: '/availability', destination: '/tracking?view=armada', permanent: false },
+    ];
+  },
   async headers() {
     return [
       {

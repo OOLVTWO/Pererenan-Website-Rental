@@ -6,18 +6,27 @@ import { createClient } from '@/lib/supabase/client';
 import { TX_LIGHT_SELECT, VEHICLE_LIGHT_COLUMNS } from '@/lib/queryColumns';
 import { startVisiblePolling } from '@/lib/visiblePolling';
 import { getWhatsAppShareUrl, getWaReminderTemplate } from '@/lib/countryCodes';
+import FleetStatusPanel, { FLEET_FILTERS } from '@/components/tracking/FleetStatusPanel';
 
 const VALID_TRACKING_TABS = ['all', 'overdue', 'critical', 'upcoming'];
 
-// Reads ?tab= so the sidebar "Tracking Sewa" dropdown links land on the
-// right filter. Split out because useSearchParams() requires a Suspense
-// boundary.
-function TabFromQuery({ onTab }) {
+// Reads ?view= & ?tab= so the sidebar "Tracking Sewa" dropdown links land on
+// the right view/filter. Split out because useSearchParams() requires a
+// Suspense boundary.
+//   /tracking?tab=overdue               → Sewa Aktif, filter Overdue
+//   /tracking?view=armada&tab=available → Status Armada, filter Tersedia
+function TabFromQuery({ onView, onTab, onFleetTab }) {
   const searchParams = useSearchParams();
   useEffect(() => {
+    const view = searchParams.get('view') === 'armada' ? 'armada' : 'sewa';
     const tab = searchParams.get('tab');
-    if (tab && VALID_TRACKING_TABS.includes(tab)) onTab(tab);
-  }, [searchParams, onTab]);
+    onView(view);
+    if (view === 'armada') {
+      onFleetTab(tab && FLEET_FILTERS.includes(tab) ? tab : 'all');
+    } else if (tab && VALID_TRACKING_TABS.includes(tab)) {
+      onTab(tab);
+    }
+  }, [searchParams, onView, onTab, onFleetTab]);
   return null;
 }
 
@@ -425,6 +434,8 @@ export default function TrackingPage() {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [view, setView] = useState('sewa'); // 'sewa' | 'armada'
+  const [fleetFilter, setFleetFilter] = useState('all');
   const [lastRefresh, setLastRefresh] = useState(new Date());
   const [search, setSearch] = useState('');
   const refreshRef = useRef(null);
@@ -437,7 +448,7 @@ export default function TrackingPage() {
         .select(TX_LIGHT_SELECT)
         .eq('status', 'active')
         .order('end_date', { ascending: true }),
-      supabase.from('vehicles').select(VEHICLE_LIGHT_COLUMNS),
+      supabase.from('vehicles').select(VEHICLE_LIGHT_COLUMNS).order('name'),
     ]);
     const validTxData = (txData || []).filter(tx => tx.vehicles && tx.vehicles.id);
     setTransactions(validTxData);
@@ -532,7 +543,7 @@ export default function TrackingPage() {
   return (
     <div className="page-content">
       <Suspense fallback={null}>
-        <TabFromQuery onTab={setFilter} />
+        <TabFromQuery onView={setView} onTab={setFilter} onFleetTab={setFleetFilter} />
       </Suspense>
 
       {/* ── Page Header ── */}
@@ -543,7 +554,7 @@ export default function TrackingPage() {
           </div>
           <div>
             <h2>Tracking Sewa Motor</h2>
-            <p>Monitor masa sewa aktif & kirim pengingat ke customer via WhatsApp</p>
+            <p>Sewa aktif, pengingat WhatsApp, dan status seluruh armada</p>
           </div>
         </div>
         <div className="tracking-header-right">
@@ -560,6 +571,30 @@ export default function TrackingPage() {
         </div>
       </div>
 
+      {/* ── Pilihan tampilan: Sewa Aktif | Status Armada (dulu halaman Ketersediaan) ── */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+        <button type="button" onClick={() => setView('sewa')}
+          className={`btn ${view === 'sewa' ? 'btn-primary' : 'btn-secondary'}`}>
+          <i className="fa-solid fa-clock-rotate-left"></i> Sewa Aktif
+          <span style={{ opacity: 0.75, marginLeft: '4px' }}>{enriched.length}</span>
+        </button>
+        <button type="button" onClick={() => setView('armada')}
+          className={`btn ${view === 'armada' ? 'btn-primary' : 'btn-secondary'}`}>
+          <i className="fa-solid fa-motorcycle"></i> Status Armada
+          <span style={{ opacity: 0.75, marginLeft: '4px' }}>{vehicles.length}</span>
+        </button>
+      </div>
+
+      {view === 'armada' ? (
+        <FleetStatusPanel
+          vehicles={vehicles}
+          activeTransactions={transactions}
+          loading={loading}
+          filter={fleetFilter}
+          onFilterChange={setFleetFilter}
+        />
+      ) : (
+      <>
       {/* ── Summary Stats ── */}
       <div className="tracking-stats-row">
         <div className="tracking-stat overdue-stat">
@@ -655,6 +690,8 @@ export default function TrackingPage() {
             ))}
           </div>
         </>
+      )}
+      </>
       )}
     </div>
   );

@@ -9,7 +9,6 @@ const pageMeta = {
   '/transactions':{ title: 'Transaksi',        subtitle: 'Kelola pencatatan sewa motor' },
   '/vehicles':    { title: 'Data Motor',       subtitle: 'Manajemen armada kendaraan' },
   '/tracking':    { title: 'Tracking Sewa',    subtitle: 'Monitoring durasi sewa & pengingat WA' },
-  '/availability':{ title: 'Ketersediaan',     subtitle: 'Ketersediaan armada motor real-time' },
   '/service':     { title: 'Servis Motor',     subtitle: 'Jejak servis & jadwal servis berikutnya' },
   '/expenses':    { title: 'Keuangan',         subtitle: 'Catat pemasukan, pengeluaran & saldo bersih' },
   '/reports':     { title: 'Laporan',          subtitle: 'Export dan analisis pendapatan' },

@@ -48,20 +48,9 @@ const NAV_SECTIONS = [
           { href: '/tracking?tab=overdue',  iconClass: 'fa-solid fa-circle-exclamation', label: 'Overdue' },
           { href: '/tracking?tab=critical', iconClass: 'fa-solid fa-bell',               label: 'Kritis' },
           { href: '/tracking?tab=upcoming', iconClass: 'fa-solid fa-calendar-days',      label: 'Akan Datang' },
-        ],
-      },
-      {
-        href: '/availability',
-        iconClass: 'fa-solid fa-circle-half-stroke',
-        label: 'Ketersediaan',
-        badge: 'availability',
-        isDropdown: true,
-        children: [
-          { href: '/availability?tab=all',         iconClass: 'fa-solid fa-grip',              label: 'Semua Armada' },
-          { href: '/availability?tab=available',   iconClass: 'fa-solid fa-circle-check',      label: 'Tersedia' },
-          { href: '/availability?tab=rented',      iconClass: 'fa-solid fa-key',                label: 'Disewa' },
-          { href: '/availability?tab=overdue',     iconClass: 'fa-solid fa-circle-exclamation', label: 'Overdue' },
-          { href: '/availability?tab=maintenance', iconClass: 'fa-solid fa-wrench',             label: 'Perawatan' },
+          { href: '/tracking?view=armada&tab=all',         iconClass: 'fa-solid fa-grip',         label: 'Status Armada' },
+          { href: '/tracking?view=armada&tab=available',   iconClass: 'fa-solid fa-circle-check', label: 'Motor Tersedia' },
+          { href: '/tracking?view=armada&tab=maintenance', iconClass: 'fa-solid fa-wrench',       label: 'Motor Perawatan' },
         ],
       },
       {
@@ -130,7 +119,7 @@ function getDaysLeft(endDate) {
 export default function Sidebar({ user, mobileOpen, onClose }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [alertCounts, setAlertCounts] = useState({ tracking: 0, availability: 0 });
+  const [alertCounts, setAlertCounts] = useState({ tracking: 0 });
   const [openDropdowns, setOpenDropdowns] = useState({});
   const [logoUrl, setLogoUrl] = useState('/images/logoCompany.png');
 
@@ -169,7 +158,7 @@ export default function Sidebar({ user, mobileOpen, onClose }) {
           .eq('status', 'active');
         if (!activeTx) return;
         const alertCount = activeTx.filter(tx => getDaysLeft(tx.end_date) <= 0).length;
-        setAlertCounts({ tracking: alertCount, availability: alertCount });
+        setAlertCounts({ tracking: alertCount });
       } catch { /* ignore */ }
     };
     fetchAlerts();
@@ -221,7 +210,6 @@ export default function Sidebar({ user, mobileOpen, onClose }) {
                 (item.href !== '/dashboard' && pathname.startsWith(item.href.split('?')[0]));
               const badgeCount =
                 item.badge === 'tracking' ? alertCounts.tracking
-                : item.badge === 'availability' ? alertCounts.availability
                 : 0;
 
               // Dropdown (Laporan, Data Motor, Keuangan, Pengaturan)
