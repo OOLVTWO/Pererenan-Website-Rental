@@ -41,15 +41,12 @@ function VehicleCard({ vehicle, activeTransaction }) {
   const brandMeta = BRAND_ICONS[vehicle.category] || BRAND_ICONS.other;
 
   const isRented = vehicle.status === 'rented' || !!activeTransaction;
-  const isMaintenance = vehicle.status === 'maintenance';
-  const isAvailable = !isRented && !isMaintenance;
+  const isAvailable = !isRented;
 
   const daysLeft = activeTransaction ? getDaysLeft(activeTransaction.end_date) : null;
 
   const statusMeta = isAvailable
     ? { label: 'Tersedia', color: '#1D4ED8', bg: 'rgba(29,78,216,0.12)', border: 'rgba(29,78,216,0.3)', icon: 'fa-solid fa-circle-check', cls: 'avail-available' }
-    : isMaintenance
-    ? { label: 'Perawatan', color: '#1E40AF', bg: 'rgba(30,64,175,0.12)', border: 'rgba(30,64,175,0.3)', icon: 'fa-solid fa-wrench', cls: 'avail-maintenance' }
     : daysLeft < 0
     ? { label: 'Overdue', color: '#1E3A8A', bg: 'rgba(30,58,138,0.12)', border: 'rgba(30,58,138,0.35)', icon: 'fa-solid fa-circle-exclamation', cls: 'avail-overdue' }
     : daysLeft === 0
@@ -137,14 +134,6 @@ function VehicleCard({ vehicle, activeTransaction }) {
         </div>
       )}
 
-      {/* If maintenance */}
-      {isMaintenance && (
-        <div className="avail-maintenance-badge">
-          <Icon fa="fa-solid fa-wrench" style={{ color: '#1E40AF' }} />
-          <span>Sedang dalam perawatan</span>
-          {vehicle.notes && <p className="avail-notes">{vehicle.notes}</p>}
-        </div>
-      )}
 
       {/* Warna motor */}
       <div className="avail-km-row">
@@ -157,7 +146,7 @@ function VehicleCard({ vehicle, activeTransaction }) {
 
 // ─── Main Availability Page ─────────────────────────────────────────────────
 
-export const FLEET_FILTERS = ['all', 'available', 'rented', 'overdue', 'maintenance'];
+export const FLEET_FILTERS = ['all', 'available', 'rented', 'overdue'];
 
 export function enrichFleet(vehicles, activeTransactions) {
   const activeTxMap = {};
@@ -166,8 +155,7 @@ export function enrichFleet(vehicles, activeTransactions) {
     .map(v => {
       const activeTx = activeTxMap[v.id] || null;
       const isRented = v.status === 'rented' || !!activeTx;
-      const isMaintenance = v.status === 'maintenance';
-      const effectiveStatus = isMaintenance ? 'maintenance' : isRented ? 'rented' : 'available';
+      const effectiveStatus = isRented ? 'rented' : 'available';
       return { vehicle: v, activeTx, effectiveStatus };
     })
     .sort((a, b) => String(a.vehicle.name || '').localeCompare(String(b.vehicle.name || '')));
@@ -179,7 +167,6 @@ export default function FleetStatusPanel({ vehicles, activeTransactions, loading
 
   const availableCount = enrichedVehicles.filter(e => e.effectiveStatus === 'available').length;
   const rentedCount = enrichedVehicles.filter(e => e.effectiveStatus === 'rented').length;
-  const maintenanceCount = enrichedVehicles.filter(e => e.effectiveStatus === 'maintenance').length;
   const overdueCount = enrichedVehicles.filter(e => e.activeTx && getDaysLeft(e.activeTx.end_date) < 0).length;
 
   const filtered = enrichedVehicles.filter(({ vehicle, effectiveStatus, activeTx }) => {
@@ -192,7 +179,6 @@ export default function FleetStatusPanel({ vehicles, activeTransactions, loading
     const matchFilter = filter === 'all'
       || (filter === 'available' && effectiveStatus === 'available')
       || (filter === 'rented' && effectiveStatus === 'rented')
-      || (filter === 'maintenance' && effectiveStatus === 'maintenance')
       || (filter === 'overdue' && activeTx && getDaysLeft(activeTx.end_date) < 0);
 
     return matchSearch && matchFilter;
@@ -203,7 +189,6 @@ export default function FleetStatusPanel({ vehicles, activeTransactions, loading
     { key: 'available', label: 'Tersedia', icon: 'fa-solid fa-circle-check', count: availableCount, color: '#1D4ED8' },
     { key: 'rented', label: 'Disewa', icon: 'fa-solid fa-key', count: rentedCount, color: '#3B82F6' },
     { key: 'overdue', label: 'Overdue', icon: 'fa-solid fa-circle-exclamation', count: overdueCount, color: '#1E3A8A' },
-    { key: 'maintenance', label: 'Perawatan', icon: 'fa-solid fa-wrench', count: maintenanceCount, color: '#1E40AF' },
   ];
 
   return (
@@ -226,12 +211,6 @@ export default function FleetStatusPanel({ vehicles, activeTransactions, loading
           <div className="avail-summary-icon"><Icon fa="fa-solid fa-circle-exclamation fa-beat" /></div>
           <div className="avail-summary-count">{overdueCount}</div>
           <div className="avail-summary-label">Overdue</div>
-        </div>
-        <div className="avail-summary-divider"></div>
-        <div className="avail-summary-item maintenance-item">
-          <div className="avail-summary-icon"><Icon fa="fa-solid fa-wrench" /></div>
-          <div className="avail-summary-count">{maintenanceCount}</div>
-          <div className="avail-summary-label">Perawatan</div>
         </div>
 
         <div className="avail-util-wrap">

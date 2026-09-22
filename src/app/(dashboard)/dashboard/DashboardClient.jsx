@@ -203,7 +203,6 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
 
   const activeCount      = safeVehicles.filter(v => v.status === 'rented').length;
   const availableCount   = safeVehicles.filter(v => v.status === 'available').length;
-  const maintenanceCount = safeVehicles.filter(v => v.status === 'maintenance').length;
 
   const summary = calcFinancialSummary({
     transactions: filteredTx,
@@ -240,7 +239,6 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
     overdueTx.length > 0 && { href: '/tracking?tab=overdue', icon: 'fa-solid fa-circle-exclamation', title: `${overdueTx.length} sewa lewat jatuh tempo`, sub: 'Hubungi penyewa sekarang' },
     dueSoonTx.length > 0 && { href: '/tracking?tab=critical', icon: 'fa-regular fa-clock', title: `${dueSoonTx.length} sewa berakhir hari ini/besok`, sub: 'Kirim pengingat WhatsApp' },
     unpaidTx.length > 0 && { href: '/transactions', icon: 'fa-solid fa-money-bill-wave', title: `${unpaidTx.length} sewa belum dibayar`, sub: `Total ${formatRupiah(totalUnpaid)}` },
-    maintenanceCount > 0 && { href: '/tracking?view=armada&tab=maintenance', icon: 'fa-solid fa-wrench', title: `${maintenanceCount} motor dalam perawatan`, sub: 'Belum bisa disewakan' },
   ].filter(Boolean);
 
   // ── Pendapatan sewa per bulan (tahun yang sedang dilihat) ──
@@ -357,12 +355,10 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
             <div className="dash2-tiles">
               <div><strong>{activeCount}</strong><span>Disewa</span></div>
               <div><strong>{availableCount}</strong><span>Tersedia</span></div>
-              <div><strong>{maintenanceCount}</strong><span>Perawatan</span></div>
             </div>
             <div className="dash2-bar" aria-hidden="true">
               <span style={{ width: pct(activeCount) }} className="b1"></span>
               <span style={{ width: pct(availableCount) }} className="b2"></span>
-              <span style={{ width: pct(maintenanceCount) }} className="b3"></span>
             </div>
             <span className="dash2-muted">
               {Math.round((activeCount / totalFleet) * 100)}% dari {safeVehicles.length} motor sedang disewa

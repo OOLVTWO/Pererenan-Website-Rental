@@ -3,7 +3,8 @@ import { requireAuth, readJsonBody, missingFields, toNonNegativeNumber } from '@
 import { NextResponse } from 'next/server';
 import { VEHICLE_LIGHT_COLUMNS } from '@/lib/queryColumns';
 
-const VALID_STATUS = ['available', 'rented', 'maintenance'];
+// Status 'maintenance' dihapus: servis dicatat manual di menu Servis Motor.
+const VALID_STATUS = ['available', 'rented'];
 const VALID_CATEGORIES = ['honda', 'yamaha', 'suzuki', 'kawasaki', 'vespa', 'other'];
 
 // GET /api/vehicles
