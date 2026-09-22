@@ -385,7 +385,6 @@ function getDefaultVehicleForm() {
     rate_per_month: '',
     image_url: '',
     status: 'available',
-    notes: '',
     // Investor & Ownership Fields
     owner_type: 'internal',
     owner_name: '',
@@ -414,7 +413,6 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
           rate_per_month: editData.rate_per_month || '',
           image_url: editData.image_url || '',
           status: editData.status || 'available',
-          notes: editData.notes || '',
           owner_type: editData.owner_type || (editData.owner_name ? 'investor' : 'internal'),
           owner_name: editData.owner_name || '',
           owner_contact: editData.owner_contact || '',
@@ -796,12 +794,6 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
             </select>
           </div>
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="v-notes">
-              <Icon fa="fa-regular fa-note-sticky" style={{ marginRight: '6px' }} /> Catatan Kondisi Motor
-            </label>
-            <textarea id="v-notes" name="notes" className="form-control" rows={3} placeholder="Catatan kondisi motor, barang bawaan, helm, dll." value={form.notes} onChange={handleChange} style={{ resize: 'vertical' }} />
-          </div>
 
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>Batal</button>

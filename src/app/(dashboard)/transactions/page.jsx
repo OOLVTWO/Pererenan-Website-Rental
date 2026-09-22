@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/client';
 import { fetchCustomers, upsertCustomer } from '@/lib/customers';
 import { getLocalDateStr } from '@/lib/finance';
 import Icon from '@/components/ui/Icon';
+import { formatTanggal as formatTanggalId } from '@/lib/period';
 
 
 function formatRupiah(amount) {
@@ -2148,7 +2149,52 @@ const handleSubmit = async (formData) => {
       </div>
 
       <div className="card" style={{ padding: 0 }}>
-        <div className="table-wrapper">
+        <div className="mobile-list">
+          {filtered.map(tx => {
+            const st = tx.status === 'active' && tx.payment_status === 'unpaid'
+              ? { label: 'Belum bayar', cls: 'strong' }
+              : tx.status === 'active' ? { label: 'Aktif', cls: 'soft' }
+              : tx.status === 'completed' ? { label: 'Selesai', cls: 'muted' }
+              : { label: 'Batal', cls: 'muted' };
+            return (
+              <div key={tx.id} className="mlist-row">
+                <div className="mlist-main">
+                  <div className="mlist-title">{tx.renter_name}</div>
+                  <div className="mlist-sub">
+                    {tx.vehicles?.name || 'Motor'} · {tx.duration_days || 1} hari · {formatTanggalId(tx.start_date)}
+                  </div>
+                </div>
+                <div className="mlist-right">
+                  <span className="mlist-value">{formatRupiah(tx.total_price)}</span>
+                  <span className={`dash2-pill ${st.cls}`}>{st.label}</span>
+                </div>
+                <div className="mlist-actions">
+                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => openWa(tx)} disabled={openingId === tx.id} aria-label="Kirim invoice WhatsApp">
+                    <Icon fa="fa-brands fa-whatsapp" />
+                  </button>
+                  {tx.status === 'active' && tx.payment_status === 'unpaid' && (
+                    <button type="button" className="btn btn-secondary btn-sm" onClick={() => setLunasModal({ open: true, tx })} aria-label="Tandai lunas">
+                      <Icon fa="fa-solid fa-money-bill-wave" />
+                    </button>
+                  )}
+                  {tx.status === 'active' && (
+                    <button type="button" className="btn btn-primary btn-sm" onClick={() => setCompleteModal({ open: true, tx })} aria-label="Tandai selesai">
+                      <Icon fa="fa-solid fa-check" />
+                    </button>
+                  )}
+                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => openEdit(tx)} disabled={openingId === tx.id} aria-label="Edit">
+                    <Icon fa="fa-solid fa-pen-to-square" />
+                  </button>
+                  <button type="button" className="btn btn-danger btn-sm" onClick={() => setDeleteModal({ open: true, txId: tx.id })} aria-label="Hapus">
+                    <Icon fa="fa-solid fa-trash" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="table-wrapper desktop-only">
           {loading ? (
             <div className="table-empty"><Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '8px' }} /> Memuat data...</div>
           ) : filtered.length === 0 ? (

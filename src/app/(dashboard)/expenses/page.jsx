@@ -6,6 +6,10 @@ import { exportFinancesToExcel } from '@/lib/excel';
 import { getLocalDateStr } from '@/lib/finance';
 import { createClient } from '@/lib/supabase/client';
 import PageTabs from '@/components/ui/PageTabs';
+import PeriodPicker from '@/components/ui/PeriodPicker';
+import { formatTanggal as formatTanggalId } from '@/lib/period';
+import { getPeriodRange } from '@/lib/period';
+import { isPaidTransaction } from '@/lib/finance';
 import Icon from '@/components/ui/Icon';
 
 const VALID_TYPE_TABS = ['all', 'income', 'expense'];
@@ -85,7 +89,7 @@ const getCategoryMeta = (cat, isIncome = false) => {
 };
 
 const SQL_MIGRATION = `-- Jalankan SQL ini di Supabase SQL Editor:
--- https://supabase.com/dashboard/project/eedrziblypwrufdzctvd/sql/new
+-- https://supabase.com/dashboard/project/fltfzhcvvfmregcsjovm/sql/new
 
 ALTER TABLE expenses ADD COLUMN IF NOT EXISTS type VARCHAR(20) DEFAULT 'expense';
 UPDATE expenses SET type = 'expense' WHERE type IS NULL;
@@ -101,7 +105,6 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
     categoryKey: 'other',
     amount: '',
     expense_date: getLocalDateStr(),
-    notes: '',
   });
   const [loading, setLoading] = useState(false);
 
@@ -116,7 +119,6 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
           categoryKey: getCleanCategoryKey(editData.category),
           amount: editData.amount || '',
           expense_date: editData.expense_date || getLocalDateStr(),
-          notes: editData.notes || '',
         });
       } else {
         setForm({
@@ -154,7 +156,6 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
       category: finalCategory,
       amount: Math.round(Number(String(form.amount || 0).replace(/[,.]/g, ''))) || 0,
       expense_date: form.expense_date,
-      notes: form.notes
     });
 
     setLoading(false);
@@ -307,12 +308,6 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
             <input id="fin-date" name="expense_date" type="date" className="form-control" value={form.expense_date} onChange={handleChange} required />
           </div>
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="fin-notes">
-              <Icon fa="fa-regular fa-note-sticky" style={{ marginRight: '6px' }} /> Catatan Tambahan
-            </label>
-            <textarea id="fin-notes" name="notes" className="form-control" rows={3} placeholder="Catatan opsional..." value={form.notes} onChange={handleChange} style={{ resize: 'vertical' }} />
-          </div>
 
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>Batal</button>
@@ -380,7 +375,7 @@ function MigrationBanner({ onCopy }) {
               {copied ? 'SQL Tersalin! Tempel ke Supabase' : 'Salin SQL Migration'}
             </button>
             <a
-              href="https://supabase.com/dashboard/project/eedrziblypwrufdzctvd/sql/new"
+              href="https://supabase.com/dashboard/project/fltfzhcvvfmregcsjovm/sql/new"
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-secondary"
@@ -444,6 +439,12 @@ function ConfirmDeleteModal({ isOpen, onClose, onConfirm, record }) {
 // ===== MAIN FINANCIAL MANAGEMENT PAGE =====
 export default function FinancesPage() {
   const [records, setRecords] = useState([]);
+  // Periode: default bulan berjalan (dulu selalu menarik SELURUH riwayat)
+  const [period, setPeriod] = useState(() => {
+    const r = getPeriodRange('this_month');
+    return { key: 'this_month', start: r.start, end: r.end };
+  });
+  const [rentalIncome, setRentalIncome] = useState({ total: 0, count: 0 });
   const [loading, setLoading] = useState(true);
   const [needsMigration, setNeedsMigration] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -462,20 +463,24 @@ export default function FinancesPage() {
 
   const fetchRecords = useCallback(async () => {
     setLoading(true);
+    const params = new URLSearchParams({ start_date: period.start, end_date: period.end });
     try {
-      // Keuangan hanya membaca tabel expenses. (Klaim denda otomatis dari
-      // transaksi dihapus — fitur denda tidak pernah dipakai; penalty dicatat
-      // manual sebagai pemasukan.)
-      const expRes = await fetch('/api/expenses').then(r => r.json()).catch(() => null);
-      let manualRecords = Array.isArray(expRes) ? expRes : [];
+      // Kas periode ini: catatan manual (tabel expenses) + pendapatan sewa
+      // dari Transaksi, supaya angkanya sejalan dengan Laporan.
+      const [expRes, txRes] = await Promise.all([
+        fetch(`/api/expenses?${params}`).then(r => r.json()).catch(() => null),
+        fetch(`/api/transactions?${params}`).then(r => r.json()).catch(() => null),
+      ]);
 
-      // Fallback: jika API gagal (non-array), ambil langsung dari Supabase
+      let manualRecords = Array.isArray(expRes) ? expRes : [];
       if (!Array.isArray(expRes)) {
         try {
           const supabase = createClient();
           const { data: expData } = await supabase
             .from('expenses')
             .select('*')
+            .gte('expense_date', period.start)
+            .lte('expense_date', period.end)
             .order('expense_date', { ascending: false });
           manualRecords = expData || [];
         } catch (fbErr) {
@@ -483,15 +488,20 @@ export default function FinancesPage() {
         }
       }
 
-      const combined = [...manualRecords].sort((a, b) => new Date(b.expense_date) - new Date(a.expense_date));
-      setRecords(combined);
+      const paid = Array.isArray(txRes) ? txRes.filter(isPaidTransaction) : [];
+      setRentalIncome({
+        total: paid.reduce((sum, t) => sum + Number(t.total_price || 0), 0),
+        count: paid.length,
+      });
+
+      setRecords([...manualRecords].sort((a, b) => new Date(b.expense_date) - new Date(a.expense_date)));
       setNeedsMigration(false);
     } catch (err) {
       console.error('Fetch finance records error:', err);
       setRecords([]);
     }
     setLoading(false);
-  }, []);
+  }, [period.start, period.end]);
 
   useEffect(() => { Promise.resolve().then(fetchRecords); }, [fetchRecords]);
 
@@ -516,7 +526,8 @@ export default function FinancesPage() {
     .filter(r => !checkIsIncome(r))
     .reduce((s, r) => s + Number(r.amount || 0), 0);
 
-  const netBalance = totalIncome - totalExpense;
+  const cashIn = totalIncome + rentalIncome.total;
+  const netBalance = cashIn - totalExpense;
 
   const handleSubmit = async (formData) => {
     const url = editData ? `/api/expenses/${editData.id}` : '/api/expenses';
@@ -573,8 +584,8 @@ export default function FinancesPage() {
 
       <div className="page-header">
         <div>
-          <h2><Icon fa="fa-solid fa-wallet" style={{ marginRight: '8px' }} /> Kelola Keuangan Usaha</h2>
-          <p>Catat dan pantau seluruh arus kas pemasukan, pengeluaran operasional, serta saldo bersih Boss Rent</p>
+          <h2>Keuangan</h2>
+          <p>Kas masuk &amp; keluar pada periode terpilih. Pendapatan sewa diambil otomatis dari Transaksi; laba bersih &amp; bagi hasil investor ada di Laporan.</p>
         </div>
       </div>
 
@@ -582,49 +593,40 @@ export default function FinancesPage() {
 
       {needsMigration && <MigrationBanner />}
 
-      {/* Summary KPI Cards */}
+      <PeriodPicker value={period} onChange={setPeriod} className="mb-6" />
+
+      {/* Ringkasan kas periode ini */}
       <div className="grid-3 mb-6">
-        {/* Total Pemasukan Card */}
-        <div className="stat-card" style={{ borderLeft: '4px solid #1D4ED8' }}>
-          <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8' }}>
+        <div className="stat-card">
+          <div className="stat-icon" style={{ background: 'var(--brand-soft)', color: '#1D4ED8' }}>
             <Icon fa="fa-solid fa-circle-arrow-down" />
           </div>
           <div className="stat-info">
-            <div className="stat-label">Total Pemasukan</div>
-            <div className="stat-value" style={{ color: '#1D4ED8' }}>+{formatRupiah(totalIncome)}</div>
-            <div className="stat-change" style={{ color: 'var(--text-muted)' }}>
-              {records.filter(r => checkIsIncome(r)).length} transaksi masuk
-            </div>
+            <div className="stat-label">Kas masuk</div>
+            <div className="stat-value" style={{ color: '#1D4ED8' }}>{formatRupiah(cashIn)}</div>
+            <div className="stat-change">Sewa {formatRupiah(rentalIncome.total)} · lainnya {formatRupiah(totalIncome)}</div>
           </div>
         </div>
 
-        {/* Total Pengeluaran Card */}
-        <div className="stat-card" style={{ borderLeft: '4px solid #1E3A8A' }}>
-          <div className="stat-icon" style={{ background: 'rgba(30,58,138, 0.15)', color: '#1E3A8A' }}>
+        <div className="stat-card">
+          <div className="stat-icon" style={{ background: 'var(--bg-elevated)', color: '#1E3A8A' }}>
             <Icon fa="fa-solid fa-circle-arrow-up" />
           </div>
           <div className="stat-info">
-            <div className="stat-label">Total Pengeluaran</div>
-            <div className="stat-value" style={{ color: '#1E3A8A' }}>-{formatRupiah(totalExpense)}</div>
-            <div className="stat-change" style={{ color: 'var(--text-muted)' }}>
-              {records.filter(r => !checkIsIncome(r)).length} transaksi keluar
-            </div>
+            <div className="stat-label">Kas keluar</div>
+            <div className="stat-value" style={{ color: '#1E3A8A' }}>{formatRupiah(totalExpense)}</div>
+            <div className="stat-change">{records.filter(r => !checkIsIncome(r)).length} pengeluaran dicatat</div>
           </div>
         </div>
 
-        {/* Saldo Net Profit Card */}
-        <div className="stat-card" style={{ borderLeft: `4px solid ${netBalance >= 0 ? '#3B82F6' : '#1E3A8A'}` }}>
-          <div className="stat-icon" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3B82F6' }}>
+        <div className="stat-card">
+          <div className="stat-icon" style={{ background: 'var(--brand-soft)', color: '#1D4ED8' }}>
             <Icon fa="fa-solid fa-scale-balanced" />
           </div>
           <div className="stat-info">
-            <div className="stat-label">Saldo / Laba Bersih</div>
-            <div className="stat-value" style={{ color: netBalance >= 0 ? '#3B82F6' : '#1E3A8A' }}>
-              {netBalance >= 0 ? '+' : ''}{formatRupiah(netBalance)}
-            </div>
-            <div className="stat-change" style={{ color: netBalance >= 0 ? '#1D4ED8' : '#1E3A8A', fontWeight: 600 }}>
-              {netBalance >= 0 ? 'Surplus / Arus Kas Positif' : 'Defisit / Arus Kas Negatif'}
-            </div>
+            <div className="stat-label">Selisih kas</div>
+            <div className="stat-value">{netBalance >= 0 ? '+' : ''}{formatRupiah(netBalance)}</div>
+            <div className="stat-change">Belum dipotong bagi hasil investor — lihat Laporan</div>
           </div>
         </div>
       </div>
@@ -704,7 +706,33 @@ export default function FinancesPage() {
 
       {/* FINANCIAL TABLE */}
       <div className="card" style={{ padding: 0 }}>
-        <div className="table-wrapper">
+        <div className="mobile-list">
+          {filtered.map(item => {
+            const isInc = checkIsIncome(item);
+            return (
+              <div key={item.id} className="mlist-row">
+                <div className="mlist-main">
+                  <div className="mlist-title">{item.title}</div>
+                  <div className="mlist-sub">{formatTanggalId(item.expense_date)} · {getCategoryMeta(item.category, isInc).label}</div>
+                </div>
+                <div className="mlist-right">
+                  <span className="mlist-value">{isInc ? '+' : '−'} {formatRupiah(item.amount)}</span>
+                  <span className={`dash2-pill ${isInc ? 'soft' : 'muted'}`}>{isInc ? 'Masuk' : 'Keluar'}</span>
+                </div>
+                <div className="mlist-actions">
+                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => { setEditData(item); setShowModal(true); }} aria-label="Edit">
+                    <Icon fa="fa-solid fa-pen-to-square" />
+                  </button>
+                  <button type="button" className="btn btn-danger btn-sm" onClick={() => setDeleteModal({ open: true, data: item })} aria-label="Hapus">
+                    <Icon fa="fa-solid fa-trash" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="table-wrapper desktop-only">
           {loading ? (
             <div className="table-empty"><Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '8px' }} /> Memuat data keuangan...</div>
           ) : filtered.length === 0 ? (
@@ -722,8 +750,7 @@ export default function FinancesPage() {
                   <th>Keterangan</th>
                   <th>Kategori</th>
                   <th>Nominal</th>
-                  <th>Catatan</th>
-                  <th>Aksi</th>
+                                    <th>Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -764,7 +791,6 @@ export default function FinancesPage() {
                           {isInc ? '+' : '-'}{formatRupiah(item.amount)}
                         </strong>
                       </td>
-                      <td data-label="Catatan" style={{ fontSize: '12px', color: 'var(--text-muted)', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.notes || ''}>{item.notes || '-'}</td>
                       <td data-label="Aksi">
                         <div className="flex gap-2">
                           {item.isAutoTransaction ? (

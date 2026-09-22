@@ -159,7 +159,6 @@ export default function CustomersPage() {
     phone: '',
     id_number: '',
     address: '',
-    notes: '',
   });
   const [countryCode, setCountryCode] = useState('+62');
   const [phoneNumberOnly, setPhoneNumberOnly] = useState('');
@@ -779,16 +778,6 @@ export default function CustomersPage() {
               </div>
 
               {/* Notes */}
-              <div className="form-group" style={{ marginBottom: '20px' }}>
-                <label className="form-label">Catatan Khusus (Optional)</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Contoh: Helm XL, Pelanggan VVIP, dsb."
-                  value={form.notes}
-                  onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))}
-                />
-              </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                 <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>

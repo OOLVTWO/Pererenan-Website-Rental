@@ -10,6 +10,8 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import { TX_LIGHT_SELECT, VEHICLE_LIGHT_COLUMNS } from '@/lib/queryColumns';
 import PageTabs from '@/components/ui/PageTabs';
+import PeriodPicker from '@/components/ui/PeriodPicker';
+import { getPeriodRange } from '@/lib/period';
 import Icon from '@/components/ui/Icon';
 
 const VALID_TABS = ['income', 'expenses', 'profit_loss', 'investor'];
@@ -55,12 +57,15 @@ export default function ReportsPage() {
   const [selectedInvestor, setSelectedInvestor] = useState('all');
   const [investorSearch, setInvestorSearch] = useState('');
   const [loading, setLoading] = useState(true);
-  const [startDate, setStartDate] = useState(() => {
-    const d = new Date();
-    d.setDate(1);
-    return getLocalDateStr(d); // tanggal lokal (WITA), bukan UTC
+  // Periode dipilih dengan komponen yang sama dengan halaman Keuangan,
+  // supaya angka kedua halaman bisa dibandingkan langsung.
+  const [period, setPeriod] = useState(() => {
+    const r = getPeriodRange('this_month');
+    return { key: 'this_month', start: r.start, end: r.end };
   });
-  const [endDate, setEndDate] = useState(getLocalDateStr());
+  const startDate = period.start;
+  const endDate = period.end;
+  const handlePeriodChange = (next) => { setLoading(true); setPeriod(next); };
   const [statusFilter, setStatusFilter] = useState('all');
   const [exporting, setExporting] = useState(false);
 
@@ -236,32 +241,8 @@ export default function ReportsPage() {
         <div className="card-header">
           <div className="card-title"><Icon fa="fa-solid fa-filter" style={{ marginRight: '6px' }} /> Filter Periode</div>
         </div>
-        <div className="form-row cols-3">
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label" htmlFor="report-start">
-              <Icon fa="fa-solid fa-calendar-days" style={{ marginRight: '6px' }} /> Tanggal Mulai
-            </label>
-            <input
-              id="report-start"
-              type="date"
-              className="form-control"
-              value={startDate}
-              onChange={e => { setLoading(true); setStartDate(e.target.value); }}
-            />
-          </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label" htmlFor="report-end">
-              <Icon fa="fa-solid fa-calendar-days" style={{ marginRight: '6px' }} /> Tanggal Selesai
-            </label>
-            <input
-              id="report-end"
-              type="date"
-              className="form-control"
-              value={endDate}
-              onChange={e => { setLoading(true); setEndDate(e.target.value); }}
-              min={startDate}
-            />
-          </div>
+        <PeriodPicker value={period} onChange={handlePeriodChange} className="mb-4" />
+        <div className="form-row">
           {activeReportTab === 'income' && (
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label" htmlFor="report-status">Status Transaksi</label>

@@ -331,3 +331,136 @@ pre, code { white-space: pre-wrap; word-break: break-word; }
 
 /* Logo asli di sidebar & top bar (menggantikan kotak inisial) */
 .shell-brand-mark { background: transparent !important; border-radius: 8px; object-fit: contain; width: 40px; height: auto; }
+
+/* ════════════════════════════════════════════════════════════════
+   FORM: bersih, satu kolom, nyaman diisi di HP
+   ════════════════════════════════════════════════════════════════ */
+.form-label {
+  display: block; margin-bottom: 6px;
+  font-size: 13.5px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0;
+}
+.form-label .required { color: var(--brand-primary); }
+.form-group { margin-bottom: 16px; min-width: 0; }
+.form-group:last-child { margin-bottom: 0; }
+.form-control, select.form-control, textarea.form-control {
+  width: 100%; box-sizing: border-box;
+  min-height: 48px; padding: 12px 14px;
+  font-size: 16px; /* 16px = HP tidak auto-zoom saat mengetik */
+  line-height: 1.4; color: var(--text-primary);
+  background: #fff; border: 1px solid var(--bg-border); border-radius: 12px;
+}
+textarea.form-control { min-height: 88px; }
+.form-control::placeholder { color: #9AA3B2; }
+.form-control:focus, select.form-control:focus, textarea.form-control:focus {
+  border-color: var(--brand-primary); outline: 2px solid var(--brand-soft-border); outline-offset: -1px;
+}
+.form-hint { font-size: 12.5px; color: var(--text-muted); margin-top: 6px; }
+.form-error { font-size: 12.5px; color: var(--status-danger); margin-top: 6px; }
+.form-control.is-invalid { border-color: var(--status-danger); }
+/* Sub-judul kelompok field — pengganti kotak di dalam kotak */
+.form-section-title {
+  margin: 22px 0 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.6px;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.form-section-title:first-child { margin-top: 0; }
+
+/* ════════════ MODAL: judul tetap, isi digulir, tombol menempel ════════════ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 100; display: flex; justify-content: center;
+  background: rgba(15, 23, 42, 0.45); padding: 24px;
+}
+.modal {
+  display: flex; flex-direction: column;
+  max-height: min(90vh, 100% - 32px); overflow: hidden !important; padding: 0 !important;
+}
+.modal-header {
+  position: sticky; top: 0; z-index: 2; flex-shrink: 0;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 18px 20px 14px; border-bottom: 1px solid var(--bg-border); background: #fff;
+}
+.modal-title { font-size: 17px; font-weight: 700; }
+.modal-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.modal-close {
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: 10px;
+  border: 1px solid var(--bg-border); background: #fff; color: var(--text-secondary); cursor: pointer;
+}
+/* Semua isi modal (termasuk <form>) menjadi area yang digulir */
+.modal > form, .modal > .modal-body {
+  flex: 1 1 auto; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 18px 20px; display: flex; flex-direction: column; gap: 0;
+}
+.modal > :not(.modal-header):not(.modal-footer):not(form):not(.modal-body) { padding: 0 20px; }
+.modal-footer {
+  position: sticky; bottom: 0; z-index: 2; flex-shrink: 0;
+  display: flex; justify-content: flex-end; align-items: center; gap: 10px;
+  margin: 0 -20px -18px; padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--bg-border); background: #fff;
+}
+.modal-footer .btn { min-height: 48px; padding: 0 18px; }
+
+@media (max-width: 680px) {
+  .modal-overlay { padding: 0; align-items: flex-end; }
+  .modal {
+    max-height: 92vh; width: 100%; max-width: 100% !important;
+    border-radius: 18px 18px 0 0 !important; border-bottom: 0;
+  }
+  .modal > form, .modal > .modal-body { padding: 16px; }
+  .modal-footer { margin: 0 -16px 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .modal-footer .btn { flex: 1 1 0; }
+}
+
+/* ════════════ Batalkan tabel-jadi-kartu (berantakan di HP) ════════════ */
+@media (max-width: 680px) {
+  .table.table--stack-mobile { display: table !important; min-width: 560px !important; }
+  .table--stack-mobile thead { display: table-header-group !important; }
+  .table--stack-mobile tbody { display: table-row-group !important; }
+  .table--stack-mobile tr { display: table-row !important; border: 0 !important; margin: 0 !important; padding: 0 !important; background: none !important; }
+  .table--stack-mobile td { display: table-cell !important; width: auto !important; text-align: left !important; border-bottom: 1px solid var(--bg-border) !important; padding: 10px 12px !important; }
+  .table--stack-mobile td::before { content: none !important; }
+}
+
+/* ════════════ Dashboard: pilihan periode tidak boleh terpotong ════════════ */
+.dash2-seg { flex-shrink: 0; }
+.dash2-seg button { white-space: nowrap; min-width: 64px; }
+.dash2-select { min-width: 0; }
+@media (max-width: 680px) {
+  .dash2-period { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 96px); gap: 8px; align-items: center; }
+  .dash2-seg { grid-column: 1; }
+  .dash2-seg button { min-width: 56px; padding: 0 10px; font-size: 13px; }
+}
+
+/* Isi halaman tidak tertutup bar menu bawah */
+@media (max-width: 900px) {
+  .shell-main > .page-content { padding-bottom: calc(104px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* Pemilih periode (Keuangan & Laporan) */
+.period-picker { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.period-picker > .form-control { width: auto; min-width: 160px; }
+.period-label { font-size: 13px; color: var(--text-muted); }
+.period-custom { display: flex; gap: 10px; flex-wrap: wrap; }
+.period-custom label { display: flex; flex-direction: column; }
+.period-custom .form-label { margin-bottom: 4px; }
+@media (max-width: 680px) {
+  .period-picker > .form-control, .period-custom, .period-custom label { width: 100%; }
+}
+
+/* ════════════ Daftar ringkas untuk HP (pengganti tabel) ════════════ */
+.mobile-list { display: none; }
+.desktop-only { display: block; }
+@media (max-width: 680px) {
+  .mobile-list { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--bg-border); border-radius: 16px; overflow: hidden; }
+  .desktop-only { display: none !important; }
+}
+.mlist-row {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px;
+  padding: 14px 16px; border-top: 1px solid var(--bg-border);
+}
+.mlist-row:first-child { border-top: 0; }
+.mlist-main { min-width: 0; }
+.mlist-title { font-size: 15px; font-weight: 600; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mlist-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.mlist-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; white-space: nowrap; }
+.mlist-value { font-size: 14px; font-weight: 600; }
+.mlist-actions { grid-column: 1 / -1; display: flex; gap: 6px; margin-top: 8px; }
+.mlist-actions .btn { flex: 1 1 0; min-height: 40px; padding: 0; }
