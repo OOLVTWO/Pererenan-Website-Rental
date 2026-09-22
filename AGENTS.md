@@ -10,7 +10,10 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
 
 ## Lingkup
 - Repo ini **hanya panel admin**. Website publik `/fleet` sengaja tidak ada di sini.
-- Hosting: **Vercel** (bukan Netlify). Database/Auth/Storage: Supabase project `boss-rent-pererenan`.
+- Hosting: **Vercel** (bukan Netlify), project `pererenan-website-rental`.
+- Database/Auth/Storage: Supabase project **`Pererenan Website Rental`** (ref `fltfzhcvvfmregcsjovm`).
+  Project lama `boss-rent-pererenan` (ref `eedrziblypwrufdzctvd`) milik app lama — JANGAN diubah dari repo ini.
+- Kuota Supabase Free (termasuk egress) dihitung per ORGANISASI, jadi kedua project berbagi kuota yang sama.
 
 ## Workflow & keamanan
 - Bypass auth khusus sandbox untuk testing **tidak boleh pernah di-commit**. Cek diff sebelum commit.

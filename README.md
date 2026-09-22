@@ -44,7 +44,7 @@ Di Vercel: Project → Settings → Environment Variables (Production + Preview)
 
 Skema ada di `supabase/migrations/` (idempotent, aman dijalankan ulang):
 
-- `001_schema.sql` — tabel inti + RLS
+- `001_schema.sql` — tabel inti (vehicles, transactions, customers, expenses) + RLS admin-only
 - `002_service_logs.sql` — jejak servis motor
 - `003_handover_photo_storage.sql` — bucket privat `handover-photos`
 
