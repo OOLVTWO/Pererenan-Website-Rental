@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { exportFinancesToExcel } from '@/lib/excel';
 import { getLocalDateStr } from '@/lib/finance';
 import { createClient } from '@/lib/supabase/client';
+import PageTabs from '@/components/ui/PageTabs';
 
 const VALID_TYPE_TABS = ['all', 'income', 'expense'];
 
@@ -39,10 +40,10 @@ function formatRupiah(amount) {
 // This is for income *outside* that flow — tips-equivalent income like
 // add-on fees, delivery charges, or a forfeited deposit.
 const INCOME_CATEGORIES = {
-  deposit_forfeit: { label: 'Klaim Deposit / Denda Damage', icon: 'fa-solid fa-shield-halved', color: '#F59E0B' },
+  deposit_forfeit: { label: 'Klaim Deposit / Denda Damage', icon: 'fa-solid fa-shield-halved', color: '#1E40AF' },
   addon_services: { label: 'Layanan Tambahan (Helm / Jas Hujan)', icon: 'fa-solid fa-headset', color: '#3B82F6' },
-  delivery_fee: { label: 'Biaya Antar-Jemput Motor', icon: 'fa-solid fa-truck-ramp-box', color: '#8B5CF6' },
-  other_income: { label: 'Pemasukan Lain-lain (mis. Tip)', icon: 'fa-solid fa-sack-dollar', color: '#10B981' },
+  delivery_fee: { label: 'Biaya Antar-Jemput Motor', icon: 'fa-solid fa-truck-ramp-box', color: '#1D4ED8' },
+  other_income: { label: 'Pemasukan Lain-lain (mis. Tip)', icon: 'fa-solid fa-sack-dollar', color: '#1D4ED8' },
 };
 
 // Full set including rental_income — kept only so any pre-existing
@@ -50,15 +51,15 @@ const INCOME_CATEGORIES = {
 // displays with a proper label and can be filtered/found, not for
 // selecting on new entries. See INCOME_CATEGORIES above for that.
 const ALL_INCOME_CATEGORIES_FOR_DISPLAY = {
-  rental_income: { label: 'Pendapatan Sewa Motor (Legacy)', icon: 'fa-solid fa-file-invoice-dollar', color: '#22C55E' },
+  rental_income: { label: 'Pendapatan Sewa Motor (Legacy)', icon: 'fa-solid fa-file-invoice-dollar', color: '#1D4ED8' },
   ...INCOME_CATEGORIES,
 };
 
 const EXPENSE_CATEGORIES = {
-  service: { label: 'Servis & Perawatan', icon: 'fa-solid fa-wrench', color: '#EF4444' },
-  sparepart: { label: 'Suku Cadang / Sparepart', icon: 'fa-solid fa-gear', color: '#F97316' },
-  fuel: { label: 'Bahan Bakar', icon: 'fa-solid fa-gas-pump', color: '#EAB308' },
-  salary: { label: 'Gaji Karyawan', icon: 'fa-solid fa-user-tie', color: '#EC4899' },
+  service: { label: 'Servis & Perawatan', icon: 'fa-solid fa-wrench', color: '#1E3A8A' },
+  sparepart: { label: 'Suku Cadang / Sparepart', icon: 'fa-solid fa-gear', color: '#1E40AF' },
+  fuel: { label: 'Bahan Bakar', icon: 'fa-solid fa-gas-pump', color: '#1E40AF' },
+  salary: { label: 'Gaji Karyawan', icon: 'fa-solid fa-user-tie', color: '#1D4ED8' },
   other: { label: 'Pengeluaran Lain-lain', icon: 'fa-solid fa-receipt', color: '#64748B' },
 };
 
@@ -77,9 +78,9 @@ const getCleanCategoryKey = (cat) => {
 const getCategoryMeta = (cat, isIncome = false) => {
   const cleanKey = getCleanCategoryKey(cat);
   if (isIncome) {
-    return ALL_INCOME_CATEGORIES_FOR_DISPLAY[cleanKey] || { label: 'Pemasukan Lain-lain', icon: 'fa-solid fa-sack-dollar', color: '#22C55E' };
+    return ALL_INCOME_CATEGORIES_FOR_DISPLAY[cleanKey] || { label: 'Pemasukan Lain-lain', icon: 'fa-solid fa-sack-dollar', color: '#1D4ED8' };
   }
-  return EXPENSE_CATEGORIES[cleanKey] || { label: 'Pengeluaran Lain-lain', icon: 'fa-solid fa-receipt', color: '#EF4444' };
+  return EXPENSE_CATEGORIES[cleanKey] || { label: 'Pengeluaran Lain-lain', icon: 'fa-solid fa-receipt', color: '#1E3A8A' };
 };
 
 const SQL_MIGRATION = `-- Jalankan SQL ini di Supabase SQL Editor:
@@ -167,7 +168,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
       <div className="modal modal-md" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <div>
-            <div className="modal-title" style={{ color: isIncome ? '#22C55E' : '#EF4444' }}>
+            <div className="modal-title" style={{ color: isIncome ? '#1D4ED8' : '#1E3A8A' }}>
               {editData ? (
                 <><i className="fa-solid fa-pen-to-square" style={{ marginRight: '6px' }}></i> Edit Transaksi Keuangan</>
               ) : isIncome ? (
@@ -197,9 +198,9 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
                   borderRadius: '10px',
                   fontWeight: 700,
                   fontSize: '13px',
-                  border: `2px solid ${isIncome ? '#22C55E' : 'var(--bg-border)'}`,
-                  background: isIncome ? 'rgba(34, 197, 94, 0.15)' : 'var(--bg-elevated)',
-                  color: isIncome ? '#22C55E' : 'var(--text-muted)',
+                  border: `2px solid ${isIncome ? '#1D4ED8' : 'var(--bg-border)'}`,
+                  background: isIncome ? 'rgba(29,78,216, 0.15)' : 'var(--bg-elevated)',
+                  color: isIncome ? '#1D4ED8' : 'var(--text-muted)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -219,9 +220,9 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
                   borderRadius: '10px',
                   fontWeight: 700,
                   fontSize: '13px',
-                  border: `2px solid ${!isIncome ? '#EF4444' : 'var(--bg-border)'}`,
-                  background: !isIncome ? 'rgba(239, 68, 68, 0.15)' : 'var(--bg-elevated)',
-                  color: !isIncome ? '#EF4444' : 'var(--text-muted)',
+                  border: `2px solid ${!isIncome ? '#1E3A8A' : 'var(--bg-border)'}`,
+                  background: !isIncome ? 'rgba(30,58,138, 0.15)' : 'var(--bg-elevated)',
+                  color: !isIncome ? '#1E3A8A' : 'var(--text-muted)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -319,7 +320,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
               className="btn"
               disabled={loading}
               style={{
-                background: isIncome ? 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)' : 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                background: isIncome ? '#1D4ED8' : '#1E3A8A',
                 color: '#fff',
                 fontWeight: 700,
                 border: 'none'
@@ -355,18 +356,18 @@ function MigrationBanner({ onCopy }) {
 
   return (
     <div style={{
-      background: 'rgba(239, 68, 68, 0.08)',
-      border: '1px solid rgba(239, 68, 68, 0.3)',
+      background: 'rgba(30,58,138, 0.08)',
+      border: '1px solid rgba(30,58,138, 0.3)',
       borderRadius: '12px',
       padding: '20px',
       marginBottom: '24px'
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
-        <div style={{ fontSize: '28px', color: '#EF4444', flexShrink: 0 }}>
+        <div style={{ fontSize: '28px', color: '#1E3A8A', flexShrink: 0 }}>
           <i className="fa-solid fa-circle-exclamation"></i>
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 700, fontSize: '15px', color: '#EF4444', marginBottom: '6px' }}>
+          <div style={{ fontWeight: 700, fontSize: '15px', color: '#1E3A8A', marginBottom: '6px' }}>
             Database Belum Di-Migrate — Kolom type pada tabel expenses Belum Ada
           </div>
           <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '14px', lineHeight: 1.6 }}>
@@ -407,7 +408,7 @@ function ConfirmDeleteModal({ isOpen, onClose, onConfirm, record }) {
       <div className="modal modal-sm" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <div className="modal-title">
-            <i className="fa-solid fa-trash-can" style={{ marginRight: '6px', color: '#EF4444' }}></i> Hapus Record {isIncome ? 'Pemasukan' : 'Pengeluaran'}?
+            <i className="fa-solid fa-trash-can" style={{ marginRight: '6px', color: '#1E3A8A' }}></i> Hapus Record {isIncome ? 'Pemasukan' : 'Pengeluaran'}?
           </div>
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
@@ -421,7 +422,7 @@ function ConfirmDeleteModal({ isOpen, onClose, onConfirm, record }) {
             <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>{record.title}</div>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px', display: 'flex', justifyContent: 'space-between' }}>
               <span>Tanggal: {new Date(record.expense_date).toLocaleDateString('id-ID')}</span>
-              <strong style={{ color: isIncome ? '#22C55E' : '#EF4444' }}>
+              <strong style={{ color: isIncome ? '#1D4ED8' : '#1E3A8A' }}>
                 {isIncome ? '+' : '-'}{formatRupiah(record.amount)}
               </strong>
             </div>
@@ -583,13 +584,13 @@ export default function FinancesPage() {
       {/* Summary KPI Cards */}
       <div className="grid-3 mb-6">
         {/* Total Pemasukan Card */}
-        <div className="stat-card" style={{ borderLeft: '4px solid #22C55E' }}>
-          <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.15)', color: '#22C55E' }}>
+        <div className="stat-card" style={{ borderLeft: '4px solid #1D4ED8' }}>
+          <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8' }}>
             <i className="fa-solid fa-circle-arrow-down"></i>
           </div>
           <div className="stat-info">
             <div className="stat-label">Total Pemasukan</div>
-            <div className="stat-value" style={{ color: '#22C55E' }}>+{formatRupiah(totalIncome)}</div>
+            <div className="stat-value" style={{ color: '#1D4ED8' }}>+{formatRupiah(totalIncome)}</div>
             <div className="stat-change" style={{ color: 'var(--text-muted)' }}>
               {records.filter(r => checkIsIncome(r)).length} transaksi masuk
             </div>
@@ -597,13 +598,13 @@ export default function FinancesPage() {
         </div>
 
         {/* Total Pengeluaran Card */}
-        <div className="stat-card" style={{ borderLeft: '4px solid #EF4444' }}>
-          <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#EF4444' }}>
+        <div className="stat-card" style={{ borderLeft: '4px solid #1E3A8A' }}>
+          <div className="stat-icon" style={{ background: 'rgba(30,58,138, 0.15)', color: '#1E3A8A' }}>
             <i className="fa-solid fa-circle-arrow-up"></i>
           </div>
           <div className="stat-info">
             <div className="stat-label">Total Pengeluaran</div>
-            <div className="stat-value" style={{ color: '#EF4444' }}>-{formatRupiah(totalExpense)}</div>
+            <div className="stat-value" style={{ color: '#1E3A8A' }}>-{formatRupiah(totalExpense)}</div>
             <div className="stat-change" style={{ color: 'var(--text-muted)' }}>
               {records.filter(r => !checkIsIncome(r)).length} transaksi keluar
             </div>
@@ -611,16 +612,16 @@ export default function FinancesPage() {
         </div>
 
         {/* Saldo Net Profit Card */}
-        <div className="stat-card" style={{ borderLeft: `4px solid ${netBalance >= 0 ? '#3B82F6' : '#EF4444'}` }}>
+        <div className="stat-card" style={{ borderLeft: `4px solid ${netBalance >= 0 ? '#3B82F6' : '#1E3A8A'}` }}>
           <div className="stat-icon" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3B82F6' }}>
             <i className="fa-solid fa-scale-balanced"></i>
           </div>
           <div className="stat-info">
             <div className="stat-label">Saldo / Laba Bersih</div>
-            <div className="stat-value" style={{ color: netBalance >= 0 ? '#3B82F6' : '#EF4444' }}>
+            <div className="stat-value" style={{ color: netBalance >= 0 ? '#3B82F6' : '#1E3A8A' }}>
               {netBalance >= 0 ? '+' : ''}{formatRupiah(netBalance)}
             </div>
-            <div className="stat-change" style={{ color: netBalance >= 0 ? '#22C55E' : '#EF4444', fontWeight: 600 }}>
+            <div className="stat-change" style={{ color: netBalance >= 0 ? '#1D4ED8' : '#1E3A8A', fontWeight: 600 }}>
               {netBalance >= 0 ? 'Surplus / Arus Kas Positif' : 'Defisit / Arus Kas Negatif'}
             </div>
           </div>
@@ -630,16 +631,16 @@ export default function FinancesPage() {
       {/* Filter Tabs & Actions */}
       <div className="bento-card bento-table-card mb-6" style={{ padding: '16px 20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
-          {/* Current filter indicator — filter is now chosen from the sidebar
-              "Keuangan" dropdown, this just confirms what's showing */}
-          <span className="badge" style={{
-            background: 'var(--bg-elevated)', color: 'var(--brand-primary)', border: '1px solid var(--bg-border)',
-            fontSize: '12.5px', padding: '6px 14px', fontWeight: 600,
-          }}>
-            {typeFilter === 'all' && <><i className="fa-solid fa-list-check" style={{ marginRight: '6px' }}></i>Semua Arus Kas ({records.length})</>}
-            {typeFilter === 'income' && <><i className="fa-solid fa-circle-arrow-down" style={{ marginRight: '6px', color: '#22C55E' }}></i>Pemasukan (+)</>}
-            {typeFilter === 'expense' && <><i className="fa-solid fa-circle-arrow-up" style={{ marginRight: '6px', color: '#EF4444' }}></i>Pengeluaran (-)</>}
-          </span>
+          <PageTabs
+            ariaLabel="Filter arus kas"
+            value={typeFilter}
+            onChange={(t) => { setTypeFilter(t); setCategoryFilter('all'); }}
+            tabs={[
+              { key: 'all', label: 'Semua', count: records.length },
+              { key: 'income', label: 'Pemasukan' },
+              { key: 'expense', label: 'Pengeluaran' },
+            ]}
+          />
 
           {/* DUAL ACTION BUTTONS & EXPORT (2-COLUMN GRID ON MOBILE) */}
           <div className="fin-actions-wrap">
@@ -649,7 +650,7 @@ export default function FinancesPage() {
               title="Export Laporan Keuangan ke Excel (.xlsx)"
               style={{ padding: '9px 14px', borderRadius: '12px', fontWeight: 600 }}
             >
-              <i className="fa-solid fa-file-excel" style={{ marginRight: '6px', color: '#10B981' }}></i>
+              <i className="fa-solid fa-file-excel" style={{ marginRight: '6px', color: '#1D4ED8' }}></i>
               Export Excel
             </button>
             <button
@@ -744,7 +745,7 @@ export default function FinancesPage() {
                           <strong style={{ fontSize: '13.5px', color: 'var(--text-primary)' }}>{item.title}</strong>
                           {item.isAutoTransaction && (
                             <div>
-                              <span className="badge badge-success" style={{ background: 'rgba(34, 197, 94, 0.12)', color: '#22C55E', borderColor: 'rgba(34, 197, 94, 0.35)', fontSize: '10.5px', padding: '2px 8px' }}>
+                              <span className="badge badge-success" style={{ background: 'rgba(29,78,216, 0.12)', color: '#1D4ED8', borderColor: 'rgba(29,78,216, 0.35)', fontSize: '10.5px', padding: '2px 8px' }}>
                                 <i className="fa-solid fa-bolt" style={{ marginRight: '4px' }}></i> Otomatis dari Transaksi Sewa
                               </span>
                             </div>
@@ -758,7 +759,7 @@ export default function FinancesPage() {
                         </span>
                       </td>
                       <td>
-                        <strong style={{ fontSize: '14px', color: isInc ? '#22C55E' : '#EF4444' }}>
+                        <strong style={{ fontSize: '14px', color: isInc ? '#1D4ED8' : '#1E3A8A' }}>
                           {isInc ? '+' : '-'}{formatRupiah(item.amount)}
                         </strong>
                       </td>

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { compressImage } from '@/lib/imageCompressor';
 import { createClient } from '@/lib/supabase/client';
+import PageTabs from '@/components/ui/PageTabs';
 
 const VALID_OWNERSHIP_TABS = ['all', 'internal', 'investor', 'investor_recap'];
 
@@ -530,11 +531,11 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
 
               {!['honda', 'yamaha', 'suzuki', 'kawasaki', 'vespa'].includes(form.category?.toLowerCase()) && (
                 <div style={{ position: 'relative', marginTop: '8px' }}>
-                  <i className="fa-solid fa-pen-to-square" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#A855F7', fontSize: '13px' }}></i>
+                  <i className="fa-solid fa-pen-to-square" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#1D4ED8', fontSize: '13px' }}></i>
                   <input
                     type="text"
                     className="form-control"
-                    style={{ paddingLeft: '34px', border: '1px solid #A855F7' }}
+                    style={{ paddingLeft: '34px', border: '1px solid #1D4ED8' }}
                     placeholder="Ketik merek motor baru (e.g. Aprilia, BMW, Royal Enfield)..."
                     value={form.category}
                     onChange={e => setForm(p => ({ ...p, category: e.target.value }))}
@@ -692,7 +693,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
               {form.image_url && !uploading && (
                 <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <img src={form.image_url} alt="Preview" style={{ width: '40px', height: '40px', borderRadius: '6px', objectFit: 'cover' }} />
-                  <span style={{ fontSize: '11px', color: '#22C55E', fontWeight: 600 }}>
+                  <span style={{ fontSize: '11px', color: '#1D4ED8', fontWeight: 600 }}>
                     <i className="fa-solid fa-circle-check" style={{ marginRight: '4px' }}></i> Foto Berhasil Dimuat
                   </span>
                   <button
@@ -708,8 +709,8 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
             </div>
 
           {/* 🔒 OWNERSHIP & INVESTOR SECTION (PRIVACY MANAGEMENT ONLY) */}
-          <div style={{ background: 'rgba(168, 85, 247, 0.07)', border: '1px solid rgba(168, 85, 247, 0.28)', padding: '16px', borderRadius: '14px', marginBottom: '20px' }}>
-            <div style={{ fontSize: '13px', fontWeight: 800, color: '#A855F7', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ background: 'rgba(29,78,216, 0.07)', border: '1px solid rgba(29,78,216, 0.28)', padding: '16px', borderRadius: '14px', marginBottom: '20px' }}>
+            <div style={{ fontSize: '13px', fontWeight: 800, color: '#1D4ED8', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <i className="fa-solid fa-user-shield"></i>
               <span>Kepemilikan & Investor (Privasi Management)</span>
             </div>
@@ -726,7 +727,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                     value="internal"
                     checked={form.owner_type === 'internal'}
                     onChange={e => setForm(p => ({ ...p, owner_type: e.target.value }))}
-                    style={{ accentColor: '#A855F7' }}
+                    style={{ accentColor: '#1D4ED8' }}
                   />
                   <span><i className="fa-solid fa-building" style={{ marginRight: '4px', color: 'var(--brand-primary)' }}></i> Milik Internal Boss Rent</span>
                 </label>
@@ -737,19 +738,19 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                     value="investor"
                     checked={form.owner_type === 'investor'}
                     onChange={e => setForm(p => ({ ...p, owner_type: e.target.value }))}
-                    style={{ accentColor: '#A855F7' }}
+                    style={{ accentColor: '#1D4ED8' }}
                   />
-                  <span><i className="fa-solid fa-crown" style={{ marginRight: '4px', color: '#A855F7' }}></i> Titipan Investor (Bagi Hasil)</span>
+                  <span><i className="fa-solid fa-crown" style={{ marginRight: '4px', color: '#1D4ED8' }}></i> Titipan Investor (Bagi Hasil)</span>
                 </label>
               </div>
             </div>
 
             {form.owner_type === 'investor' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed rgba(168, 85, 247, 0.3)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed rgba(29,78,216, 0.3)' }}>
                 <div className="form-row cols-2">
                   <div className="form-group">
                     <label className="form-label" htmlFor="v-owner-name">
-                      <i className="fa-solid fa-user-tie" style={{ marginRight: '6px', color: '#A855F7' }}></i> Nama Investor / Pemilik <span className="required">*</span>
+                      <i className="fa-solid fa-user-tie" style={{ marginRight: '6px', color: '#1D4ED8' }}></i> Nama Investor / Pemilik <span className="required">*</span>
                     </label>
                     <input
                       id="v-owner-name"
@@ -764,7 +765,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                   </div>
                   <div className="form-group">
                     <label className="form-label" htmlFor="v-owner-contact">
-                      <i className="fa-brands fa-whatsapp" style={{ marginRight: '6px', color: '#22C55E' }}></i> No. WA / HP Investor
+                      <i className="fa-brands fa-whatsapp" style={{ marginRight: '6px', color: '#1D4ED8' }}></i> No. WA / HP Investor
                     </label>
                     <input
                       id="v-owner-contact"
@@ -781,7 +782,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                 <div className="form-row cols-2">
                   <div className="form-group">
                     <label className="form-label" htmlFor="v-share-pct">
-                      <i className="fa-solid fa-percent" style={{ marginRight: '6px', color: '#A855F7' }}></i> Bagi Hasil Investor (%)
+                      <i className="fa-solid fa-percent" style={{ marginRight: '6px', color: '#1D4ED8' }}></i> Bagi Hasil Investor (%)
                     </label>
                     <input
                       id="v-share-pct"
@@ -793,7 +794,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                       value={form.revenue_share_percentage}
                       onChange={handleChange}
                     />
-                    <div style={{ fontSize: '11px', color: '#A855F7', marginTop: '4px', fontWeight: 600 }}>
+                    <div style={{ fontSize: '11px', color: '#1D4ED8', marginTop: '4px', fontWeight: 600 }}>
                       * {form.revenue_share_percentage || 70}% Investor / {100 - Number(form.revenue_share_percentage || 70)}% Boss Rent
                     </div>
                   </div>
@@ -847,7 +848,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, onForceDelete, onSetMaintena
       <div className="modal modal-md" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <div className="modal-title">
-            <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: '6px', color: historyError ? '#F59E0B' : '#EF4444' }}></i>
+            <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: '6px', color: historyError ? '#1E40AF' : '#1E3A8A' }}></i>
             {historyError ? 'Motor Memiliki Riwayat Transaksi' : 'Hapus Motor?'}
           </div>
           <button className="modal-close" onClick={onClose}>✕</button>
@@ -857,7 +858,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, onForceDelete, onSetMaintena
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div className="alert alert-warning" style={{ fontSize: '13px', margin: 0 }}>
               <span>
-                Motor <strong style={{ color: '#F59E0B' }}>{vehicleName}</strong> pernah disewakan dan memiliki riwayat transaksi di sistem. Menghapus motor ini secara paksa akan merusak laporan keuangan.
+                Motor <strong style={{ color: '#1E40AF' }}>{vehicleName}</strong> pernah disewakan dan memiliki riwayat transaksi di sistem. Menghapus motor ini secara paksa akan merusak laporan keuangan.
               </span>
             </div>
             <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
@@ -1078,19 +1079,17 @@ export default function VehiclesPage() {
         <p>Kelola armada kendaraan rental Boss Rent Pererenan</p>
       </div>
 
-      {/* Current filter indicator — the filter itself is now chosen from the
-          sidebar "Data Motor" dropdown, this just confirms what's showing */}
-      <div style={{ marginBottom: '16px' }}>
-        <span className="badge" style={{
-          background: 'var(--bg-elevated)', color: 'var(--brand-primary)', border: '1px solid var(--bg-border)',
-          fontSize: '12.5px', padding: '6px 14px', fontWeight: 600,
-        }}>
-          {ownershipFilter === 'all' && <><i className="fa-solid fa-motorcycle" style={{ marginRight: '6px' }}></i>Semua Unit Armada ({safeVehicles.length})</>}
-          {ownershipFilter === 'internal' && <><i className="fa-solid fa-building" style={{ marginRight: '6px' }}></i>Milik Internal ({internalVehicles.length})</>}
-          {ownershipFilter === 'investor' && <><i className="fa-solid fa-crown" style={{ marginRight: '6px', color: '#A855F7' }}></i>Milik Investor ({investorVehicles.length})</>}
-          {ownershipFilter === 'investor_recap' && <><i className="fa-solid fa-address-card" style={{ marginRight: '6px', color: '#A855F7' }}></i>Directory & Rekap Investor ({investorList.length})</>}
-        </span>
-      </div>
+      <PageTabs
+        ariaLabel="Filter motor"
+        value={ownershipFilter}
+        onChange={setOwnershipFilter}
+        tabs={[
+          { key: 'all', label: 'Semua', count: safeVehicles.length },
+          { key: 'internal', label: 'Internal', count: internalVehicles.length },
+          { key: 'investor', label: 'Investor', count: investorVehicles.length },
+          { key: 'investor_recap', label: 'Rekap investor', count: investorList.length },
+        ]}
+      />
 
       {alert && <div className={`alert alert-${alert.type}`}>{alert.message}</div>}
 
@@ -1135,23 +1134,23 @@ export default function VehiclesPage() {
           {/* Investor Summary Cards */}
           <div className="grid-2">
             <div className="stat-card">
-              <div className="stat-icon" style={{ background: 'rgba(168, 85, 247, 0.15)', color: '#A855F7' }}>
+              <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8' }}>
                 <i className="fa-solid fa-users"></i>
               </div>
               <div className="stat-info">
                 <div className="stat-label">Total Investor Aktif</div>
-                <div className="stat-value" style={{ color: '#A855F7' }}>{investorList.length} Investor</div>
+                <div className="stat-value" style={{ color: '#1D4ED8' }}>{investorList.length} Investor</div>
                 <div className="stat-change">{investorVehicles.length} total unit motor titipan</div>
               </div>
             </div>
 
             <div className="stat-card">
-              <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.15)', color: '#22C55E' }}>
+              <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8' }}>
                 <i className="fa-solid fa-hand-holding-dollar"></i>
               </div>
               <div className="stat-info">
                 <div className="stat-label">Unit Titipan Investor (Bagi Hasil)</div>
-                <div className="stat-value" style={{ color: '#22C55E' }}>{investorVehicles.length} Unit</div>
+                <div className="stat-value" style={{ color: '#1D4ED8' }}>{investorVehicles.length} Unit</div>
                 <div className="stat-change">{Math.round((investorVehicles.length / Math.max(safeVehicles.length, 1)) * 100)}% dari total armada</div>
               </div>
             </div>
@@ -1160,24 +1159,24 @@ export default function VehiclesPage() {
           {/* Directory Cards Grid */}
           {investorList.length === 0 ? (
             <div className="table-empty card">
-              <div className="table-empty-icon"><i className="fa-solid fa-crown" style={{ color: '#A855F7' }}></i></div>
+              <div className="table-empty-icon"><i className="fa-solid fa-crown" style={{ color: '#1D4ED8' }}></i></div>
               <p>Belum ada data investor terdaftar. Edit atau tambah motor baru lalu aktifkan status kepemilikan &apos;Titipan Investor&apos;.</p>
             </div>
           ) : (
             <div className="grid-2">
               {investorList.map((inv, idx) => (
-                <div key={idx} className="card" style={{ padding: '20px', borderRadius: '16px', border: '1px solid rgba(168, 85, 247, 0.3)', background: 'var(--bg-card)' }}>
+                <div key={idx} className="card" style={{ padding: '20px', borderRadius: '16px', border: '1px solid rgba(29,78,216, 0.3)', background: 'var(--bg-card)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px', borderBottom: '1px solid var(--bg-border)', paddingBottom: '12px' }}>
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span className="badge" style={{ background: 'rgba(168, 85, 247, 0.15)', color: '#A855F7', padding: '4px 10px', fontSize: '11px' }}>
+                        <span className="badge" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8', padding: '4px 10px', fontSize: '11px' }}>
                           <i className="fa-solid fa-crown"></i> Investor #{idx + 1}
                         </span>
                         <strong style={{ fontSize: '15.5px', color: 'var(--text-primary)' }}>{inv.name}</strong>
                       </div>
                       {inv.contact && inv.contact !== '-' && (
                         <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                          <i className="fa-brands fa-whatsapp" style={{ color: '#22C55E', marginRight: '6px' }}></i>{inv.contact}
+                          <i className="fa-brands fa-whatsapp" style={{ color: '#1D4ED8', marginRight: '6px' }}></i>{inv.contact}
                         </div>
                       )}
                     </div>
@@ -1264,7 +1263,7 @@ export default function VehiclesPage() {
                   </div>
                   {isInvestorUnit && (
                     <div style={{ marginTop: '8px' }}>
-                      <span className="badge" style={{ background: 'rgba(168, 85, 247, 0.15)', color: '#A855F7', borderColor: 'rgba(168, 85, 247, 0.35)', fontSize: '10.5px', padding: '3px 8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <span className="badge" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8', borderColor: 'rgba(29,78,216, 0.35)', fontSize: '10.5px', padding: '3px 8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                         <i className="fa-solid fa-crown"></i> Investor: {vehicle.owner_name || 'Bagi Hasil'} ({vehicle.revenue_share_percentage || 70}/{100 - Number(vehicle.revenue_share_percentage || 70)})
                       </span>
                     </div>

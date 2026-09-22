@@ -7,6 +7,7 @@ import { TX_LIGHT_SELECT, VEHICLE_LIGHT_COLUMNS } from '@/lib/queryColumns';
 import { startVisiblePolling } from '@/lib/visiblePolling';
 import { getWhatsAppShareUrl, getWaReminderTemplate } from '@/lib/countryCodes';
 import FleetStatusPanel, { FLEET_FILTERS } from '@/components/tracking/FleetStatusPanel';
+import PageTabs from '@/components/ui/PageTabs';
 
 const VALID_TRACKING_TABS = ['all', 'overdue', 'critical', 'upcoming'];
 
@@ -248,11 +249,11 @@ function TrackingCard({ tx, vehicle, onComplete }) {
   }, []);
 
   const categoryMeta = {
-    overdue: { label: 'Overdue', color: '#EF4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.3)', icon: 'fa-solid fa-circle-exclamation', pulse: true },
-    today: { label: 'Hari Ini', color: '#F59E0B', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', icon: 'fa-solid fa-bell', pulse: true },
-    tomorrow: { label: 'Besok', color: '#F59E0B', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)', icon: 'fa-solid fa-clock', pulse: false },
+    overdue: { label: 'Overdue', color: '#1E3A8A', bg: 'rgba(30,58,138,0.1)', border: 'rgba(30,58,138,0.3)', icon: 'fa-solid fa-circle-exclamation', pulse: true },
+    today: { label: 'Hari Ini', color: '#1E40AF', bg: 'rgba(30,64,175,0.1)', border: 'rgba(30,64,175,0.3)', icon: 'fa-solid fa-bell', pulse: true },
+    tomorrow: { label: 'Besok', color: '#1E40AF', bg: 'rgba(30,64,175,0.08)', border: 'rgba(30,64,175,0.25)', icon: 'fa-solid fa-clock', pulse: false },
     upcoming: { label: `${daysLeft} Hari Lagi`, color: '#3B82F6', bg: 'rgba(59,130,246,0.08)', border: 'rgba(59,130,246,0.2)', icon: 'fa-solid fa-calendar-days', pulse: false },
-    future: { label: `${daysLeft} Hari Lagi`, color: '#22C55E', bg: 'rgba(34,197,94,0.08)', border: 'rgba(34,197,94,0.2)', icon: 'fa-solid fa-calendar-check', pulse: false },
+    future: { label: `${daysLeft} Hari Lagi`, color: '#1D4ED8', bg: 'rgba(29,78,216,0.08)', border: 'rgba(29,78,216,0.2)', icon: 'fa-solid fa-calendar-check', pulse: false },
   };
   const meta = categoryMeta[type];
 
@@ -276,7 +277,7 @@ function TrackingCard({ tx, vehicle, onComplete }) {
   const isOverProgress = progress >= 100;
 
   return (
-    <div className="tracking-card" style={{ borderColor: meta.border, background: `linear-gradient(145deg, var(--bg-card), ${meta.bg})` }}>
+    <div className="tracking-card" style={{ borderColor: meta.border, background: `var(--bg-card)` }}>
       {/* Top Badge */}
       <div className="tracking-card-top">
         <div className="tracking-status-badge" style={{ color: meta.color, background: meta.bg, borderColor: meta.border }}>
@@ -292,23 +293,23 @@ function TrackingCard({ tx, vehicle, onComplete }) {
 
       {/* Renter Info */}
       <div className="tracking-renter">
-        <div className="tracking-renter-avatar" style={{ background: `linear-gradient(135deg, ${meta.color}, ${meta.border})` }}>
+        <div className="tracking-renter-avatar" style={{ background: meta.color }}>
           <i className="fa-solid fa-user"></i>
         </div>
         <div className="tracking-renter-info">
           <div className="tracking-renter-name">{tx.renter_name}</div>
           <div className="tracking-renter-phone">
-            <i className="fa-solid fa-phone" style={{ fontSize: '10px', color: '#22C55E' }}></i>
+            <i className="fa-solid fa-phone" style={{ fontSize: '10px', color: '#1D4ED8' }}></i>
             {tx.renter_phone}
           </div>
         </div>
         <div className="tracking-dates">
           <div className="tracking-date-row" title="Waktu Mulai Sewa (Jam Transaksi)">
-            <i className="fa-solid fa-calendar-plus" style={{ color: '#9898B0', fontSize: '11px' }}></i>
+            <i className="fa-solid fa-calendar-plus" style={{ color: '#5B6474', fontSize: '11px' }}></i>
             <span>{formatDateTime(tx.start_date, tx.created_at)}</span>
           </div>
           <div className="tracking-date-arrow">
-            <i className="fa-solid fa-arrow-down" style={{ color: '#9898B0', fontSize: '10px' }}></i>
+            <i className="fa-solid fa-arrow-down" style={{ color: '#5B6474', fontSize: '10px' }}></i>
           </div>
           <div className="tracking-date-row" style={{ color: meta.color, fontWeight: 600 }} title="Waktu Selesai Sewa (Persis Jam yang sama)">
             <i className="fa-solid fa-calendar-xmark" style={{ fontSize: '11px' }}></i>
@@ -321,7 +322,7 @@ function TrackingCard({ tx, vehicle, onComplete }) {
       <div className="tracking-progress-wrap">
         <div className="tracking-progress-labels">
           <span><i className="fa-solid fa-hourglass-start" style={{ fontSize: '10px', marginRight: '4px' }}></i>Mulai</span>
-          <span style={{ color: isOverProgress ? '#EF4444' : meta.color }}>
+          <span style={{ color: isOverProgress ? '#1E3A8A' : meta.color }}>
             {isOverProgress ? 'Sudah Berakhir' : `${Math.round(progress)}% berjalan`}
           </span>
           <span><i className="fa-solid fa-flag-checkered" style={{ fontSize: '10px', marginRight: '4px' }}></i>Selesai</span>
@@ -332,8 +333,8 @@ function TrackingCard({ tx, vehicle, onComplete }) {
             style={{
               width: `${progress}%`,
               background: isOverProgress
-                ? 'linear-gradient(90deg, #EF4444, #DC2626)'
-                : `linear-gradient(90deg, ${meta.color}, ${meta.border})`
+                ? '#1E3A8A'
+                : meta.color
             }}
           ></div>
         </div>
@@ -365,8 +366,8 @@ function TrackingCard({ tx, vehicle, onComplete }) {
           onClick={() => setConfirmSelesai(true)}
           style={{
             width: '100%', marginTop: '10px', padding: '10px 16px',
-            borderRadius: '10px', border: '1.5px solid rgba(34,197,94,0.5)',
-            background: 'rgba(34,197,94,0.08)', color: '#22C55E',
+            borderRadius: '10px', border: '1.5px solid rgba(29,78,216,0.5)',
+            background: 'rgba(29,78,216,0.08)', color: '#1D4ED8',
             fontWeight: 700, fontSize: '13px', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
             transition: 'all 0.2s ease'
@@ -378,10 +379,10 @@ function TrackingCard({ tx, vehicle, onComplete }) {
       ) : (
         <div style={{
           marginTop: '10px', padding: '12px', borderRadius: '10px',
-          border: '1.5px solid rgba(34,197,94,0.5)', background: 'rgba(34,197,94,0.08)'
+          border: '1.5px solid rgba(29,78,216,0.5)', background: 'rgba(29,78,216,0.08)'
         }}>
-          <div style={{ fontSize: '12px', color: '#22C55E', fontWeight: 700, marginBottom: '8px', textAlign: 'center' }}>
-            <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: '5px', color: '#F59E0B' }}></i>
+          <div style={{ fontSize: '12px', color: '#1D4ED8', fontWeight: 700, marginBottom: '8px', textAlign: 'center' }}>
+            <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: '5px', color: '#1E40AF' }}></i>
             Yakin selesaikan sewa ini? Motor akan langsung jadi <strong>Tersedia</strong>.
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -403,7 +404,7 @@ function TrackingCard({ tx, vehicle, onComplete }) {
               }}
               style={{
                 flex: 2, padding: '8px', borderRadius: '8px',
-                border: 'none', background: '#22C55E',
+                border: 'none', background: '#1D4ED8',
                 color: '#fff', fontWeight: 700, fontSize: '12px', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
               }}
@@ -535,8 +536,8 @@ export default function TrackingPage() {
 
   const FILTERS = [
     { key: 'all', label: 'Semua', icon: 'fa-solid fa-list', count: enriched.length },
-    { key: 'overdue', label: 'Overdue', icon: 'fa-solid fa-circle-exclamation', count: overdueCnt, color: '#EF4444' },
-    { key: 'critical', label: 'Kritis', icon: 'fa-solid fa-bell', count: criticalCnt, color: '#F59E0B' },
+    { key: 'overdue', label: 'Overdue', icon: 'fa-solid fa-circle-exclamation', count: overdueCnt, color: '#1E3A8A' },
+    { key: 'critical', label: 'Kritis', icon: 'fa-solid fa-bell', count: criticalCnt, color: '#1E40AF' },
     { key: 'upcoming', label: 'Akan Datang', icon: 'fa-solid fa-calendar-days', count: upcomingCnt, color: '#3B82F6' },
   ];
 
@@ -559,7 +560,7 @@ export default function TrackingPage() {
         </div>
         <div className="tracking-header-right">
           <div className="tracking-refresh-info">
-            <i className="fa-solid fa-rotate" style={{ fontSize: '11px', color: '#22C55E' }}></i>
+            <i className="fa-solid fa-rotate" style={{ fontSize: '11px', color: '#1D4ED8' }}></i>
             <span>Auto-refresh tiap 60 detik</span>
             <span className="tracking-refresh-time">
               {lastRefresh.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
@@ -571,19 +572,18 @@ export default function TrackingPage() {
         </div>
       </div>
 
-      {/* ── Pilihan tampilan: Sewa Aktif | Status Armada (dulu halaman Ketersediaan) ── */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-        <button type="button" onClick={() => setView('sewa')}
-          className={`btn ${view === 'sewa' ? 'btn-primary' : 'btn-secondary'}`}>
-          <i className="fa-solid fa-clock-rotate-left"></i> Sewa Aktif
-          <span style={{ opacity: 0.75, marginLeft: '4px' }}>{enriched.length}</span>
-        </button>
-        <button type="button" onClick={() => setView('armada')}
-          className={`btn ${view === 'armada' ? 'btn-primary' : 'btn-secondary'}`}>
-          <i className="fa-solid fa-motorcycle"></i> Status Armada
-          <span style={{ opacity: 0.75, marginLeft: '4px' }}>{vehicles.length}</span>
-        </button>
-      </div>
+      {/* ── Pilihan tampilan: Sewa aktif | Status armada (dulu halaman Ketersediaan) ── */}
+      <PageTabs
+        ariaLabel="Tampilan tracking"
+        param="view"
+        resetParams={['tab']}
+        value={view}
+        onChange={setView}
+        tabs={[
+          { key: 'sewa', label: 'Sewa aktif', count: enriched.length },
+          { key: 'armada', label: 'Status armada', count: vehicles.length },
+        ]}
+      />
 
       {view === 'armada' ? (
         <FleetStatusPanel
@@ -629,23 +629,12 @@ export default function TrackingPage() {
 
       {/* ── Filters & Search ── */}
       <div className="tracking-controls">
-        {/* Current filter indicator — filter is now chosen from the
-            sidebar "Tracking Sewa" dropdown, this just confirms what's showing */}
-        {(() => {
-          const current = FILTERS.find(f => f.key === filter) || FILTERS[0];
-          return (
-            <span className="badge" style={{
-              background: current.color ? `${current.color}18` : 'var(--bg-elevated)',
-              color: current.color || 'var(--brand-primary)',
-              border: `1px solid ${current.color ? `${current.color}40` : 'var(--bg-border)'}`,
-              fontSize: '12.5px', padding: '6px 14px', fontWeight: 600,
-            }}>
-              <i className={current.icon} style={{ marginRight: '6px' }}></i>
-              {current.label}
-              {current.count > 0 && <span style={{ marginLeft: '6px', opacity: 0.75 }}>({current.count})</span>}
-            </span>
-          );
-        })()}
+        <PageTabs
+          ariaLabel="Filter sewa aktif"
+          value={filter}
+          onChange={setFilter}
+          tabs={FILTERS.map(f => ({ key: f.key, label: f.label, count: f.count }))}
+        />
         <div className="tracking-search-wrap">
           <i className="fa-solid fa-magnifying-glass"></i>
           <input

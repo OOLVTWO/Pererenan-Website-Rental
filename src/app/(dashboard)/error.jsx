@@ -5,7 +5,7 @@ export default function DashboardError({ error, reset }) {
     <div style={{ maxWidth: 520, margin: '80px auto', textAlign: 'center', fontFamily: 'system-ui, -apple-system, sans-serif', color: '#F0F0F5' }}>
       <div style={{ fontSize: 40, marginBottom: 8 }}>⚠️</div>
       <h2 style={{ fontSize: 18, margin: '0 0 8px' }}>Terjadi kesalahan saat memuat halaman</h2>
-      <p style={{ fontSize: 13, color: '#9898B0', wordBreak: 'break-word' }}>
+      <p style={{ fontSize: 13, color: '#5B6474', wordBreak: 'break-word' }}>
         {error && error.message ? String(error.message) : 'Kesalahan tidak diketahui.'}
       </p>
       <button

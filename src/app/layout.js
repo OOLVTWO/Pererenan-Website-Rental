@@ -1,12 +1,13 @@
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@/styles/globals.css";
+import "@/styles/flat.css";
 
-// Self-hosted via Next.js at build time — no runtime CDN request, no CORS/font-block risk.
-const inter = Inter({
+// Self-hosted via Next.js at build time — no runtime CDN request.
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans",
   display: "swap",
 });
 
@@ -28,7 +29,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="id" className={inter.variable}>
+    <html lang="id" className={jakarta.variable}>
       <body>{children}</body>
     </html>
   );

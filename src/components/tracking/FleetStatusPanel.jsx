@@ -7,6 +7,7 @@
  * halaman Tracking (motor + sewa aktif) — cukup satu polling.
  */
 import { useState } from 'react';
+import PageTabs from '@/components/ui/PageTabs';
 
 function formatDate(dateStr) {
   if (!dateStr) return '-';
@@ -26,12 +27,12 @@ function formatRupiah(amount) {
 }
 
 const BRAND_ICONS = {
-  honda: { icon: 'fa-solid fa-motorcycle', color: '#EF4444', label: 'Honda' },
+  honda: { icon: 'fa-solid fa-motorcycle', color: '#1E3A8A', label: 'Honda' },
   yamaha: { icon: 'fa-solid fa-motorcycle', color: '#3B82F6', label: 'Yamaha' },
-  suzuki: { icon: 'fa-solid fa-motorcycle', color: '#F59E0B', label: 'Suzuki' },
-  kawasaki: { icon: 'fa-solid fa-motorcycle', color: '#22C55E', label: 'Kawasaki' },
-  vespa: { icon: 'fa-solid fa-person-biking', color: '#8B5CF6', label: 'Vespa' },
-  other: { icon: 'fa-solid fa-circle-question', color: '#9898B0', label: 'Lainnya' },
+  suzuki: { icon: 'fa-solid fa-motorcycle', color: '#1E40AF', label: 'Suzuki' },
+  kawasaki: { icon: 'fa-solid fa-motorcycle', color: '#1D4ED8', label: 'Kawasaki' },
+  vespa: { icon: 'fa-solid fa-person-biking', color: '#1D4ED8', label: 'Vespa' },
+  other: { icon: 'fa-solid fa-circle-question', color: '#5B6474', label: 'Lainnya' },
 };
 
 // ─── Vehicle Availability Card ──────────────────────────────────────────────
@@ -45,19 +46,19 @@ function VehicleCard({ vehicle, activeTransaction }) {
   const daysLeft = activeTransaction ? getDaysLeft(activeTransaction.end_date) : null;
 
   const statusMeta = isAvailable
-    ? { label: 'Tersedia', color: '#22C55E', bg: 'rgba(34,197,94,0.12)', border: 'rgba(34,197,94,0.3)', icon: 'fa-solid fa-circle-check', cls: 'avail-available' }
+    ? { label: 'Tersedia', color: '#1D4ED8', bg: 'rgba(29,78,216,0.12)', border: 'rgba(29,78,216,0.3)', icon: 'fa-solid fa-circle-check', cls: 'avail-available' }
     : isMaintenance
-    ? { label: 'Perawatan', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', icon: 'fa-solid fa-wrench', cls: 'avail-maintenance' }
+    ? { label: 'Perawatan', color: '#1E40AF', bg: 'rgba(30,64,175,0.12)', border: 'rgba(30,64,175,0.3)', icon: 'fa-solid fa-wrench', cls: 'avail-maintenance' }
     : daysLeft < 0
-    ? { label: 'Overdue', color: '#EF4444', bg: 'rgba(239,68,68,0.12)', border: 'rgba(239,68,68,0.35)', icon: 'fa-solid fa-circle-exclamation', cls: 'avail-overdue' }
+    ? { label: 'Overdue', color: '#1E3A8A', bg: 'rgba(30,58,138,0.12)', border: 'rgba(30,58,138,0.35)', icon: 'fa-solid fa-circle-exclamation', cls: 'avail-overdue' }
     : daysLeft === 0
-    ? { label: 'Selesai Hari Ini', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', icon: 'fa-solid fa-bell', cls: 'avail-today' }
+    ? { label: 'Selesai Hari Ini', color: '#1E40AF', bg: 'rgba(30,64,175,0.12)', border: 'rgba(30,64,175,0.3)', icon: 'fa-solid fa-bell', cls: 'avail-today' }
     : { label: 'Sedang Disewa', color: '#3B82F6', bg: 'rgba(59,130,246,0.12)', border: 'rgba(59,130,246,0.3)', icon: 'fa-solid fa-key', cls: 'avail-rented' };
 
   return (
     <div className={`avail-card ${statusMeta.cls}`} style={{ borderColor: statusMeta.border }}>
       {/* Top accent bar */}
-      <div className="avail-card-accent" style={{ background: `linear-gradient(90deg, ${statusMeta.color}, transparent)` }}></div>
+      <div className="avail-card-accent" style={{ background: statusMeta.color }}></div>
 
       {/* Status Badge */}
       <div className="avail-status-badge" style={{ color: statusMeta.color, background: statusMeta.bg, borderColor: statusMeta.border }}>
@@ -73,7 +74,7 @@ function VehicleCard({ vehicle, activeTransaction }) {
         <div className="avail-vehicle-identity">
           <div className="avail-vehicle-name">{vehicle.name}</div>
           <div className="avail-vehicle-plate">
-            <i className="fa-solid fa-id-card" style={{ fontSize: '10px', marginRight: '4px', color: '#9898B0' }}></i>
+            <i className="fa-solid fa-id-card" style={{ fontSize: '10px', marginRight: '4px', color: '#5B6474' }}></i>
             {vehicle.plate_number}
           </div>
           <div className="avail-vehicle-brand" style={{ color: brandMeta.color }}>
@@ -97,11 +98,11 @@ function VehicleCard({ vehicle, activeTransaction }) {
             Info Penyewa
           </div>
           <div className="avail-renter-row">
-            <i className="fa-solid fa-user" style={{ color: '#9898B0', fontSize: '11px', width: '14px' }}></i>
+            <i className="fa-solid fa-user" style={{ color: '#5B6474', fontSize: '11px', width: '14px' }}></i>
             <span className="avail-renter-name">{activeTransaction.renter_name}</span>
           </div>
           <div className="avail-renter-row">
-            <i className="fa-solid fa-phone" style={{ color: '#22C55E', fontSize: '11px', width: '14px' }}></i>
+            <i className="fa-solid fa-phone" style={{ color: '#1D4ED8', fontSize: '11px', width: '14px' }}></i>
             <span>{activeTransaction.renter_phone}</span>
           </div>
           <div className="avail-renter-row">
@@ -130,7 +131,7 @@ function VehicleCard({ vehicle, activeTransaction }) {
       {/* If available — show availability indicator */}
       {isAvailable && (
         <div className="avail-ready-badge">
-          <i className="fa-solid fa-circle-check fa-beat-fade" style={{ color: '#22C55E' }}></i>
+          <i className="fa-solid fa-circle-check fa-beat-fade" style={{ color: '#1D4ED8' }}></i>
           <span>Siap disewa sekarang</span>
         </div>
       )}
@@ -138,7 +139,7 @@ function VehicleCard({ vehicle, activeTransaction }) {
       {/* If maintenance */}
       {isMaintenance && (
         <div className="avail-maintenance-badge">
-          <i className="fa-solid fa-wrench" style={{ color: '#F59E0B' }}></i>
+          <i className="fa-solid fa-wrench" style={{ color: '#1E40AF' }}></i>
           <span>Sedang dalam perawatan</span>
           {vehicle.notes && <p className="avail-notes">{vehicle.notes}</p>}
         </div>
@@ -146,10 +147,10 @@ function VehicleCard({ vehicle, activeTransaction }) {
 
       {/* KM Info */}
       <div className="avail-km-row">
-        <i className="fa-solid fa-gauge" style={{ color: '#9898B0', fontSize: '11px' }}></i>
+        <i className="fa-solid fa-gauge" style={{ color: '#5B6474', fontSize: '11px' }}></i>
         <span>{(vehicle.current_km || 0).toLocaleString('id-ID')} km</span>
         <span className="avail-km-sep">·</span>
-        <i className="fa-solid fa-paint-roller" style={{ color: vehicle.color ? '#A78BFA' : '#9898B0', fontSize: '11px' }}></i>
+        <i className="fa-solid fa-paint-roller" style={{ color: vehicle.color ? '#A78BFA' : '#5B6474', fontSize: '11px' }}></i>
         <span>{vehicle.color || '-'}</span>
       </div>
     </div>
@@ -201,10 +202,10 @@ export default function FleetStatusPanel({ vehicles, activeTransactions, loading
 
   const FILTERS = [
     { key: 'all', label: 'Semua', icon: 'fa-solid fa-grip', count: enrichedVehicles.length },
-    { key: 'available', label: 'Tersedia', icon: 'fa-solid fa-circle-check', count: availableCount, color: '#22C55E' },
+    { key: 'available', label: 'Tersedia', icon: 'fa-solid fa-circle-check', count: availableCount, color: '#1D4ED8' },
     { key: 'rented', label: 'Disewa', icon: 'fa-solid fa-key', count: rentedCount, color: '#3B82F6' },
-    { key: 'overdue', label: 'Overdue', icon: 'fa-solid fa-circle-exclamation', count: overdueCount, color: '#EF4444' },
-    { key: 'maintenance', label: 'Perawatan', icon: 'fa-solid fa-wrench', count: maintenanceCount, color: '#F59E0B' },
+    { key: 'overdue', label: 'Overdue', icon: 'fa-solid fa-circle-exclamation', count: overdueCount, color: '#1E3A8A' },
+    { key: 'maintenance', label: 'Perawatan', icon: 'fa-solid fa-wrench', count: maintenanceCount, color: '#1E40AF' },
   ];
 
   return (
@@ -254,15 +255,12 @@ export default function FleetStatusPanel({ vehicles, activeTransactions, loading
 
       {/* ── Filter & Search ── */}
       <div className="tracking-controls" style={{ flexWrap: 'wrap', gap: '8px' }}>
-        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-          {FILTERS.map(f => (
-            <button key={f.key} type="button" onClick={() => onFilterChange(f.key)}
-              className={`btn btn-sm ${filter === f.key ? 'btn-primary' : 'btn-secondary'}`}>
-              <i className={f.icon} style={{ marginRight: '5px', color: filter === f.key ? undefined : f.color }}></i>
-              {f.label} <span style={{ opacity: 0.75, marginLeft: '4px' }}>{f.count}</span>
-            </button>
-          ))}
-        </div>
+        <PageTabs
+          ariaLabel="Filter status armada"
+          value={filter}
+          onChange={onFilterChange}
+          tabs={FILTERS.map(f => ({ key: f.key, label: f.label, count: f.count }))}
+        />
         <div className="tracking-search-wrap">
           <i className="fa-solid fa-magnifying-glass"></i>
           <input

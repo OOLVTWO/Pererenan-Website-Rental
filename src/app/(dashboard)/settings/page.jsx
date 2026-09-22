@@ -16,6 +16,7 @@ import { updateFavicon } from '@/lib/favicon';
 import { fetchAllRows } from '@/lib/queryColumns';
 import { uploadHandoverPhoto } from '@/lib/handoverPhoto';
 import { DEFAULT_SERVICE_INTERVAL_KM, DEFAULT_SERVICE_INTERVAL_DAYS } from '@/lib/serviceLog';
+import PageTabs from '@/components/ui/PageTabs';
 
 // Panel Pengaturan difokuskan untuk ADMINISTRASI saja.
 // CMS website publik (hero, galeri, FAQ, rating) dihapus: isinya hanya
@@ -73,13 +74,13 @@ const FA_ICON_OPTIONS = [
 ];
 
 const COLOR_OPTIONS = [
-  { hex: '#22C55E', label: 'Hijau' },
+  { hex: '#1D4ED8', label: 'Hijau' },
   { hex: '#3B82F6', label: 'Biru' },
-  { hex: '#8B5CF6', label: 'Ungu' },
-  { hex: '#F59E0B', label: 'Kuning' },
-  { hex: '#EF4444', label: 'Merah' },
+  { hex: '#1D4ED8', label: 'Ungu' },
+  { hex: '#1E40AF', label: 'Kuning' },
+  { hex: '#1E3A8A', label: 'Merah' },
   { hex: '#06B6D4', label: 'Cyan' },
-  { hex: '#EC4899', label: 'Pink' },
+  { hex: '#1D4ED8', label: 'Pink' },
 ];
 
 export default function SettingsPage() {
@@ -443,7 +444,7 @@ export default function SettingsPage() {
               textAlign: 'center',
               padding: '28px 24px',
               borderRadius: '20px',
-              border: `2px solid ${alert.type === 'danger' ? '#EF4444' : 'var(--brand-primary)'}`,
+              border: `2px solid ${alert.type === 'danger' ? '#1E3A8A' : 'var(--brand-primary)'}`,
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)',
               background: '#0F172A',
               animation: 'fadeIn 0.25s ease-out'
@@ -453,15 +454,15 @@ export default function SettingsPage() {
               width: '64px',
               height: '64px',
               borderRadius: '50%',
-              background: alert.type === 'danger' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(34, 197, 94, 0.15)',
-              border: `2px solid ${alert.type === 'danger' ? '#EF4444' : '#22C55E'}`,
-              color: alert.type === 'danger' ? '#EF4444' : '#22C55E',
+              background: alert.type === 'danger' ? 'rgba(30,58,138, 0.15)' : 'rgba(29,78,216, 0.15)',
+              border: `2px solid ${alert.type === 'danger' ? '#1E3A8A' : '#1D4ED8'}`,
+              color: alert.type === 'danger' ? '#1E3A8A' : '#1D4ED8',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: '32px',
               margin: '0 auto 16px auto',
-              boxShadow: `0 0 24px ${alert.type === 'danger' ? 'rgba(239,68,68,0.3)' : 'rgba(34,197,94,0.3)'}`
+              boxShadow: `0 0 24px ${alert.type === 'danger' ? 'rgba(30,58,138,0.3)' : 'rgba(29,78,216,0.3)'}`
             }}>
               <i className={alert.type === 'danger' ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-circle-check'}></i>
             </div>
@@ -495,28 +496,18 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {/* Current section indicator — the section itself is chosen from
-          the sidebar "Pengaturan" dropdown, this just confirms what's showing */}
-      {(() => {
-        const TABS = [
-          { id: 'business', label: 'Profil Bisnis', icon: 'fa-solid fa-store' },
-          { id: 'payment', label: 'Metode Pembayaran', icon: 'fa-solid fa-credit-card' },
-          { id: 'wacustom', label: 'Template WhatsApp', icon: 'fa-brands fa-whatsapp' },
-          { id: 'security', label: 'Keamanan & Password', icon: 'fa-solid fa-shield-halved' },
-          { id: 'storage', label: 'Data & Backup', icon: 'fa-solid fa-database' },
-        ];
-        const current = TABS.find(t => t.id === activeTab) || TABS[0];
-        return (
-          <div style={{ marginBottom: '16px' }}>
-            <span className="badge" style={{
-              background: 'var(--bg-elevated)', color: 'var(--brand-primary)', border: '1px solid var(--bg-border)',
-              fontSize: '12.5px', padding: '6px 14px', fontWeight: 600,
-            }}>
-              <i className={current.icon} style={{ marginRight: '6px' }}></i>{current.label}
-            </span>
-          </div>
-        );
-      })()}
+      <PageTabs
+        ariaLabel="Bagian pengaturan"
+        value={activeTab}
+        onChange={setActiveTab}
+        tabs={[
+          { key: 'business', label: 'Profil bisnis' },
+          { key: 'payment', label: 'Pembayaran' },
+          { key: 'wacustom', label: 'Template WhatsApp' },
+          { key: 'security', label: 'Keamanan' },
+          { key: 'storage', label: 'Data & backup' },
+        ]}
+      />
 
       {/* TAB 1: PROFIL BISNIS (dipakai di invoice/pesan WA, header & sidebar) */}
       {activeTab === 'business' && (
@@ -621,7 +612,7 @@ export default function SettingsPage() {
                     justifyContent: 'space-between',
                     padding: '14px 18px',
                     borderRadius: '10px',
-                    border: `1px solid ${method.active ? 'var(--bg-border)' : 'rgba(239, 68, 68, 0.2)'}`,
+                    border: `1px solid ${method.active ? 'var(--bg-border)' : 'rgba(30,58,138, 0.2)'}`,
                     background: method.active ? 'var(--bg-elevated)' : 'rgba(0,0,0,0.2)',
                     opacity: method.active ? 1 : 0.6,
                     transition: 'all 0.15s ease'
@@ -641,7 +632,7 @@ export default function SettingsPage() {
                         {method.label}
                       </div>
                       <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                        ID System: <code>{method.id}</code> | Status: {method.active ? <span style={{ color: '#22C55E' }}>Aktif ✓</span> : <span style={{ color: '#EF4444' }}>Non-Aktif ✕</span>}
+                        ID System: <code>{method.id}</code> | Status: {method.active ? <span style={{ color: '#1D4ED8' }}>Aktif ✓</span> : <span style={{ color: '#1E3A8A' }}>Non-Aktif ✕</span>}
                       </div>
                     </div>
                   </div>
@@ -683,7 +674,7 @@ export default function SettingsPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
               <div>
                 <h3 style={{ fontSize: '17px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <i className="fa-brands fa-whatsapp" style={{ color: '#25D366', fontSize: '22px' }}></i>
+                  <i className="fa-brands fa-whatsapp" style={{ color: '#1D4ED8', fontSize: '22px' }}></i>
                   Custom Format Text WhatsApp (Dual Templates)
                 </h3>
                 <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -712,7 +703,7 @@ export default function SettingsPage() {
 
             {/* Alert Banner */}
             {waSavedAlert && (
-              <div className="alert alert-success mb-4" style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', color: '#22C55E', padding: '14px 18px', borderRadius: '10px' }}>
+              <div className="alert alert-success mb-4" style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(29,78,216, 0.15)', border: '1px solid rgba(29,78,216, 0.3)', color: '#1D4ED8', padding: '14px 18px', borderRadius: '10px' }}>
                 <i className="fa-solid fa-circle-check" style={{ fontSize: '20px' }}></i>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '14px' }}>
@@ -796,7 +787,7 @@ export default function SettingsPage() {
                   </div>
 
                   <div style={{ marginTop: '16px' }}>
-                    <button type="submit" className="btn btn-success" style={{ width: '100%', background: '#25D366', borderColor: '#25D366', color: '#fff', fontWeight: 700 }}>
+                    <button type="submit" className="btn btn-success" style={{ width: '100%', background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff', fontWeight: 700 }}>
                       <i className="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }}></i> Simpan Template Invoice WA
                     </button>
                   </div>
@@ -809,7 +800,7 @@ export default function SettingsPage() {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    <i className="fa-solid fa-bell" style={{ marginRight: '6px', color: '#F59E0B' }}></i>
+                    <i className="fa-solid fa-bell" style={{ marginRight: '6px', color: '#1E40AF' }}></i>
                     Format Pesan WhatsApp Reminder (Tracking Sewa)
                   </div>
                   <button className="btn btn-secondary btn-sm" onClick={handleResetWaReminderTemplate}>
@@ -845,9 +836,9 @@ export default function SettingsPage() {
                             borderRadius: '6px',
                             fontSize: '11px',
                             fontWeight: 600,
-                            border: '1px solid #F59E0B',
-                            background: 'rgba(245, 158, 11, 0.12)',
-                            color: '#F59E0B',
+                            border: '1px solid #1E40AF',
+                            background: 'rgba(30,64,175, 0.12)',
+                            color: '#1E40AF',
                             cursor: 'pointer'
                           }}
                         >
@@ -869,7 +860,7 @@ export default function SettingsPage() {
                   </div>
 
                   <div style={{ marginTop: '16px' }}>
-                    <button type="submit" className="btn btn-success" style={{ width: '100%', background: '#25D366', borderColor: '#25D366', color: '#fff', fontWeight: 700 }}>
+                    <button type="submit" className="btn btn-success" style={{ width: '100%', background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff', fontWeight: 700 }}>
                       <i className="fa-solid fa-floppy-disk" style={{ marginRight: '6px' }}></i> Simpan Template Reminder WA
                     </button>
                   </div>
@@ -1096,7 +1087,7 @@ export default function SettingsPage() {
           <div className="modal modal-md" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <div>
-                <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#22C55E' }}>
+                <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1D4ED8' }}>
                   <i className="fa-solid fa-cloud-arrow-up"></i> Confirm Restore Database Backup
                 </div>
                 <div className="modal-subtitle">
@@ -1130,7 +1121,7 @@ export default function SettingsPage() {
                 className="btn btn-success"
                 onClick={handleExecuteRestore}
                 disabled={restoringData}
-                style={{ background: '#22C55E', borderColor: '#22C55E', color: '#fff', fontWeight: 700 }}
+                style={{ background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff', fontWeight: 700 }}
               >
                 {restoringData ? (
                   <><i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '6px' }}></i> Memulihkan Data...</>

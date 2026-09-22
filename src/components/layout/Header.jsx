@@ -1,128 +1,21 @@
-/* eslint-disable react-hooks/set-state-in-effect, @next/next/no-img-element */
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { findNavItem } from '@/components/layout/navConfig';
 
-const pageMeta = {
-  '/dashboard':   { title: 'Dashboard',       subtitle: 'Ringkasan statistik usaha rental' },
-  '/transactions':{ title: 'Transaksi',        subtitle: 'Kelola pencatatan sewa motor' },
-  '/vehicles':    { title: 'Data Motor',       subtitle: 'Manajemen armada kendaraan' },
-  '/tracking':    { title: 'Tracking Sewa',    subtitle: 'Monitoring durasi sewa & pengingat WA' },
-  '/service':     { title: 'Servis Motor',     subtitle: 'Jejak servis & jadwal servis berikutnya' },
-  '/expenses':    { title: 'Keuangan',         subtitle: 'Catat pemasukan, pengeluaran & saldo bersih' },
-  '/reports':     { title: 'Laporan',          subtitle: 'Export dan analisis pendapatan' },
-  '/settings':    { title: 'Pengaturan',       subtitle: 'Profil bisnis, pembayaran, template WA & backup' },
-  '/customers':   { title: 'Data Customer',    subtitle: 'Kelola data penyewa & riwayat' },
-};
-
-export default function Header({ onToggleMobile, theme, onToggleTheme }) {
+/** Top bar HP: logo + nama halaman. Di desktop disembunyikan (sidebar sudah ada). */
+export default function Header() {
   const pathname = usePathname();
-  const matchedKey = Object.keys(pageMeta).find(key => pathname.startsWith(key));
-  const meta = pageMeta[matchedKey] || { title: 'Boss Rent', subtitle: 'Admin Panel' };
-  const [logoUrl, setLogoUrl] = useState('/images/logoCompany.png');
-  const [themeDropOpen, setThemeDropOpen] = useState(false);
-  const themeRef = useRef(null);
-
-  useEffect(() => {
-    try {
-      const savedBiz = localStorage.getItem('boss_rent_biz_settings');
-      if (savedBiz) {
-        const parsed = JSON.parse(savedBiz);
-        if (parsed.logoUrl) setLogoUrl(parsed.logoUrl);
-      }
-    } catch { /* ignore */ }
-  }, []);
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    const handler = (e) => {
-      if (themeRef.current && !themeRef.current.contains(e.target)) {
-        setThemeDropOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('id-ID', {
-    weekday: 'short', month: 'short', day: 'numeric',
-  });
-
-  const isDark = theme === 'dark';
-
-  const handleSelectTheme = (dark) => {
-    if (dark !== isDark) onToggleTheme();
-    setThemeDropOpen(false);
-  };
+  const item = findNavItem(pathname);
+  const title = pathname === '/menu' ? 'Menu' : item?.label || 'Boss Rent';
 
   return (
-    <header className="header">
-      <div className="header-left-wrap">
-        <button
-          type="button"
-          className="mobile-hamburger-btn"
-          onClick={onToggleMobile}
-          aria-label="Buka Menu Navigasi"
-        >
-          <i className="fa-solid fa-bars"></i>
-        </button>
-        <div className="header-title-box">
-          <h2>{meta.title}</h2>
-          <p className="header-subtitle">{meta.subtitle}</p>
-        </div>
-      </div>
-
-      <div className="header-right-wrap">
-        {/* ── Theme Dropdown Toggle ── */}
-        <div className="theme-dropdown-wrap" ref={themeRef}>
-          <button
-            type="button"
-            className={`theme-dropdown-trigger ${themeDropOpen ? 'open' : ''}`}
-            onClick={() => setThemeDropOpen(prev => !prev)}
-            aria-label="Pilih tema"
-            aria-expanded={themeDropOpen}
-          >
-            {/* Active theme icon */}
-            <i className={isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun'}></i>
-            {/* Chevron arrow — rotates when open */}
-            <i className="fa-solid fa-chevron-down theme-dropdown-arrow"></i>
-          </button>
-
-          {themeDropOpen && (
-            <div className="theme-dropdown-menu" role="menu">
-              <button
-                type="button"
-                className={`theme-dropdown-item ${!isDark ? 'active' : ''}`}
-                onClick={() => handleSelectTheme(false)}
-                role="menuitem"
-              >
-                <i className="fa-solid fa-sun"></i>
-                <span>Terang</span>
-                {!isDark && <i className="fa-solid fa-check theme-check"></i>}
-              </button>
-              <button
-                type="button"
-                className={`theme-dropdown-item ${isDark ? 'active' : ''}`}
-                onClick={() => handleSelectTheme(true)}
-                role="menuitem"
-              >
-                <i className="fa-solid fa-moon"></i>
-                <span>Gelap</span>
-                {isDark && <i className="fa-solid fa-check theme-check"></i>}
-              </button>
-            </div>
-          )}
-        </div>
-
-        <img src={logoUrl} alt="Boss Rent Pererenan" className="header-logo-img" />
-
-        <div className="header-date">
-          <i className="fa-regular fa-calendar-days" style={{ marginRight: '6px' }}></i>
-          {dateStr}
-        </div>
-      </div>
+    <header className="shell-topbar">
+      <Link href="/dashboard" className="shell-brand compact" aria-label="Ke Dashboard">
+        <span className="shell-brand-mark">BR</span>
+      </Link>
+      <span className="shell-topbar-title">{title}</span>
     </header>
   );
 }

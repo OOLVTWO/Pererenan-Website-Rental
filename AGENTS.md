@@ -48,3 +48,14 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
 - Jejak servis ada di tabel `service_logs`; kolom `vehicles.last_service_km / last_serviced_at / current_km`
   disinkronkan otomatis dari catatan servis terbaru (`src/lib/serviceLogServer.js`).
 - Interval servis (km / hari) disimpan di localStorage `boss_rent_biz_settings` (Pengaturan → Profil Bisnis).
+
+## Desain (sejak redesign flat)
+- Flat & ringan: putih + satu biru (`--brand-primary` #1D4ED8), abu hanya untuk teks/garis. Tanpa gradient,
+  shadow tebal, blur, atau animasi mencolok. Satu tema terang (tidak ada dark mode / toggle tema).
+- Token & komponen dasar ada di `src/styles/flat.css` (dimuat setelah `globals.css`). Jangan tambah warna hijau/
+  merah/kuning/ungu baru; status dibedakan dengan skala biru/abu + teks.
+- Navigasi: `src/components/layout/navConfig.js` = satu sumber menu. Sidebar desktop & halaman `/menu` flat,
+  1 menu = 1 klik, TANPA dropdown. HP (≤900px): top bar + bar bawah (Beranda · Transaksi · Tracking · Menu).
+- Sub-bagian halaman = tab di dalam halaman (`src/components/ui/PageTabs.jsx`, tersimpan di `?tab=`),
+  bukan submenu sidebar.
+- Mobile-first: target sentuh ≥ 44px, modal jadi lembar bawah di HP.

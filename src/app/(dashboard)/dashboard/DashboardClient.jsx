@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import DashboardCharts from '@/components/dashboard/DashboardCharts';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { getServiceIntervals, getServiceStatus } from '@/lib/serviceLog';
@@ -11,47 +10,29 @@ const MONTH_NAMES = [
   'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
   'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
 ];
+const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
-const statusBadge = (status, paymentStatus) => {
-  if (status === 'active' && paymentStatus === 'unpaid') {
-    return (
-      <span className="tx-status-pill" style={{ background: 'rgba(245,158,11,0.15)', color: '#F59E0B', borderColor: 'rgba(245,158,11,0.4)' }}>
-        <i className="fa-solid fa-clock" style={{ fontSize: '11px' }}></i> Belum Bayar
-      </span>
-    );
-  }
-  const map = {
-    active: (
-      <span className="tx-status-pill active">
-        <i className="fa-solid fa-bolt" style={{ fontSize: '11px' }}></i> Sewa Aktif
-      </span>
-    ),
-    completed: (
-      <span className="tx-status-pill completed">
-        <i className="fa-solid fa-circle-check" style={{ fontSize: '11px' }}></i> Selesai
-      </span>
-    ),
-    cancelled: (
-      <span className="tx-status-pill cancelled">
-        <i className="fa-solid fa-circle-xmark" style={{ fontSize: '11px' }}></i> Dibatalkan
-      </span>
-    ),
-  };
-  return map[status] || <span className="tx-status-pill">{status}</span>;
-};
-
-function fleetStatusDot(status) {
-  if (status === 'available') return '#22C55E';
-  if (status === 'rented') return '#3B82F6';
-  if (status === 'maintenance') return '#F59E0B';
-  return '#5C5C78';
+function daysUntil(dateStr) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const end = new Date(dateStr);
+  end.setHours(0, 0, 0, 0);
+  return Math.floor((end - today) / 86400000);
 }
 
-function fleetStatusLabel(status) {
-  if (status === 'available') return 'Tersedia';
-  if (status === 'rented') return 'Disewa';
-  if (status === 'maintenance') return 'Servis';
-  return status;
+function shortRupiah(n) {
+  const v = Number(n || 0);
+  if (v >= 1e9) return `${(v / 1e9).toLocaleString('id-ID', { maximumFractionDigits: 1 })} M`;
+  if (v >= 1e6) return `${(v / 1e6).toLocaleString('id-ID', { maximumFractionDigits: 1 })} jt`;
+  if (v >= 1e3) return `${Math.round(v / 1e3).toLocaleString('id-ID')} rb`;
+  return v.toLocaleString('id-ID');
+}
+
+function txStatus(tx) {
+  if (tx.status === 'active' && tx.payment_status === 'unpaid') return { label: 'Belum bayar', cls: 'strong' };
+  if (tx.status === 'active') return { label: 'Aktif', cls: 'soft' };
+  if (tx.status === 'completed') return { label: 'Selesai', cls: 'muted' };
+  return { label: 'Dibatalkan', cls: 'muted' };
 }
 
 export default function DashboardClient({ transactions, vehicles, loadedYear }) {
@@ -251,7 +232,6 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
   const totalUnpaid = unpaidTx.reduce((s, t) => s + Number(t.total_price || 0), 0);
 
   const recentTx    = filteredTx.slice(0, 5);
-  const fleetPreview = safeVehicles.slice(0, 6);
 
   // Reuse summary.totalRevenue (from calcFinancialSummary) rather than a
   // separate transactions-only calculation, so this figure always matches
@@ -259,115 +239,66 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
   // rental + Keuangan income combination.
   const periodRevenue = totalRevenue;
 
-  const kpiCards = [
-    {
-      accent: '#E85D04',
-      iconBg: 'rgba(232,93,4,0.12)',
-      iconColor: '#E85D04',
-      icon: 'fa-solid fa-sack-dollar',
-      label: showToday ? 'Pendapatan Hari Ini' : `Pendapatan ${periodRange.label}`,
-      value: formatRupiah(showToday ? todayRevenue : periodRevenue),
-      sub: showToday ? `${periodRange.label}: ${formatRupiah(periodRevenue)}` : `${paidTx.length} transaksi terbayar`,
-    },
-    {
-      accent: '#3B82F6',
-      iconBg: 'rgba(59,130,246,0.12)',
-      iconColor: '#3B82F6',
-      icon: 'fa-solid fa-key',
-      label: 'Motor Sedang Disewa',
-      value: `${activeCount} Unit`,
-      sub: `dari ${safeVehicles.length} total armada`,
-    },
-    {
-      accent: '#22C55E',
-      iconBg: 'rgba(34,197,94,0.12)',
-      iconColor: '#22C55E',
-      icon: 'fa-solid fa-circle-check',
-      label: 'Motor Tersedia',
-      value: `${availableCount} Unit`,
-      sub: 'siap sewa sekarang',
-    },
-    {
-      accent: '#F59E0B',
-      iconBg: 'rgba(245,158,11,0.12)',
-      iconColor: '#F59E0B',
-      icon: 'fa-solid fa-wrench',
-      label: 'Dalam Perawatan',
-      value: `${maintenanceCount} Unit`,
-      sub: 'tidak beroperasi',
-    },
-  ];
+
+  // ── Perlu perhatian: hanya yang ada isinya ──
+  const overdueTx = activeTx.filter(t => daysUntil(t.end_date) < 0);
+  const dueSoonTx = activeTx.filter(t => { const d = daysUntil(t.end_date); return d === 0 || d === 1; });
+  const attention = [
+    overdueTx.length > 0 && { href: '/tracking?tab=overdue', icon: 'fa-solid fa-circle-exclamation', title: `${overdueTx.length} sewa lewat jatuh tempo`, sub: 'Hubungi penyewa sekarang' },
+    dueSoonTx.length > 0 && { href: '/tracking?tab=critical', icon: 'fa-regular fa-clock', title: `${dueSoonTx.length} sewa berakhir hari ini/besok`, sub: 'Kirim pengingat WhatsApp' },
+    unpaidTx.length > 0 && { href: '/transactions', icon: 'fa-solid fa-money-bill-wave', title: `${unpaidTx.length} sewa belum dibayar`, sub: `Total ${formatRupiah(totalUnpaid)}` },
+    serviceDueVehicles.length > 0 && { href: '/service', icon: 'fa-solid fa-screwdriver-wrench', title: `${serviceDueVehicles.length} motor waktunya servis`, sub: serviceDueVehicles.slice(0, 3).map(v => v.name).join(', ') },
+    maintenanceCount > 0 && { href: '/tracking?view=armada&tab=maintenance', icon: 'fa-solid fa-wrench', title: `${maintenanceCount} motor dalam perawatan`, sub: 'Belum bisa disewakan' },
+  ].filter(Boolean);
+
+  // ── Pendapatan sewa per bulan (tahun yang sedang dilihat) ──
+  const nowMonth = getLocalMonthStr();
+  const monthly = MONTH_SHORT.map((label, i) => {
+    const key = `${viewingYear}-${String(i + 1).padStart(2, '0')}`;
+    const total = safeTx
+      .filter(t => isPaidTransaction(t) && toLocalDateStr(t.created_at).startsWith(key))
+      .reduce((s, t) => s + Number(t.total_price || 0), 0);
+    return { key, label, total };
+  }).filter(m => m.key <= nowMonth && (m.total > 0 || m.key.slice(0, 4) === nowMonth.slice(0, 4)));
+  const firstWithData = monthly.findIndex(m => m.total > 0);
+  const chartMonths = firstWithData >= 0 ? monthly.slice(firstWithData) : monthly.slice(-3);
+  const chartMax = Math.max(1, ...chartMonths.map(m => m.total));
+  const selectedMonthKey = periodMode === 'month' ? selectedMonth : null;
+
+  const totalFleet = safeVehicles.length || 1;
+  const pct = (n) => `${(n / totalFleet) * 100}%`;
 
   return (
-    <div className="dashboard-v2 fade-in">
-
-      {(unpaidTx.length > 0 || serviceDueVehicles.length > 0) && (
-        <div className="dash-alerts">
-          {unpaidTx.length > 0 && (
-            <Link href="/transactions" className="dash-alert-bar unpaid">
-              <i className="fa-solid fa-triangle-exclamation"></i>
-              <span>{unpaidTx.length} sewa aktif belum bayar — total piutang {formatRupiah(totalUnpaid)}</span>
-              <span className="alert-cta">Lihat Transaksi &rarr;</span>
-            </Link>
-          )}
-          {serviceDueVehicles.length > 0 && (
-            <Link href="/service" className="dash-alert-bar maintenance">
-              <i className="fa-solid fa-screwdriver-wrench"></i>
-              <span>
-                {serviceDueVehicles.length} motor sudah waktunya servis — {serviceDueVehicles.slice(0, 4).map(v => v.name).join(', ')}
-                {serviceDueVehicles.length > 4 ? ` +${serviceDueVehicles.length - 4} lagi` : ''}
-              </span>
-              <span className="alert-cta">Buka Servis &rarr;</span>
-            </Link>
-          )}
-        </div>
-      )}
-
-      <div className="dash-header">
+    <div className="dash2">
+      {/* ── Judul + periode ── */}
+      <div className="dash2-head">
         <div>
-          <h2 className="dash-title">
-            <i className="fa-solid fa-chart-pie" style={{ marginRight: '8px', color: 'var(--brand-primary)' }}></i>
-            Dashboard
-          </h2>
-          <p className="dash-subtitle">
-            Ringkasan performa usaha — {periodRange.label}
-            {loadingYear && (
-              <span style={{ marginLeft: '8px', color: 'var(--brand-primary)' }}>
-                <i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '4px' }}></i>
-                Memuat data {viewingYear}...
-              </span>
-            )}
+          <h1 className="page-title" style={{ marginBottom: 2 }}>Ringkasan</h1>
+          <p className="dash2-muted">
+            {periodRange.label}
+            {loadingYear && <> · <i className="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> memuat data {viewingYear}…</>}
           </p>
         </div>
-
-        <div className="dash-period-bar">
-          <div className="dash-period-tabs">
-            <button
-              type="button"
-              className={`dash-ptab ${periodMode === 'month' ? 'active' : ''}`}
-              onClick={() => setPeriodMode('month')}
-            >Bulanan</button>
-            <button
-              type="button"
-              className={`dash-ptab ${periodMode === 'year' ? 'active' : ''}`}
-              onClick={() => setPeriodMode('year')}
-            >Tahunan</button>
+        <div className="dash2-period">
+          <div className="dash2-seg" role="group" aria-label="Jenis periode">
+            <button type="button" className={periodMode === 'month' ? 'active' : ''} onClick={() => setPeriodMode('month')}>Bulan</button>
+            <button type="button" className={periodMode === 'year' ? 'active' : ''} onClick={() => setPeriodMode('year')}>Tahun</button>
           </div>
-
-          {/* Always rendered — hidden in year mode to prevent layout shift */}
+          {periodMode === 'month' && (
+            <select
+              className="form-control dash2-select"
+              aria-label="Pilih bulan"
+              value={selectedMonth.substring(5, 7)}
+              onChange={e => setSelectedMonth(`${selectedMonth.substring(0, 4)}-${e.target.value}`)}
+            >
+              {MONTH_NAMES.map((name, i) => (
+                <option key={i} value={String(i + 1).padStart(2, '0')}>{name}</option>
+              ))}
+            </select>
+          )}
           <select
-            className="dash-period-select"
-            style={{ display: periodMode === 'year' ? 'none' : undefined }}
-            value={selectedMonth.substring(5, 7)}
-            onChange={e => setSelectedMonth(`${selectedMonth.substring(0, 4)}-${e.target.value}`)}
-          >
-            {MONTH_NAMES.map((name, i) => (
-              <option key={i} value={String(i + 1).padStart(2, '0')}>{name}</option>
-            ))}
-          </select>
-
-          <select
-            className="dash-period-select"
+            className="form-control dash2-select"
+            aria-label="Pilih tahun"
             value={periodMode === 'year' ? selectedYear : selectedMonth.substring(0, 4)}
             onChange={e => {
               if (periodMode === 'year') setSelectedYear(e.target.value);
@@ -376,248 +307,120 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
           >
             {yearOptions.map(y => <option key={y} value={String(y)}>{y}</option>)}
           </select>
-
           {!periodRange.isCurrent && (
-            <button type="button" className="dash-period-reset" onClick={handleResetPeriod}>
-              <i className="fa-solid fa-rotate-left"></i> Periode Berjalan
-            </button>
+            <button type="button" className="btn btn-secondary btn-sm" onClick={handleResetPeriod}>Kembali ke sekarang</button>
           )}
         </div>
+        <Link href="/transactions?new=1" className="btn btn-primary dash2-cta">
+          <i className="fa-solid fa-plus" aria-hidden="true"></i> Transaksi baru
+        </Link>
       </div>
 
-      <div className="dash-kpi-row">
-        {kpiCards.map((card, i) => (
-          <div key={i} className="dash-kpi-card" style={{ borderTopColor: card.accent }}>
-            <div className="dash-kpi-icon" style={{ background: card.iconBg, color: card.iconColor }}>
-              <i className={card.icon}></i>
-            </div>
-            <div className="dash-kpi-text">
-              <div className="dash-kpi-label">{card.label}</div>
-              <div className="dash-kpi-value">{card.value}</div>
-              <div className="dash-kpi-sub">{card.sub}</div>
-            </div>
+      <div className="dash2-grid">
+        {/* ── Kolom 1: Keuangan ── */}
+        <section className="dash2-col" aria-labelledby="dash-keuangan">
+          <div className="dash2-section-head">
+            <h2 id="dash-keuangan">Keuangan</h2>
+            <Link href="/reports">Laporan <i className="fa-solid fa-chevron-right" aria-hidden="true"></i></Link>
           </div>
-        ))}
-      </div>
+          <div className="list-card">
+            <div className="dash2-hero">
+              <span className="dash2-muted">Pendapatan sewa · {paidTx.length} transaksi lunas</span>
+              <span className="dash2-big">{formatRupiah(summary.rentalRevenue)}</span>
+              {showToday && <span className="dash2-muted">Hari ini: <strong>{formatRupiah(todayRevenue)}</strong></span>}
+            </div>
+            <div className="dash2-row"><span>Pemasukan lain</span><strong>{formatRupiah(summary.otherIncome)}</strong></div>
+            <div className="dash2-row"><span>Pengeluaran</span><strong>− {formatRupiah(totalExpenses)}</strong></div>
+            {hasInvestor && <div className="dash2-row"><span>Bagi hasil investor</span><strong>− {formatRupiah(investorPayout)}</strong></div>}
+            <div className="dash2-row total"><span>Laba bersih</span><strong>{formatRupiah(netProfit)}</strong></div>
+            {(totalDepositHeld > 0 || totalDepositReturned > 0) && (
+              <div className="dash2-row"><span>Deposit ditahan · dikembalikan</span><strong>{formatRupiah(totalDepositHeld)} · {formatRupiah(totalDepositReturned)}</strong></div>
+            )}
+          </div>
+        </section>
 
-      <div className="dash-finance-row">
-        <div className="dash-finance-item income">
-          <i className="fa-solid fa-circle-arrow-down"></i>
-          <div>
-            <div className="fin-label">Total Pemasukan</div>
-            <div className="fin-value">{formatRupiah(totalRevenue)}</div>
-          </div>
-        </div>
-        <div className="dash-finance-divider"></div>
-        <div className="dash-finance-item expense">
-          <i className="fa-solid fa-circle-arrow-up"></i>
-          <div>
-            <div className="fin-label">Total Pengeluaran</div>
-            <div className="fin-value">{formatRupiah(totalExpenses)}</div>
-          </div>
-        </div>
-        {hasInvestor && (
-          <>
-            <div className="dash-finance-divider"></div>
-            <div className="dash-finance-item investor">
-              <i className="fa-solid fa-crown"></i>
-              <div>
-                <div className="fin-label">Bagi Hasil Investor</div>
-                <div className="fin-value">{formatRupiah(investorPayout)}</div>
+        {/* ── Kolom 2: Perlu perhatian + Armada ── */}
+        <section className="dash2-col" aria-labelledby="dash-perhatian">
+          <div className="dash2-section-head"><h2 id="dash-perhatian">Perlu perhatian</h2></div>
+          <div className="list-card">
+            {attention.length === 0 ? (
+              <div className="list-row">
+                <span className="list-row-icon"><i className="fa-solid fa-check" aria-hidden="true"></i></span>
+                <span className="list-row-text"><span className="list-row-title">Semua aman</span><span className="list-row-sub">Tidak ada yang perlu ditindaklanjuti</span></span>
               </div>
-            </div>
-          </>
-        )}
-        <div className="dash-finance-divider"></div>
-        <div className={`dash-finance-item profit ${netProfit >= 0 ? 'positive' : 'negative'}`}>
-          <i className={`fa-solid ${netProfit >= 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}`}></i>
-          <div>
-            <div className="fin-label">Laba Bersih</div>
-            <div className="fin-value">{formatRupiah(netProfit)}</div>
-          </div>
-        </div>
-        <div style={{ marginLeft: 'auto' }}>
-          <Link href="/reports" className="btn btn-secondary btn-sm">
-            Laporan Lengkap <i className="fa-solid fa-arrow-right" style={{ marginLeft: '4px' }}></i>
-          </Link>
-        </div>
-      </div>
-
-      <DashboardCharts
-        transactions={filteredTx}
-        vehicles={safeVehicles}
-        periodMode={periodMode}
-        periodRange={periodRange}
-      />
-
-      <div className="dash-mid-row">
-        <div className="dash-card dash-deposit-card">
-          <div className="dash-card-header">
-            <div className="dash-card-title">
-              <i className="fa-solid fa-vault" style={{ color: 'var(--brand-primary)' }}></i>
-              Rekap Deposit Jaminan
-            </div>
-            <div className="dash-card-sub">Monitoring deposit jaminan</div>
-          </div>
-          <div className="dash-deposit-list">
-            <div className="dash-deposit-item dep-held">
-              <div className="dep-dot"></div>
-              <div className="dep-info">
-                <div className="dep-name">Deposit Ditahan (Aktif)</div>
-                <div className="dep-count">{activeTx.length} sewa berjalan</div>
-              </div>
-              <div className="dep-amount" style={{ color: '#F59E0B' }}>{formatRupiah(totalDepositHeld)}</div>
-            </div>
-            <div className="dash-deposit-item dep-returned">
-              <div className="dep-dot"></div>
-              <div className="dep-info">
-                <div className="dep-name">Deposit Dikembalikan</div>
-                <div className="dep-count">{completedTx.length} transaksi selesai</div>
-              </div>
-              <div className="dep-amount" style={{ color: '#3B82F6' }}>{formatRupiah(totalDepositReturned)}</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="dash-card dash-quick-card">
-          <div className="dash-card-header">
-            <div className="dash-card-title">
-              <i className="fa-solid fa-bolt" style={{ color: 'var(--brand-primary)' }}></i>
-              Aksi Cepat
-            </div>
-          </div>
-          <div className="dash-quick-grid">
-            <Link href="/transactions" className="dash-quick-btn q-orange">
-              <i className="fa-solid fa-plus"></i>
-              <div className="qbtn-label">Transaksi Baru</div>
-              <div className="qbtn-sub">Catat sewa motor</div>
-            </Link>
-            <Link href="/tracking?view=armada" className="dash-quick-btn q-blue">
-              <i className="fa-solid fa-circle-half-stroke"></i>
-              <div className="qbtn-label">Cek Armada</div>
-              <div className="qbtn-sub">Status real-time</div>
-            </Link>
-            <Link href="/service" className="dash-quick-btn q-purple">
-              <i className="fa-solid fa-screwdriver-wrench"></i>
-              <div className="qbtn-label">Servis Motor</div>
-              <div className="qbtn-sub">Catat &amp; cek jadwal</div>
-            </Link>
-            <Link href="/reports?tab=investor" className="dash-quick-btn q-green">
-              <i className="fa-solid fa-chart-line"></i>
-              <div className="qbtn-label">Laporan Investor</div>
-              <div className="qbtn-sub">Export Excel</div>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <div className="dash-bottom-row">
-        <div className="dash-card">
-          <div className="dash-card-header">
-            <div>
-              <div className="dash-card-title">
-                <i className="fa-solid fa-receipt" style={{ color: 'var(--brand-primary)' }}></i>
-                Transaksi Terbaru
-              </div>
-              <div className="dash-card-sub">5 terkini pada {periodRange.label}</div>
-            </div>
-            <Link href="/transactions" className="btn btn-secondary btn-sm">
-              Lihat Semua <i className="fa-solid fa-arrow-right" style={{ marginLeft: '4px' }}></i>
-            </Link>
-          </div>
-
-          {recentTx.length === 0 ? (
-            <div className="table-empty" style={{ padding: '32px 16px' }}>
-              <div className="table-empty-icon"><i className="fa-solid fa-receipt"></i></div>
-              <p>Belum ada transaksi. <Link href="/transactions">Catat transaksi baru</Link></p>
-            </div>
-          ) : (
-            <div className="table-wrapper">
-              <table className="table table--stack-mobile" style={{ minWidth: '580px' }}>
-                <thead>
-                  <tr>
-                    <th>Penyewa</th>
-                    <th>Motor</th>
-                    <th>Tanggal</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentTx.map((tx) => (
-                    <tr key={tx.id}>
-                      <td data-label="Penyewa" data-label-align="left">
-                        <div style={{ fontWeight: 600, fontSize: '13px', color: 'var(--text-primary)' }}>{tx.renter_name}</div>
-                        {tx.renter_phone && (
-                          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                            <i className="fa-solid fa-phone" style={{ marginRight: '3px', fontSize: '10px' }}></i>{tx.renter_phone}
-                          </div>
-                        )}
-                      </td>
-                      <td data-label="Motor" data-label-align="left">
-                        <div style={{ fontSize: '13px', fontWeight: 500 }}>{tx.vehicles?.name || tx.vehicle_name || '\u2014'}</div>
-                        {(tx.vehicles?.plate_number || tx.plate_number) && (
-                          <span style={{ fontSize: '11px', color: 'var(--text-muted)', background: 'var(--bg-elevated)', padding: '1px 6px', borderRadius: '4px' }}>
-                            {tx.vehicles?.plate_number || tx.plate_number}
-                          </span>
-                        )}
-                      </td>
-                      <td data-label="Tanggal" data-label-align="left" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                        <div><i className="fa-solid fa-calendar-plus" style={{ marginRight: '3px', color: '#22C55E', fontSize: '10px' }}></i>{tx.start_date}</div>
-                        <div><i className="fa-solid fa-calendar-check" style={{ marginRight: '3px', color: '#3B82F6', fontSize: '10px' }}></i>{tx.end_date}</div>
-                      </td>
-                      <td data-label="Total">
-                        <strong style={{ fontSize: '13px' }}>{formatRupiah(tx.total_price)}</strong>
-                      </td>
-                      <td data-label="Status">{statusBadge(tx.status, tx.payment_status)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
-        <div className="dash-card dash-fleet-card">
-          <div className="dash-card-header">
-            <div>
-              <div className="dash-card-title">
-                <i className="fa-solid fa-motorcycle" style={{ color: 'var(--brand-primary)' }}></i>
-                Status Armada
-              </div>
-              <div className="dash-card-sub">{safeVehicles.length} unit terdaftar</div>
-            </div>
-            <Link href="/tracking?view=armada" className="btn btn-secondary btn-sm">
-              Selengkapnya <i className="fa-solid fa-arrow-right" style={{ marginLeft: '4px' }}></i>
-            </Link>
-          </div>
-
-          <div className="fleet-legend">
-            <span className="fleet-legend-item"><span className="fleet-dot-lg" style={{ background: '#22C55E' }}></span>{availableCount} Tersedia</span>
-            <span className="fleet-legend-item"><span className="fleet-dot-lg" style={{ background: '#3B82F6' }}></span>{activeCount} Disewa</span>
-            <span className="fleet-legend-item"><span className="fleet-dot-lg" style={{ background: '#F59E0B' }}></span>{maintenanceCount} Servis</span>
-          </div>
-
-          <div className="dash-fleet-grid">
-            {fleetPreview.map((v) => (
-              <div key={v.id} className="dash-fleet-item">
-                <span className="fleet-status-dot" style={{ background: fleetStatusDot(v.status) }}></span>
-                <div className="fleet-item-info">
-                  <div className="fleet-item-name">{v.name}</div>
-                  <div className="fleet-item-plate">{v.plate_number}</div>
-                </div>
-                <div className="fleet-item-status" style={{ color: fleetStatusDot(v.status) }}>
-                  {fleetStatusLabel(v.status)}
-                </div>
-              </div>
+            ) : attention.map(a => (
+              <Link key={a.href + a.title} href={a.href} className="list-row">
+                <span className="list-row-icon"><i className={a.icon} aria-hidden="true"></i></span>
+                <span className="list-row-text"><span className="list-row-title">{a.title}</span><span className="list-row-sub">{a.sub}</span></span>
+                <i className="fa-solid fa-chevron-right list-row-chev" aria-hidden="true"></i>
+              </Link>
             ))}
-            {safeVehicles.length === 0 && (
-              <div className="table-empty" style={{ padding: '24px' }}>
-                <p><Link href="/vehicles">Tambah motor pertama</Link></p>
+          </div>
+
+          <div className="dash2-section-head">
+            <h2>Armada</h2>
+            <Link href="/tracking?view=armada">Status armada <i className="fa-solid fa-chevron-right" aria-hidden="true"></i></Link>
+          </div>
+          <div className="list-card dash2-pad">
+            <div className="dash2-tiles">
+              <div><strong>{activeCount}</strong><span>Disewa</span></div>
+              <div><strong>{availableCount}</strong><span>Tersedia</span></div>
+              <div><strong>{maintenanceCount}</strong><span>Perawatan</span></div>
+            </div>
+            <div className="dash2-bar" aria-hidden="true">
+              <span style={{ width: pct(activeCount) }} className="b1"></span>
+              <span style={{ width: pct(availableCount) }} className="b2"></span>
+              <span style={{ width: pct(maintenanceCount) }} className="b3"></span>
+            </div>
+            <span className="dash2-muted">
+              {Math.round((activeCount / totalFleet) * 100)}% dari {safeVehicles.length} motor sedang disewa
+            </span>
+          </div>
+        </section>
+
+        {/* ── Kolom 3: Grafik + transaksi terbaru ── */}
+        <section className="dash2-col" aria-labelledby="dash-grafik">
+          <div className="dash2-section-head"><h2 id="dash-grafik">Pendapatan sewa per bulan · {viewingYear}</h2></div>
+          <div className="list-card dash2-pad">
+            {chartMonths.every(m => m.total === 0) ? (
+              <span className="dash2-muted">Belum ada pendapatan di tahun ini.</span>
+            ) : (
+              <div className="dash2-chart" role="img" aria-label={`Pendapatan sewa per bulan tahun ${viewingYear}`}>
+                {chartMonths.map(m => (
+                  <div key={m.key} className="dash2-chart-col">
+                    <span className="dash2-chart-val">{m.total > 0 ? shortRupiah(m.total) : '–'}</span>
+                    <span className={`dash2-chart-bar${m.key === selectedMonthKey ? ' on' : ''}`} style={{ height: `${Math.max(4, (m.total / chartMax) * 120)}px` }}></span>
+                    <span className="dash2-chart-label">{m.label}</span>
+                  </div>
+                ))}
               </div>
             )}
           </div>
-        </div>
+
+          <div className="dash2-section-head">
+            <h2>Transaksi terbaru</h2>
+            <Link href="/transactions">Semua <i className="fa-solid fa-chevron-right" aria-hidden="true"></i></Link>
+          </div>
+          <div className="list-card">
+            {recentTx.length === 0 ? (
+              <div className="list-row"><span className="list-row-sub">Belum ada transaksi di {periodRange.label}.</span></div>
+            ) : recentTx.map(tx => {
+              const st = txStatus(tx);
+              return (
+                <Link key={tx.id} href="/transactions" className="list-row">
+                  <span className="list-row-text">
+                    <span className="list-row-title">{tx.renter_name}</span>
+                    <span className="list-row-sub">{tx.vehicles?.name || 'Motor'} · {tx.duration_days || 1} hari</span>
+                  </span>
+                  <span className="dash2-tx-right">
+                    <span className="list-row-value">{formatRupiah(tx.total_price)}</span>
+                    <span className={`dash2-pill ${st.cls}`}>{st.label}</span>
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ const statusBadge = (status, paymentStatus) => {
   // If active but unpaid, show special badge
   if (status === 'active' && paymentStatus === 'unpaid') {
     return (
-      <span className="tx-status-pill" style={{ background: 'rgba(245,158,11,0.15)', color: '#F59E0B', borderColor: 'rgba(245,158,11,0.4)' }}>
+      <span className="tx-status-pill" style={{ background: 'rgba(30,64,175,0.15)', color: '#1E40AF', borderColor: 'rgba(30,64,175,0.4)' }}>
         <i className="fa-solid fa-clock" style={{ fontSize: '11px' }}></i> Belum Bayar
       </span>
     );
@@ -48,12 +48,12 @@ const statusBadge = (status, paymentStatus) => {
 };
 
 const BRANDS = [
-  { key: 'honda',    label: 'Honda',          icon: 'fa-solid fa-motorcycle', color: '#EF4444' },
+  { key: 'honda',    label: 'Honda',          icon: 'fa-solid fa-motorcycle', color: '#1E3A8A' },
   { key: 'yamaha',   label: 'Yamaha',          icon: 'fa-solid fa-motorcycle', color: '#3B82F6' },
-  { key: 'suzuki',   label: 'Suzuki',          icon: 'fa-solid fa-motorcycle', color: '#F59E0B' },
-  { key: 'kawasaki', label: 'Kawasaki',        icon: 'fa-solid fa-motorcycle', color: '#22C55E' },
-  { key: 'vespa',    label: 'Vespa / Piaggio', icon: 'fa-solid fa-person-biking', color: '#8B5CF6' },
-  { key: 'other',    label: 'Merek Lain',      icon: 'fa-solid fa-circle-question', color: '#9898B0' },
+  { key: 'suzuki',   label: 'Suzuki',          icon: 'fa-solid fa-motorcycle', color: '#1E40AF' },
+  { key: 'kawasaki', label: 'Kawasaki',        icon: 'fa-solid fa-motorcycle', color: '#1D4ED8' },
+  { key: 'vespa',    label: 'Vespa / Piaggio', icon: 'fa-solid fa-person-biking', color: '#1D4ED8' },
+  { key: 'other',    label: 'Merek Lain',      icon: 'fa-solid fa-circle-question', color: '#5B6474' },
 ];
 
 // ===== BRAND-FIRST VEHICLE PICKER =====
@@ -485,7 +485,7 @@ function CustomerPickerCombobox({ onSelectCustomer }) {
                           )}
                         </div>
                         <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                          WA: <span style={{ color: '#22C55E' }}>{c.phone}</span> {c.id_number ? `• KTP: ${c.id_number}` : ''}
+                          WA: <span style={{ color: '#1D4ED8' }}>{c.phone}</span> {c.id_number ? `• KTP: ${c.id_number}` : ''}
                         </div>
                       </div>
                     </div>
@@ -502,7 +502,7 @@ function CustomerPickerCombobox({ onSelectCustomer }) {
       </div>
 
       {selectedCust && (
-        <div style={{ marginTop: '8px', fontSize: '12px', color: '#22C55E', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ marginTop: '8px', fontSize: '12px', color: '#1D4ED8', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span><i className="fa-solid fa-circle-check" style={{ marginRight: '6px' }}></i> Terpilih: <strong>{selectedCust.name}</strong> ({selectedCust.phone})</span>
           <button type="button" onClick={() => setSelectedCust(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '11px', textDecoration: 'underline' }}>Reset</button>
         </div>
@@ -803,7 +803,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
 
           {/* ── Pilih Motor ── */}
           {noVehiclesAvailable && !editData ? (
-            <div style={{ padding: '16px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.35)', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#EF4444' }}>
+            <div style={{ padding: '16px', background: 'rgba(30,58,138,0.08)', border: '1px solid rgba(30,58,138,0.35)', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#1E3A8A' }}>
               <i className="fa-solid fa-triangle-exclamation" style={{ fontSize: '18px', flexShrink: 0 }}></i>
               <div>
                 <strong>Semua motor sedang disewa atau dalam perawatan.</strong>
@@ -902,21 +902,21 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
                {/* ── Status Pembayaran ── */}
           <div className="form-group" style={{ marginBottom: '16px' }}>
             <label className="form-label">
-              <i className="fa-solid fa-money-bill-wave" style={{ marginRight: '6px', color: '#22C55E' }}></i>
+              <i className="fa-solid fa-money-bill-wave" style={{ marginRight: '6px', color: '#1D4ED8' }}></i>
               Status Pembayaran <span className="required">*</span>
             </label>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button type="button" onClick={() => setForm(prev => ({ ...prev, payment_status: 'paid' }))}
-                style={{ flex: 1, padding: '12px 16px', borderRadius: '10px', border: `2px solid ${form.payment_status !== 'unpaid' ? '#22C55E' : 'var(--bg-border)'}`, background: form.payment_status !== 'unpaid' ? 'rgba(34,197,94,0.15)' : 'var(--bg-elevated)', color: form.payment_status !== 'unpaid' ? '#22C55E' : 'var(--text-secondary)', fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                style={{ flex: 1, padding: '12px 16px', borderRadius: '10px', border: `2px solid ${form.payment_status !== 'unpaid' ? '#1D4ED8' : 'var(--bg-border)'}`, background: form.payment_status !== 'unpaid' ? 'rgba(29,78,216,0.15)' : 'var(--bg-elevated)', color: form.payment_status !== 'unpaid' ? '#1D4ED8' : 'var(--text-secondary)', fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                 <i className="fa-solid fa-circle-check"></i> Lunas / Paid
               </button>
               <button type="button" onClick={() => setForm(prev => ({ ...prev, payment_status: 'unpaid' }))}
-                style={{ flex: 1, padding: '12px 16px', borderRadius: '10px', border: `2px solid ${form.payment_status === 'unpaid' ? '#F59E0B' : 'var(--bg-border)'}`, background: form.payment_status === 'unpaid' ? 'rgba(245,158,11,0.15)' : 'var(--bg-elevated)', color: form.payment_status === 'unpaid' ? '#F59E0B' : 'var(--text-secondary)', fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                style={{ flex: 1, padding: '12px 16px', borderRadius: '10px', border: `2px solid ${form.payment_status === 'unpaid' ? '#1E40AF' : 'var(--bg-border)'}`, background: form.payment_status === 'unpaid' ? 'rgba(30,64,175,0.15)' : 'var(--bg-elevated)', color: form.payment_status === 'unpaid' ? '#1E40AF' : 'var(--text-secondary)', fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                 <i className="fa-solid fa-clock"></i> Belum Bayar
               </button>
             </div>
             {form.payment_status === 'unpaid' && (
-              <div style={{ marginTop: '8px', padding: '8px 12px', background: 'rgba(245,158,11,0.08)', borderRadius: '8px', border: '1px solid rgba(245,158,11,0.3)', fontSize: '12px', color: '#F59E0B', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div style={{ marginTop: '8px', padding: '8px 12px', background: 'rgba(30,64,175,0.08)', borderRadius: '8px', border: '1px solid rgba(30,64,175,0.3)', fontSize: '12px', color: '#1E40AF', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <i className="fa-solid fa-triangle-exclamation"></i>
                 Motor tetap tidak tersedia. Pembayaran <strong>belum masuk</strong> ke laporan pendapatan.
               </div>
@@ -925,13 +925,13 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
 
           {/* ── Info harga otomatis (muncul setelah motor + tanggal dipilih) ── */}
           {totalPrice > 0 && (
-            <div style={{ padding: '12px 16px', background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.25)', borderRadius: '10px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ padding: '12px 16px', background: 'rgba(29,78,216,0.08)', border: '1px solid rgba(29,78,216,0.25)', borderRadius: '10px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <i className="fa-solid fa-calculator" style={{ color: '#22C55E' }}></i>
+                <i className="fa-solid fa-calculator" style={{ color: '#1D4ED8' }}></i>
                 Harga Terbaik Otomatis
-                {form.discount > 0 && <span style={{ fontSize: '11px', color: '#F59E0B' }}>(sudah potong diskon)</span>}
+                {form.discount > 0 && <span style={{ fontSize: '11px', color: '#1E40AF' }}>(sudah potong diskon)</span>}
               </div>
-              <strong style={{ fontSize: '20px', color: '#22C55E', letterSpacing: '-0.5px' }}>
+              <strong style={{ fontSize: '20px', color: '#1D4ED8', letterSpacing: '-0.5px' }}>
                 {formatRupiah(totalPrice)}
               </strong>
             </div>
@@ -1010,7 +1010,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
                       <i className="fa-solid fa-spinner fa-spin" style={{ color: 'var(--text-muted)' }}></i>
                     )}
                     <button type="button" onClick={handleRemovePhoto} title="Hapus foto"
-                      style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(239,68,68,0.9)', color: '#FFF', border: 'none', borderRadius: '50%', width: '26px', height: '26px', cursor: 'pointer', fontWeight: 800, fontSize: '12px' }}>✕</button>
+                      style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(30,58,138,0.9)', color: '#FFF', border: 'none', borderRadius: '50%', width: '26px', height: '26px', cursor: 'pointer', fontWeight: 800, fontSize: '12px' }}>✕</button>
                     <span style={{ position: 'absolute', bottom: '6px', left: '6px', background: 'rgba(15,23,42,0.9)', color: '#3B82F6', padding: '2px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 800 }}>✓ Foto tersimpan</span>
                   </div>
                 ) : (
@@ -1054,8 +1054,8 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
             <div className="modal modal-sm" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
               <div className="modal-header" style={{ borderBottom: '1px solid var(--bg-border)', paddingBottom: '16px' }}>
                 <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '16px', fontWeight: 800 }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(99,102,241,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <i className="fa-solid fa-floppy-disk" style={{ color: '#6366F1', fontSize: '16px' }}></i>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(29,78,216,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <i className="fa-solid fa-floppy-disk" style={{ color: '#1D4ED8', fontSize: '16px' }}></i>
                   </div>
                   {editData ? 'Konfirmasi Perubahan' : 'Konfirmasi Transaksi Baru'}
                 </div>
@@ -1073,13 +1073,13 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
                       <i className="fa-solid fa-motorcycle" style={{ marginRight: '5px', fontSize: '11px' }}></i>
                       {vehicles.find(v => v.id === (form.vehicle_id || '').trim())?.name || '—'}
                       {totalPrice > 0 && (
-                        <span style={{ marginLeft: '8px', color: '#22C55E', fontWeight: 700 }}>· {formatRupiah(totalPrice)}</span>
+                        <span style={{ marginLeft: '8px', color: '#1D4ED8', fontWeight: 700 }}>· {formatRupiah(totalPrice)}</span>
                       )}
                     </div>
                   </div>
                 </div>
 
-                <div style={{ padding: '12px 14px', background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: '8px', marginBottom: '8px' }}>
+                <div style={{ padding: '12px 14px', background: 'rgba(29,78,216,0.07)', border: '1px solid rgba(29,78,216,0.25)', borderRadius: '8px', marginBottom: '8px' }}>
                   <p style={{ fontSize: '13.5px', color: 'var(--text-primary)', margin: 0, lineHeight: 1.6 }}>
                     {editData ? 'Simpan perubahan data transaksi ini?' : 'Tambahkan transaksi baru ini ke sistem?'}
                   </p>
@@ -1274,7 +1274,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
         <div className="modal-header no-print">
           <div>
             <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <i className="fa-brands fa-whatsapp" style={{ color: '#25D366', fontSize: '20px' }}></i>
+              <i className="fa-brands fa-whatsapp" style={{ color: '#1D4ED8', fontSize: '20px' }}></i>
               Kirim Invoice WhatsApp & Pesan Customer
             </div>
             <div className="modal-subtitle">
@@ -1325,7 +1325,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-success"
-                style={{ textDecoration: 'none', background: '#25D366', borderColor: '#25D366', color: '#fff' }}
+                style={{ textDecoration: 'none', background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff' }}
               >
                 <i className="fa-brands fa-whatsapp" style={{ marginRight: '6px', fontSize: '16px' }}></i>
                 Buka WhatsApp & Kirim Pesan
@@ -1380,9 +1380,9 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
                   </div>
                   <span style={{
                     display: 'inline-block', marginTop: '8px', padding: '4px 12px', borderRadius: '4px', fontSize: '11px', fontWeight: 700,
-                    background: tx.status === 'completed' ? '#DCFCE7' : '#DBEAFE',
-                    color: tx.status === 'completed' ? '#16A34A' : '#2563EB',
-                    border: `1px solid ${tx.status === 'completed' ? '#86EFAC' : '#93C5FD'}`,
+                    background: tx.status === 'completed' ? '#EEF3FF' : '#DBEAFE',
+                    color: tx.status === 'completed' ? '#1D4ED8' : '#2563EB',
+                    border: `1px solid ${tx.status === 'completed' ? '#BFD1FF' : '#93C5FD'}`,
                   }}>
                     {tx.status === 'completed' ? 'PAID' : 'ACTIVE RENTAL'}
                   </span>
@@ -1443,7 +1443,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
                     <td style={{ padding: '10px 4px', textAlign: 'right' }}>{formatRupiah(vehicle?.rate_per_day)} / day</td>
                   </tr>
                   {tx.discount > 0 && (
-                    <tr style={{ borderBottom: '1px solid #E2E8F0', color: '#D97706' }}>
+                    <tr style={{ borderBottom: '1px solid #E2E8F0', color: '#1E40AF' }}>
                       <td style={{ padding: '10px 4px' }}>Discount</td>
                       <td style={{ padding: '10px 4px', textAlign: 'right' }}>-{formatRupiah(tx.discount)}</td>
                     </tr>
@@ -1505,14 +1505,14 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ height: '48px' }}></div>
                   <div style={{ maxWidth: '200px', margin: '0 auto' }}>
-                    <div style={{ borderTop: '1px solid #94A3B8', paddingTop: '6px', fontSize: '11px', color: '#1E293B', fontWeight: 700 }}>Owner</div>
+                    <div style={{ borderTop: '1px solid #64748B', paddingTop: '6px', fontSize: '11px', color: '#1E293B', fontWeight: 700 }}>Owner</div>
                     <div style={{ fontSize: '9.5px', color: '#64748B' }}>Boss Rent Pererenan</div>
                   </div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ height: '48px' }}></div>
                   <div style={{ maxWidth: '200px', margin: '0 auto' }}>
-                    <div style={{ borderTop: '1px solid #94A3B8', paddingTop: '6px', fontSize: '11px', color: '#1E293B', fontWeight: 700 }}>Renter</div>
+                    <div style={{ borderTop: '1px solid #64748B', paddingTop: '6px', fontSize: '11px', color: '#1E293B', fontWeight: 700 }}>Renter</div>
                     <div style={{ fontSize: '9.5px', color: '#64748B' }}>{tx.renter_name}</div>
                   </div>
                 </div>
@@ -1538,7 +1538,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
 
               <div className="modal-footer" style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  <button className="btn btn-success" onClick={handleShareDirect} disabled={sharing} style={{ background: '#25D366', borderColor: '#25D366', color: '#fff' }}>
+                  <button className="btn btn-success" onClick={handleShareDirect} disabled={sharing} style={{ background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff' }}>
                     <i className={`fa-solid ${sharing ? 'fa-spinner fa-spin' : 'fa-share-nodes'}`} style={{ marginRight: '6px' }}></i>
                     {sharing ? 'Menyiapkan Invoice...' : 'Bagikan Langsung ke WhatsApp'}
                   </button>
@@ -1557,7 +1557,7 @@ function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
                   className="btn btn-secondary"
                   style={{ textDecoration: 'none' }}
                 >
-                  <i className="fa-brands fa-whatsapp" style={{ marginRight: '6px', fontSize: '16px', color: '#25D366' }}></i> Buka WhatsApp
+                  <i className="fa-brands fa-whatsapp" style={{ marginRight: '6px', fontSize: '16px', color: '#1D4ED8' }}></i> Buka WhatsApp
                 </a>
               </div>
             </div>
@@ -1606,7 +1606,7 @@ function CompleteModal({ isOpen, onClose, onConfirm, tx }) {
         <div className="modal-header">
           <div>
             <div className="modal-title">
-              <i className="fa-solid fa-flag-checkered" style={{ marginRight: '6px', color: '#22C55E' }}></i>
+              <i className="fa-solid fa-flag-checkered" style={{ marginRight: '6px', color: '#1D4ED8' }}></i>
               Selesaikan Transaksi & Pengembalian Deposit
             </div>
             <div className="modal-subtitle">Customer: <strong>{tx.renter_name}</strong> | Motor: <strong>{tx.vehicles?.name} ({tx.vehicles?.plate_number})</strong></div>
@@ -1642,7 +1642,7 @@ function CompleteModal({ isOpen, onClose, onConfirm, tx }) {
               <span>Deposit Jaminan Awal:</span>
               <strong>{formatRupiah(deposit)}</strong>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '6px', fontSize: '15px', fontWeight: 800, color: '#22C55E' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '6px', fontSize: '15px', fontWeight: 800, color: '#1D4ED8' }}>
               <span>Deposit Yang Dikembalikan Ke Customer:</span>
               <span>{formatRupiah(deposit)}</span>
             </div>
@@ -1672,8 +1672,8 @@ function ConfirmLunasModal({ isOpen, onClose, onConfirm, tx }) {
       <div className="modal modal-sm" onClick={e => e.stopPropagation()} style={{ maxWidth: '420px' }}>
         <div className="modal-header" style={{ borderBottom: '1px solid var(--bg-border)', paddingBottom: '16px' }}>
           <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '16px', fontWeight: 800 }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(34,197,94,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <i className="fa-solid fa-money-bill-wave" style={{ color: '#22C55E', fontSize: '16px' }}></i>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(29,78,216,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <i className="fa-solid fa-money-bill-wave" style={{ color: '#1D4ED8', fontSize: '16px' }}></i>
             </div>
             Konfirmasi Pembayaran Lunas
           </div>
@@ -1696,9 +1696,9 @@ function ConfirmLunasModal({ isOpen, onClose, onConfirm, tx }) {
           </div>
 
           {/* Pesan konfirmasi */}
-          <div style={{ padding: '12px 14px', background: 'rgba(34,197,94,0.07)', border: '1px solid rgba(34,197,94,0.25)', borderRadius: '8px', marginBottom: '8px' }}>
+          <div style={{ padding: '12px 14px', background: 'rgba(29,78,216,0.07)', border: '1px solid rgba(29,78,216,0.25)', borderRadius: '8px', marginBottom: '8px' }}>
             <p style={{ fontSize: '13.5px', color: 'var(--text-primary)', margin: 0, lineHeight: 1.6 }}>
-              Tandai transaksi ini sebagai <strong style={{ color: '#22C55E' }}>LUNAS</strong>? Pembayaran akan langsung masuk ke laporan pendapatan.
+              Tandai transaksi ini sebagai <strong style={{ color: '#1D4ED8' }}>LUNAS</strong>? Pembayaran akan langsung masuk ke laporan pendapatan.
             </p>
           </div>
 
@@ -1713,7 +1713,7 @@ function ConfirmLunasModal({ isOpen, onClose, onConfirm, tx }) {
           <button
             className="btn btn-success"
             onClick={() => { onConfirm(tx); onClose(); }}
-            style={{ background: '#22C55E', borderColor: '#22C55E', color: '#fff', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}
+            style={{ background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}
           >
             <i className="fa-solid fa-circle-check"></i> Ya, Tandai Lunas
           </button>
@@ -1740,10 +1740,10 @@ function LunasSuccessToast({ isOpen, onClose, renterName }) {
       position: 'fixed', bottom: '28px', right: '28px', zIndex: 9999,
       display: 'flex', alignItems: 'center', gap: '14px',
       padding: '14px 20px',
-      background: 'linear-gradient(135deg, #064e3b, #065f46)',
-      border: '1px solid rgba(34,197,94,0.45)',
+      background: '#064e3b',
+      border: '1px solid rgba(29,78,216,0.45)',
       borderRadius: '14px',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(34,197,94,0.15)',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(29,78,216,0.15)',
       minWidth: '300px', maxWidth: '380px',
       animation: 'toastSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
     }}>
@@ -1757,26 +1757,26 @@ function LunasSuccessToast({ isOpen, onClose, renterName }) {
       {/* Icon */}
       <div style={{
         width: '42px', height: '42px', borderRadius: '50%',
-        background: 'rgba(34,197,94,0.2)', border: '2px solid rgba(34,197,94,0.45)',
+        background: 'rgba(29,78,216,0.2)', border: '2px solid rgba(29,78,216,0.45)',
         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
       }}>
-        <i className="fa-solid fa-circle-check" style={{ color: '#4ade80', fontSize: '20px' }}></i>
+        <i className="fa-solid fa-circle-check" style={{ color: '#3B82F6', fontSize: '20px' }}></i>
       </div>
 
       {/* Text */}
       <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 800, fontSize: '14px', color: '#f0fdf4', letterSpacing: '-0.2px' }}>
+        <div style={{ fontWeight: 800, fontSize: '14px', color: '#EEF3FF', letterSpacing: '-0.2px' }}>
           Pembayaran Dikonfirmasi! 🎉
         </div>
-        <div style={{ fontSize: '12px', color: '#86efac', marginTop: '2px' }}>
-          Transaksi <strong style={{ color: '#f0fdf4' }}>{renterName}</strong> sudah lunas & masuk ke laporan pendapatan.
+        <div style={{ fontSize: '12px', color: '#BFD1FF', marginTop: '2px' }}>
+          Transaksi <strong style={{ color: '#EEF3FF' }}>{renterName}</strong> sudah lunas & masuk ke laporan pendapatan.
         </div>
       </div>
 
       {/* Close */}
       <button
         onClick={onClose}
-        style={{ background: 'none', border: 'none', color: '#86efac', cursor: 'pointer', fontSize: '16px', padding: '4px', lineHeight: 1, flexShrink: 0 }}
+        style={{ background: 'none', border: 'none', color: '#BFD1FF', cursor: 'pointer', fontSize: '16px', padding: '4px', lineHeight: 1, flexShrink: 0 }}
       >
         <i className="fa-solid fa-xmark"></i>
       </button>
@@ -1802,31 +1802,31 @@ function SaveSuccessToast({ isOpen, onClose, isEdit, renterName }) {
       position: 'fixed', bottom: '28px', right: '28px', zIndex: 9999,
       display: 'flex', alignItems: 'center', gap: '14px',
       padding: '14px 20px',
-      background: 'linear-gradient(135deg, #1e1b4b, #312e81)',
-      border: '1px solid rgba(99,102,241,0.45)',
+      background: '#1e1b4b',
+      border: '1px solid rgba(29,78,216,0.45)',
       borderRadius: '14px',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(99,102,241,0.15)',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(29,78,216,0.15)',
       minWidth: '300px', maxWidth: '380px',
       animation: 'toastSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
     }}>
       <div style={{
         width: '42px', height: '42px', borderRadius: '50%',
-        background: 'rgba(99,102,241,0.2)', border: '2px solid rgba(99,102,241,0.45)',
+        background: 'rgba(29,78,216,0.2)', border: '2px solid rgba(29,78,216,0.45)',
         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
       }}>
-        <i className="fa-solid fa-floppy-disk" style={{ color: '#a5b4fc', fontSize: '18px' }}></i>
+        <i className="fa-solid fa-floppy-disk" style={{ color: '#BFD1FF', fontSize: '18px' }}></i>
       </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontWeight: 800, fontSize: '14px', color: '#eef2ff', letterSpacing: '-0.2px' }}>
           {isEdit ? 'Transaksi Diperbarui! ✏️' : 'Transaksi Tersimpan! 🎉'}
         </div>
-        <div style={{ fontSize: '12px', color: '#a5b4fc', marginTop: '2px' }}>
+        <div style={{ fontSize: '12px', color: '#BFD1FF', marginTop: '2px' }}>
           Data <strong style={{ color: '#eef2ff' }}>{renterName}</strong> berhasil {isEdit ? 'diperbarui' : 'ditambahkan'} ke sistem.
         </div>
       </div>
       <button
         onClick={onClose}
-        style={{ background: 'none', border: 'none', color: '#a5b4fc', cursor: 'pointer', fontSize: '16px', padding: '4px', lineHeight: 1, flexShrink: 0 }}
+        style={{ background: 'none', border: 'none', color: '#BFD1FF', cursor: 'pointer', fontSize: '16px', padding: '4px', lineHeight: 1, flexShrink: 0 }}
       >
         <i className="fa-solid fa-xmark"></i>
       </button>
@@ -1850,31 +1850,31 @@ function ErrorToast({ isOpen, onClose, message }) {
       position: 'fixed', bottom: '28px', right: '28px', zIndex: 9999,
       display: 'flex', alignItems: 'center', gap: '14px',
       padding: '14px 20px',
-      background: 'linear-gradient(135deg, #450a0a, #7f1d1d)',
-      border: '1px solid rgba(239,68,68,0.45)',
+      background: '#450a0a',
+      border: '1px solid rgba(30,58,138,0.45)',
       borderRadius: '14px',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(239,68,68,0.15)',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(30,58,138,0.15)',
       minWidth: '300px', maxWidth: '400px',
       animation: 'toastSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
     }}>
       <div style={{
         width: '42px', height: '42px', borderRadius: '50%',
-        background: 'rgba(239,68,68,0.2)', border: '2px solid rgba(239,68,68,0.45)',
+        background: 'rgba(30,58,138,0.2)', border: '2px solid rgba(30,58,138,0.45)',
         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
       }}>
-        <i className="fa-solid fa-circle-exclamation" style={{ color: '#fca5a5', fontSize: '20px' }}></i>
+        <i className="fa-solid fa-circle-exclamation" style={{ color: '#C7D6FF', fontSize: '20px' }}></i>
       </div>
       <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 800, fontSize: '14px', color: '#fee2e2', letterSpacing: '-0.2px' }}>
+        <div style={{ fontWeight: 800, fontSize: '14px', color: '#E8EEFB', letterSpacing: '-0.2px' }}>
           Gagal Menyimpan ⚠️
         </div>
-        <div style={{ fontSize: '12px', color: '#fca5a5', marginTop: '2px' }}>
+        <div style={{ fontSize: '12px', color: '#C7D6FF', marginTop: '2px' }}>
           {message}
         </div>
       </div>
       <button
         onClick={onClose}
-        style={{ background: 'none', border: 'none', color: '#fca5a5', cursor: 'pointer', fontSize: '16px', padding: '4px', lineHeight: 1, flexShrink: 0 }}
+        style={{ background: 'none', border: 'none', color: '#C7D6FF', cursor: 'pointer', fontSize: '16px', padding: '4px', lineHeight: 1, flexShrink: 0 }}
       >
         <i className="fa-solid fa-xmark"></i>
       </button>
@@ -1889,7 +1889,7 @@ function SuccessModal({ isOpen, onClose, message }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal modal-sm" onClick={e => e.stopPropagation()} style={{ textAlign: 'center', padding: '32px 24px' }}>
-        <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(34, 197, 94, 0.2)', color: '#22C55E', fontSize: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+        <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(29,78,216, 0.2)', color: '#1D4ED8', fontSize: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
           <i className="fa-solid fa-circle-check"></i>
         </div>
         <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>Transaksi Selesai!</h3>
@@ -1944,6 +1944,21 @@ export default function TransactionsPage() {
   const [photoIds, setPhotoIds] = useState(() => new Set());
   const [openingId, setOpeningId] = useState(null);
   const [photoViewer, setPhotoViewer] = useState({ open: false, loading: false, src: null, name: '' });
+
+  // Pintasan dari Dashboard: /transactions?new=1 langsung membuka form transaksi baru.
+  useEffect(() => {
+    Promise.resolve().then(() => {
+      try {
+        const url = new URL(window.location.href);
+        if (url.searchParams.get('new') === '1') {
+          setEditData(null);
+          setShowModal(true);
+          url.searchParams.delete('new');
+          window.history.replaceState(window.history.state, '', url.toString());
+        }
+      } catch { /* ignore */ }
+    });
+  }, []);
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
@@ -2286,7 +2301,7 @@ const handleSubmit = async (formData) => {
                     <td>
                       <div className="tx-date-cell">
                         <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>
-                          <i className="fa-solid fa-calendar-plus" style={{ marginRight: '6px', fontSize: '11px', color: '#22C55E' }}></i>
+                          <i className="fa-solid fa-calendar-plus" style={{ marginRight: '6px', fontSize: '11px', color: '#1D4ED8' }}></i>
                           {new Date(tx.start_date).toLocaleDateString('id-ID')}
                         </div>
                         <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>
@@ -2306,10 +2321,10 @@ const handleSubmit = async (formData) => {
                     </td>
                     <td>
                       <div className="tx-price-cell">
-                        <strong style={{ fontSize: '14px', color: '#22C55E' }}>{formatRupiah(tx.total_price)}</strong>
+                        <strong style={{ fontSize: '14px', color: '#1D4ED8' }}>{formatRupiah(tx.total_price)}</strong>
                         {tx.discount > 0 && (
                           <div>
-                            <span className="tx-info-pill" style={{ color: '#F59E0B', borderColor: 'rgba(245, 158, 11, 0.3)', background: 'rgba(245, 158, 11, 0.1)' }}>
+                            <span className="tx-info-pill" style={{ color: '#1E40AF', borderColor: 'rgba(30,64,175, 0.3)', background: 'rgba(30,64,175, 0.1)' }}>
                               Diskon: -{formatRupiah(tx.discount)}
                             </span>
                           </div>
@@ -2325,7 +2340,7 @@ const handleSubmit = async (formData) => {
                       {statusBadge(tx.status, tx.payment_status)}
                       {tx.status === 'active' && tx.payment_status !== 'unpaid' && (
                         <div style={{ marginTop: '4px' }}>
-                          <span style={{ fontSize: '10px', color: '#22C55E', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          <span style={{ fontSize: '10px', color: '#1D4ED8', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
                             <i className="fa-solid fa-circle-check" style={{ fontSize: '9px' }}></i> Lunas
                           </span>
                         </div>
@@ -2337,7 +2352,7 @@ const handleSubmit = async (formData) => {
                         <button
                           className="btn btn-success btn-sm"
                           title="Kirim Invoice WhatsApp"
-                          style={{ background: '#25D366', borderColor: '#25D366', color: '#fff', padding: '7px 10px' }}
+                          style={{ background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff', padding: '7px 10px' }}
                           onClick={() => openWa(tx)}
                           disabled={openingId === tx.id}
                         >
@@ -2349,7 +2364,7 @@ const handleSubmit = async (formData) => {
                         <button
                         className="btn btn-sm"
                         title="Tandai Lunas — Masukkan ke Pendapatan"
-                        style={{ padding: '7px 10px', background: 'rgba(34,197,94,0.15)', border: '1px solid #22C55E', color: '#22C55E', fontWeight: 700 }}
+                        style={{ padding: '7px 10px', background: 'rgba(29,78,216,0.15)', border: '1px solid #1D4ED8', color: '#1D4ED8', fontWeight: 700 }}
                         onClick={() => setLunasModal({ open: true, tx })}
                       >
                         <i className="fa-solid fa-money-bill-wave"></i>

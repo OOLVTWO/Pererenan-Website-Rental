@@ -1,80 +1,60 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
+import BottomNav from '@/components/layout/BottomNav';
+import { createClient } from '@/lib/supabase/client';
+import { startVisiblePolling } from '@/lib/visiblePolling';
 import { updateFavicon } from '@/lib/favicon';
 
-export default function DashboardShell({ user, children }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [theme, setTheme] = useState('light');
-  const pathname = usePathname();
+function daysLeft(endDate) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const end = new Date(endDate);
+  end.setHours(0, 0, 0, 0);
+  return Math.floor((end - today) / 86400000);
+}
 
-  // Load saved theme on mount
+/**
+ * Kerangka panel: sidebar (desktop) · top bar + bar bawah (HP).
+ * Satu tema terang saja (toggle gelap/terang dihapus).
+ * Jumlah sewa jatuh tempo/terlambat dihitung SEKALI di sini lalu dibagikan
+ * ke sidebar & bar bawah (satu polling, kolom ringan saja).
+ */
+export default function DashboardShell({ user, children }) {
+  const [trackingAlerts, setTrackingAlerts] = useState(0);
+
   useEffect(() => {
     try {
-      const savedTheme = localStorage.getItem('boss_rent_theme') || 'light';
-      setTheme(savedTheme);
-      document.documentElement.setAttribute('data-theme', savedTheme);
+      const saved = JSON.parse(localStorage.getItem('boss_rent_biz_settings') || '{}');
+      if (saved.logoUrl) updateFavicon(saved.logoUrl);
+      // Bersihkan sisa pengaturan tema lama
+      localStorage.removeItem('boss_rent_theme');
+      document.documentElement.removeAttribute('data-theme');
     } catch { /* ignore */ }
   }, []);
 
-  // Sync favicon
   useEffect(() => {
-    try {
-      const savedBiz = localStorage.getItem('boss_rent_biz_settings');
-      if (savedBiz) {
-        const parsed = JSON.parse(savedBiz);
-        if (parsed.logoUrl) updateFavicon(parsed.logoUrl);
-      }
-    } catch (e) {
-      console.error('Favicon sync error:', e);
-    }
-  }, []);
-
-  // Close mobile nav on route change
-  useEffect(() => { setMobileOpen(false); }, [pathname]);
-
-  // Prevent background scroll when mobile menu open
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [mobileOpen]);
-
-  const toggleTheme = useCallback(() => {
-    setTheme(prev => {
-      const next = prev === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', next);
-      try { localStorage.setItem('boss_rent_theme', next); } catch { /* ignore */ }
-      return next;
-    });
+    const fetchAlerts = async () => {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase.from('transactions').select('end_date').eq('status', 'active');
+        if (Array.isArray(data)) setTrackingAlerts(data.filter(tx => daysLeft(tx.end_date) <= 0).length);
+      } catch { /* ignore */ }
+    };
+    fetchAlerts();
+    return startVisiblePolling(fetchAlerts, 60000);
   }, []);
 
   return (
-    <div className="app-layout">
-      {mobileOpen && (
-        <div className="mobile-sidebar-backdrop" onClick={() => setMobileOpen(false)} />
-      )}
-
-      <Sidebar
-        user={user}
-        mobileOpen={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-      />
-
-      <div className="main-content">
-        <Header
-          user={user}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          onToggleMobile={() => setMobileOpen(prev => !prev)}
-        />
-        <main className="page-content fade-in">
-          {children}
-        </main>
+    <div className="shell">
+      <Sidebar user={user} trackingAlerts={trackingAlerts} />
+      <div className="shell-main">
+        <Header />
+        <main className="page-content">{children}</main>
       </div>
+      <BottomNav trackingAlerts={trackingAlerts} />
     </div>
   );
 }

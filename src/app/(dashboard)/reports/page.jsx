@@ -9,6 +9,7 @@ import {
 } from '@/lib/finance';
 import { createClient } from '@/lib/supabase/client';
 import { TX_LIGHT_SELECT, VEHICLE_LIGHT_COLUMNS } from '@/lib/queryColumns';
+import PageTabs from '@/components/ui/PageTabs';
 
 const VALID_TABS = ['income', 'expenses', 'profit_loss', 'investor'];
 
@@ -224,6 +225,18 @@ export default function ReportsPage() {
         <p>Analisis terpisah antara Pemasukan, Pengeluaran, Laba Bersih & Bagi Hasil Investor</p>
       </div>
 
+      <PageTabs
+        ariaLabel="Jenis laporan"
+        value={activeReportTab}
+        onChange={setActiveReportTab}
+        tabs={[
+          { key: 'income', label: 'Pemasukan' },
+          { key: 'expenses', label: 'Pengeluaran' },
+          { key: 'profit_loss', label: 'Laba rugi' },
+          { key: 'investor', label: 'Bagi hasil investor' },
+        ]}
+      />
+
       {/* Filter */}
       <div className="card mb-6">
         <div className="card-header">
@@ -274,7 +287,7 @@ export default function ReportsPage() {
           {activeReportTab === 'investor' && (
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label" htmlFor="report-investor">
-                <i className="fa-solid fa-crown" style={{ marginRight: '6px', color: '#A855F7' }}></i> Cari & Pilih Investor ({uniqueInvestorNames.length} Terdaftar)
+                <i className="fa-solid fa-crown" style={{ marginRight: '6px', color: '#1D4ED8' }}></i> Cari & Pilih Investor ({uniqueInvestorNames.length} Terdaftar)
               </label>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <div style={{ position: 'relative', minWidth: '160px', flex: '1 1 160px' }}>
@@ -282,7 +295,7 @@ export default function ReportsPage() {
                   <input
                     type="text"
                     className="form-control"
-                    style={{ paddingLeft: '32px', border: '1px solid #A855F7' }}
+                    style={{ paddingLeft: '32px', border: '1px solid #1D4ED8' }}
                     placeholder="Ketik nama investor..."
                     value={investorSearch}
                     onChange={e => setInvestorSearch(e.target.value)}
@@ -311,23 +324,23 @@ export default function ReportsPage() {
       {/* Summary KPI */}
       <div className="grid-3 mb-6">
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.15)', color: '#22C55E' }}>
+          <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8' }}>
             <i className="fa-solid fa-sack-dollar"></i>
           </div>
           <div className="stat-info">
             <div className="stat-label">Total Pemasukan</div>
-            <div className="stat-value" style={{ color: '#22C55E' }}>{formatRupiah(totalRevenue)}</div>
+            <div className="stat-value" style={{ color: '#1D4ED8' }}>{formatRupiah(totalRevenue)}</div>
             <div className="stat-change">{paidTx.length} transaksi terbayar</div>
           </div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#EF4444' }}>
+          <div className="stat-icon" style={{ background: 'rgba(30,58,138, 0.15)', color: '#1E3A8A' }}>
             <i className="fa-solid fa-money-bill-transfer"></i>
           </div>
           <div className="stat-info">
             <div className="stat-label">Total Pengeluaran</div>
-            <div className="stat-value" style={{ color: '#EF4444' }}>{formatRupiah(totalExpenses)}</div>
+            <div className="stat-value" style={{ color: '#1E3A8A' }}>{formatRupiah(totalExpenses)}</div>
             <div className="stat-change">{safeExp.length} item pengeluaran</div>
           </div>
         </div>
@@ -338,7 +351,7 @@ export default function ReportsPage() {
           </div>
           <div className="stat-info">
             <div className="stat-label">Laba Bersih (Net Profit)</div>
-            <div className="stat-value" style={{ color: netProfit >= 0 ? '#3B82F6' : '#EF4444' }}>{formatRupiah(netProfit)}</div>
+            <div className="stat-value" style={{ color: netProfit >= 0 ? '#3B82F6' : '#1E3A8A' }}>{formatRupiah(netProfit)}</div>
             <div className="stat-change">Pemasukan − Pengeluaran − Bagi Hasil Investor</div>
           </div>
         </div>
@@ -436,7 +449,7 @@ export default function ReportsPage() {
                           <span style={{ fontSize: '13.5px', color: 'var(--text-primary)', fontWeight: 600 }}>{formatRupiah(totalPrice)}</span>
                         </td>
                         <td>
-                          <strong style={{ fontSize: '14px', color: '#22C55E' }}>{formatRupiah(grandTotalIncome)}</strong>
+                          <strong style={{ fontSize: '14px', color: '#1D4ED8' }}>{formatRupiah(grandTotalIncome)}</strong>
                         </td>
                         <td style={{ verticalAlign: 'middle' }}>{statusBadge(tx.status)}</td>
                       </tr>
@@ -489,7 +502,7 @@ export default function ReportsPage() {
                       <td>{new Date(exp.expense_date).toLocaleDateString('id-ID')}</td>
                       <td><strong>{exp.title}</strong></td>
                       <td><span className="badge badge-muted">{exp.category}</span></td>
-                      <td><strong style={{ color: '#EF4444' }}>-{formatRupiah(exp.amount)}</strong></td>
+                      <td><strong style={{ color: '#1E3A8A' }}>-{formatRupiah(exp.amount)}</strong></td>
                     </tr>
                   ))}
                 </tbody>
@@ -506,24 +519,24 @@ export default function ReportsPage() {
             <div className="card-title"><i className="fa-solid fa-calculator" style={{ marginRight: '6px' }}></i> Laporan Ringkasan Laba Rugi</div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '600px', margin: '20px 0' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '8px', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(29,78,216, 0.1)', borderRadius: '8px', border: '1px solid rgba(29,78,216, 0.2)' }}>
               <span>Total Pemasukan (Sewa + Lainnya):</span>
-              <strong style={{ color: '#22C55E', fontSize: '16px' }}>{formatRupiah(totalRevenue)}</strong>
+              <strong style={{ color: '#1D4ED8', fontSize: '16px' }}>{formatRupiah(totalRevenue)}</strong>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(30,58,138, 0.1)', borderRadius: '8px', border: '1px solid rgba(30,58,138, 0.2)' }}>
               <span>Total Pengeluaran Operasional:</span>
-              <strong style={{ color: '#EF4444', fontSize: '16px' }}>-{formatRupiah(totalExpenses)}</strong>
+              <strong style={{ color: '#1E3A8A', fontSize: '16px' }}>-{formatRupiah(totalExpenses)}</strong>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(168, 85, 247, 0.08)', borderRadius: '8px', border: '1px solid rgba(168, 85, 247, 0.25)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(29,78,216, 0.08)', borderRadius: '8px', border: '1px solid rgba(29,78,216, 0.25)' }}>
               <span>Bagi Hasil Investor (basis NET per motor):</span>
-              <strong style={{ color: '#A855F7', fontSize: '16px' }}>-{formatRupiah(summary.investorPayout)}</strong>
+              <strong style={{ color: '#1D4ED8', fontSize: '16px' }}>-{formatRupiah(summary.investorPayout)}</strong>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--bg-card-hover)', borderRadius: '10px', border: '2px solid var(--brand-primary)', marginTop: '8px' }}>
               <span style={{ fontWeight: 700, fontSize: '16px' }}>Laba Bersih (Net Profit):</span>
-              <strong style={{ color: netProfit >= 0 ? '#3B82F6' : '#EF4444', fontSize: '20px' }}>
+              <strong style={{ color: netProfit >= 0 ? '#3B82F6' : '#1E3A8A', fontSize: '20px' }}>
                 {formatRupiah(netProfit)}
               </strong>
             </div>
@@ -537,35 +550,35 @@ export default function ReportsPage() {
           {/* Investor KPI Summary Header Cards */}
           <div className="grid-4 mb-6">
             <div className="stat-card">
-              <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.15)', color: '#22C55E' }}>
+              <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8' }}>
                 <i className="fa-solid fa-arrow-down-left"></i>
               </div>
               <div className="stat-info">
                 <div className="stat-label">Total Omset Motor (+)</div>
-                <div className="stat-value" style={{ color: '#22C55E' }}>{formatRupiah(invTotalRevenue)}</div>
+                <div className="stat-value" style={{ color: '#1D4ED8' }}>{formatRupiah(invTotalRevenue)}</div>
                 <div className="stat-change">{targetPaidTx.length} transaksi terbayar</div>
               </div>
             </div>
 
             <div className="stat-card">
-              <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#EF4444' }}>
+              <div className="stat-icon" style={{ background: 'rgba(30,58,138, 0.15)', color: '#1E3A8A' }}>
                 <i className="fa-solid fa-wrench"></i>
               </div>
               <div className="stat-info">
                 <div className="stat-label">Biaya Servis / Perawatan (-)</div>
-                <div className="stat-value" style={{ color: '#EF4444' }}>{formatRupiah(invTotalExpenses)}</div>
+                <div className="stat-value" style={{ color: '#1E3A8A' }}>{formatRupiah(invTotalExpenses)}</div>
                 <div className="stat-change">{targetInvestorExp.length} item servis motor</div>
               </div>
             </div>
 
-            <div className="stat-card" style={{ border: '2px solid rgba(168, 85, 247, 0.4)', background: 'rgba(168, 85, 247, 0.06)' }}>
-              <div className="stat-icon" style={{ background: 'rgba(168, 85, 247, 0.2)', color: '#A855F7' }}>
+            <div className="stat-card" style={{ border: '2px solid rgba(29,78,216, 0.4)', background: 'rgba(29,78,216, 0.06)' }}>
+              <div className="stat-icon" style={{ background: 'rgba(29,78,216, 0.2)', color: '#1D4ED8' }}>
                 <i className="fa-solid fa-crown"></i>
               </div>
               <div className="stat-info">
-                <div className="stat-label" style={{ color: '#A855F7', fontWeight: 800 }}>TRANSFER NET INVESTOR ({investorSharePct}%)</div>
-                <div className="stat-value" style={{ color: '#A855F7', fontSize: '20px', fontWeight: 900 }}>{formatRupiah(investorPayout)}</div>
-                <div className="stat-change" style={{ color: '#A855F7', fontWeight: 600 }}>Hak Bersih Investor ({selectedInvestor === 'all' ? 'Gabungan' : selectedInvestor})</div>
+                <div className="stat-label" style={{ color: '#1D4ED8', fontWeight: 800 }}>TRANSFER NET INVESTOR ({investorSharePct}%)</div>
+                <div className="stat-value" style={{ color: '#1D4ED8', fontSize: '20px', fontWeight: 900 }}>{formatRupiah(investorPayout)}</div>
+                <div className="stat-change" style={{ color: '#1D4ED8', fontWeight: 600 }}>Hak Bersih Investor ({selectedInvestor === 'all' ? 'Gabungan' : selectedInvestor})</div>
               </div>
             </div>
 
@@ -625,16 +638,16 @@ export default function ReportsPage() {
                             <div style={{ fontSize: '11px', color: 'var(--brand-primary-light)', fontWeight: 600 }}>{v.plate_number}</div>
                           </td>
                           <td>
-                            <strong style={{ fontSize: '13px', color: '#A855F7' }}>{v.owner_name || 'Bagi Hasil'}</strong>
+                            <strong style={{ fontSize: '13px', color: '#1D4ED8' }}>{v.owner_name || 'Bagi Hasil'}</strong>
                           </td>
                           <td style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{v.owner_contact || '-'}</td>
                           <td>
                             <span className="badge badge-success" style={{ fontSize: '11px' }}>{sharePct}% / {100 - sharePct}%</span>
                           </td>
-                          <td><strong style={{ color: '#22C55E' }}>+{formatRupiah(vRev)}</strong></td>
-                          <td><strong style={{ color: '#EF4444' }}>-{formatRupiah(vExp)}</strong></td>
+                          <td><strong style={{ color: '#1D4ED8' }}>+{formatRupiah(vRev)}</strong></td>
+                          <td><strong style={{ color: '#1E3A8A' }}>-{formatRupiah(vExp)}</strong></td>
                           <td><strong style={{ color: 'var(--text-primary)' }}>{formatRupiah(vNet)}</strong></td>
-                          <td><strong style={{ color: '#A855F7', fontSize: '14px' }}>{formatRupiah(vPayout)}</strong></td>
+                          <td><strong style={{ color: '#1D4ED8', fontSize: '14px' }}>{formatRupiah(vPayout)}</strong></td>
                         </tr>
                       );
                     })}

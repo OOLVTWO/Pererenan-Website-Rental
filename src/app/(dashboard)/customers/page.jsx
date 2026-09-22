@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { fetchCustomers, upsertCustomer, syncTransactionsToCustomers } from '@/lib/customers';
 import { exportCustomersToExcel, formatRupiah } from '@/lib/excel';
 import { COUNTRY_CODES, getFlagImageUrl } from '@/lib/countryCodes';
+import PageTabs from '@/components/ui/PageTabs';
 
 const VALID_CUSTOMER_TABS = ['all', 'repeat', 'new'];
 
@@ -324,7 +325,7 @@ export default function CustomersPage() {
           top: '20px',
           right: '20px',
           zIndex: 99999,
-          background: feedbackMsg.type === 'error' ? '#EF4444' : '#10B981',
+          background: feedbackMsg.type === 'error' ? '#1E3A8A' : '#1D4ED8',
           color: '#fff',
           padding: '12px 20px',
           borderRadius: '8px',
@@ -374,7 +375,7 @@ export default function CustomersPage() {
             type="button"
             className="btn btn-secondary"
             onClick={handleExportExcel}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', background: 'rgba(34, 197, 94, 0.15)', borderColor: '#22C55E', color: '#22C55E' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', background: 'rgba(29,78,216, 0.15)', borderColor: '#1D4ED8', color: '#1D4ED8' }}
           >
             <i className="fa-solid fa-file-excel"></i>
             Download Backup Excel
@@ -457,14 +458,14 @@ export default function CustomersPage() {
         }}>
           <div style={{
             width: '48px', height: '48px', borderRadius: '12px',
-            background: 'rgba(34, 197, 94, 0.15)', color: '#22C55E',
+            background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8',
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px'
           }}>
             <i className="fa-solid fa-vault"></i>
           </div>
           <div>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Omset dari Customer</div>
-            <div style={{ fontSize: '20px', fontWeight: 800, color: '#22C55E' }}>{formatRupiah(totalSpendSum)}</div>
+            <div style={{ fontSize: '20px', fontWeight: 800, color: '#1D4ED8' }}>{formatRupiah(totalSpendSum)}</div>
           </div>
         </div>
 
@@ -480,14 +481,14 @@ export default function CustomersPage() {
         }}>
           <div style={{
             width: '48px', height: '48px', borderRadius: '12px',
-            background: 'rgba(168, 85, 247, 0.15)', color: '#A855F7',
+            background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8',
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px'
           }}>
             <i className="fa-solid fa-user-plus"></i>
           </div>
           <div>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Customer Baru Bulan Ini</div>
-            <div style={{ fontSize: '24px', fontWeight: 800, color: '#A855F7' }}>{newThisMonthCount} <span style={{ fontSize: '13px', fontWeight: 500 }}>Orang</span></div>
+            <div style={{ fontSize: '24px', fontWeight: 800, color: '#1D4ED8' }}>{newThisMonthCount} <span style={{ fontSize: '13px', fontWeight: 500 }}>Orang</span></div>
           </div>
         </div>
       </div>
@@ -505,25 +506,16 @@ export default function CustomersPage() {
         flexWrap: 'wrap',
         gap: '16px'
       }}>
-        {/* Current filter indicator — filter is now chosen from the
-            sidebar "Data Customer" dropdown, this just confirms what's showing */}
-        {(() => {
-          const TABS = {
-            all: { label: `Semua Customer (${totalCustomersCount})`, icon: 'fa-solid fa-users', color: 'var(--brand-primary)' },
-            repeat: { label: `Repeat Customer (${repeatCustomersCount})`, icon: 'fa-solid fa-crown', color: '#60A5FA' },
-            new: { label: 'Customer Baru', icon: 'fa-solid fa-user-plus', color: '#C084FC' },
-          };
-          const current = TABS[activeTab] || TABS.all;
-          return (
-            <span className="badge" style={{
-              background: `${current.color}18`, color: current.color, border: `1px solid ${current.color}40`,
-              fontSize: '12.5px', padding: '6px 14px', fontWeight: 600,
-            }}>
-              <i className={current.icon} style={{ marginRight: '6px' }}></i>
-              {current.label}
-            </span>
-          );
-        })()}
+        <PageTabs
+          ariaLabel="Filter customer"
+          value={activeTab}
+          onChange={setActiveTab}
+          tabs={[
+            { key: 'all', label: 'Semua', count: totalCustomersCount },
+            { key: 'repeat', label: 'Repeat', count: repeatCustomersCount },
+            { key: 'new', label: 'Baru' },
+          ]}
+        />
 
         {/* Search Input */}
         <div style={{ position: 'relative', width: '320px', maxWidth: '100%' }}>
@@ -824,7 +816,7 @@ export default function CustomersPage() {
               onClick={() => setViewPhotoUrl(null)}
               style={{
                 position: 'absolute', top: '-12px', right: '-12px',
-                background: '#EF4444', color: '#fff', border: 'none',
+                background: '#1E3A8A', color: '#fff', border: 'none',
                 borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer',
                 fontWeight: 800, boxShadow: '0 4px 10px rgba(0,0,0,0.5)'
               }}
