@@ -14,6 +14,7 @@ import dynamic from 'next/dynamic';
 // Modal invoice dimuat hanya saat dibuka (mengurangi ukuran halaman Transaksi)
 const WhatsAppInvoiceModal = dynamic(() => import('@/components/transactions/WhatsAppInvoiceModal'), { ssr: false });
 import { formatTanggal as formatTanggalId } from '@/lib/period';
+import RupiahInput from '@/components/ui/RupiahInput';
 
 
 function formatRupiah(amount) {
@@ -114,7 +115,6 @@ function VehicleCombobox({ vehicles, value, onChange }) {
   return (
     <div className="form-group">
       <label className="form-label">
-        <Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '6px' }} />
         Pilih Kendaraan Motor <span className="required">*</span>
       </label>
 
@@ -820,13 +820,13 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           <div className="form-row cols-2">
             <div className="form-group">
               <label className="form-label" htmlFor="tx-name">
-                <Icon fa="fa-solid fa-user" style={{ marginRight: '6px' }} /> Nama Penyewa <span className="required">*</span>
+                Nama Penyewa <span className="required">*</span>
               </label>
               <input id="tx-name" name="renter_name" type="text" className="form-control" placeholder="Nama lengkap penyewa" value={form.renter_name} onChange={handleChange} required />
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="tx-phone">
-                <Icon fa="fa-solid fa-globe" style={{ marginRight: '6px' }} /> No. WhatsApp <span className="required">*</span>
+                No. WhatsApp <span className="required">*</span>
               </label>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'nowrap' }}>
                 <CountryCodePicker
@@ -859,13 +859,13 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           <div className="form-row cols-2">
             <div className="form-group">
               <label className="form-label" htmlFor="tx-start">
-                <Icon fa="fa-solid fa-calendar-plus" style={{ marginRight: '6px' }} /> Tanggal Mulai <span className="required">*</span>
+                Tanggal Mulai <span className="required">*</span>
               </label>
               <input id="tx-start" name="start_date" type="date" className="form-control" value={form.start_date} onChange={handleChange} required />
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="tx-end">
-                <Icon fa="fa-solid fa-calendar-check" style={{ marginRight: '6px' }} /> Tanggal Selesai <span className="required">*</span>
+                Tanggal Selesai <span className="required">*</span>
               </label>
               <input id="tx-end" name="end_date" type="date" className="form-control" value={form.end_date} onChange={handleChange} min={form.start_date} required />
             </div>
@@ -874,7 +874,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           {/* ── Alamat ── */}
           <div className="form-group">
             <label className="form-label" htmlFor="tx-address">
-              <Icon fa="fa-solid fa-location-dot" style={{ marginRight: '6px', color: 'var(--brand-primary)' }} /> Alamat / Villa / Hotel
+              Alamat / Villa / Hotel
             </label>
             <input id="tx-address" name="renter_address" type="text" className="form-control" placeholder="e.g. Villa Bamboo, Jl. Pererenan" value={form.renter_address || ''} onChange={handleChange} />
           </div>
@@ -882,7 +882,6 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
                {/* ── Status Pembayaran ── */}
           <div className="form-group" style={{ marginBottom: '16px' }}>
             <label className="form-label">
-              <Icon fa="fa-solid fa-money-bill-wave" style={{ marginRight: '6px', color: '#1D4ED8' }} />
               Status Pembayaran <span className="required">*</span>
             </label>
             <div style={{ display: 'flex', gap: '10px' }}>
@@ -921,19 +920,19 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           <div className="form-row cols-3">
             <div className="form-group">
               <label className="form-label" htmlFor="tx-discount">
-                <Icon fa="fa-solid fa-tags" style={{ marginRight: '6px' }} /> Diskon (Rp)
+                Diskon (Rp)
               </label>
-              <input id="tx-discount" name="discount" type="number" className="form-control" placeholder="0" value={form.discount} onChange={handleChange} min="0" style={{ MozAppearance: 'textfield' }} />
+              <RupiahInput id="tx-discount" value={form.discount} onChange={v => setForm(prev => ({ ...prev, discount: v }))} />
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="tx-deposit">
-                <Icon fa="fa-solid fa-vault" style={{ marginRight: '6px' }} /> Deposit (Rp)
+                Deposit (Rp)
               </label>
-              <input id="tx-deposit" name="deposit" type="number" className="form-control" placeholder="0" value={form.deposit} onChange={handleChange} min="0" style={{ MozAppearance: 'textfield' }} />
+              <RupiahInput id="tx-deposit" value={form.deposit} onChange={v => setForm(prev => ({ ...prev, deposit: v }))} />
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="tx-payment">
-                <Icon fa="fa-solid fa-credit-card" style={{ marginRight: '6px' }} /> Metode Bayar
+                Metode Bayar
               </label>
               <select id="tx-payment" name="payment_method" className="form-control" value={form.payment_method} onChange={handleChange}>
                 {getPaymentMethods().filter(m => m.active).map(m => (
@@ -947,7 +946,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           {/* ── Catatan ── */}
           <div className="form-group">
             <label className="form-label" htmlFor="tx-notes">
-              <Icon fa="fa-regular fa-note-sticky" style={{ marginRight: '6px' }} /> Catatan Tambahan
+              Catatan Tambahan
             </label>
             <textarea id="tx-notes" name="notes" className="form-control" rows={2} placeholder="Catatan khusus, permintaan khusus, dll..." value={form.notes} onChange={handleChange} style={{ resize: 'vertical' }} />
           </div>
@@ -956,7 +955,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           <div>
             <div className="form-group">
               <label className="form-label" htmlFor="tx-id-num">
-                <Icon fa="fa-solid fa-id-card" style={{ marginRight: '6px' }} /> No. Paspor / KTP / SIM <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(boleh dikosongkan)</span>
+                No. Paspor / KTP / SIM <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(boleh dikosongkan)</span>
               </label>
               <input id="tx-id-num" name="renter_id_number" type="text" className="form-control" placeholder="mis. C1234567 — boleh dikosongkan" value={form.renter_id_number} onChange={handleChange} />
             </div>
@@ -967,7 +966,7 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
             </div>
             <div className="form-group mb-0">
               <label className="form-label" style={{ fontSize: '12px' }}>
-                <Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '6px', color: '#3B82F6' }} /> Foto penyewa + motor saat serah terima (boleh dikosongkan)
+                Foto penyewa + motor saat serah terima (boleh dikosongkan)
               </label>
               {form.handover_image_url ? (
                 <div style={{ position: 'relative', width: '100%', maxWidth: '360px', height: '180px', borderRadius: '10px', overflow: 'hidden', border: '2px solid #3B82F6', background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1403,6 +1402,7 @@ export default function TransactionsPage({ initialTransactions = [], initialVehi
   const [searchQuery, setSearchQuery] = useState('');
   const [hasMore, setHasMore] = useState(initialTransactions.length >= pageSize);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [rowMenu, setRowMenu] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all');
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState(null);
@@ -1742,26 +1742,42 @@ const handleSubmit = async (formData) => {
                   <span className={`dash2-pill ${st.cls}`}>{st.label}</span>
                 </div>
                 <div className="mlist-actions">
-                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => openWa(tx)} disabled={openingId === tx.id} aria-label="Kirim invoice WhatsApp">
-                    <Icon fa="fa-brands fa-whatsapp" />
-                  </button>
-                  {tx.status === 'active' && tx.payment_status === 'unpaid' && (
-                    <button type="button" className="btn btn-secondary btn-sm" onClick={() => setLunasModal({ open: true, tx })} aria-label="Tandai lunas">
-                      <Icon fa="fa-solid fa-money-bill-wave" />
+                  {tx.status === 'active' ? (
+                    <button type="button" className="btn btn-primary btn-sm" onClick={() => setCompleteModal({ open: true, tx })}>
+                      <Icon fa="fa-solid fa-check" /> Selesai
+                    </button>
+                  ) : (
+                    <button type="button" className="btn btn-secondary btn-sm" onClick={() => openWa(tx)} disabled={openingId === tx.id}>
+                      <Icon fa="fa-brands fa-whatsapp" /> Invoice
                     </button>
                   )}
-                  {tx.status === 'active' && (
-                    <button type="button" className="btn btn-primary btn-sm" onClick={() => setCompleteModal({ open: true, tx })} aria-label="Tandai selesai">
-                      <Icon fa="fa-solid fa-check" />
-                    </button>
-                  )}
-                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => openEdit(tx)} disabled={openingId === tx.id} aria-label="Edit">
-                    <Icon fa="fa-solid fa-pen-to-square" />
-                  </button>
-                  <button type="button" className="btn btn-danger btn-sm" onClick={() => setDeleteModal({ open: true, txId: tx.id })} aria-label="Hapus">
-                    <Icon fa="fa-solid fa-trash" />
+                  <button type="button" className="btn btn-secondary btn-sm mlist-more"
+                    aria-label="Aksi lain" aria-expanded={rowMenu === tx.id}
+                    onClick={() => setRowMenu(rowMenu === tx.id ? null : tx.id)}>
+                    <Icon fa="fa-solid fa-sliders" />
                   </button>
                 </div>
+
+                {rowMenu === tx.id && (
+                  <div className="mlist-menu">
+                    {tx.status === 'active' && (
+                      <button type="button" onClick={() => { setRowMenu(null); openWa(tx); }}>
+                        <Icon fa="fa-brands fa-whatsapp" /> Kirim invoice WhatsApp
+                      </button>
+                    )}
+                    {tx.status === 'active' && tx.payment_status === 'unpaid' && (
+                      <button type="button" onClick={() => { setRowMenu(null); setLunasModal({ open: true, tx }); }}>
+                        <Icon fa="fa-solid fa-money-bill-wave" /> Tandai lunas
+                      </button>
+                    )}
+                    <button type="button" onClick={() => { setRowMenu(null); openEdit(tx); }}>
+                      <Icon fa="fa-solid fa-pen-to-square" /> Edit transaksi
+                    </button>
+                    <button type="button" className="danger" onClick={() => { setRowMenu(null); setDeleteModal({ open: true, txId: tx.id }); }}>
+                      <Icon fa="fa-solid fa-trash" /> Hapus transaksi
+                    </button>
+                  </div>
+                )}
               </div>
             );
           })}

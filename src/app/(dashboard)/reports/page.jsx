@@ -262,7 +262,7 @@ export default function ReportsPage() {
           {activeReportTab === 'investor' && (
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label" htmlFor="report-investor">
-                <Icon fa="fa-solid fa-crown" style={{ marginRight: '6px', color: '#1D4ED8' }} /> Cari & Pilih Investor ({uniqueInvestorNames.length} Terdaftar)
+                Cari & Pilih Investor ({uniqueInvestorNames.length} Terdaftar)
               </label>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <div style={{ position: 'relative', minWidth: '160px', flex: '1 1 160px' }}>

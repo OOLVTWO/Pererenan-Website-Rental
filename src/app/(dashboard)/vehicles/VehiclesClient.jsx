@@ -6,6 +6,7 @@ import { compressImage } from '@/lib/imageCompressor';
 import { createClient } from '@/lib/supabase/client';
 import PageTabs from '@/components/ui/PageTabs';
 import Icon from '@/components/ui/Icon';
+import RupiahInput from '@/components/ui/RupiahInput';
 
 const VALID_OWNERSHIP_TABS = ['all', 'internal', 'investor', 'investor_recap'];
 
@@ -485,7 +486,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label" htmlFor="v-name">
-              <Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '6px' }} /> Nama Motor <span className="required">*</span>
+              Nama Motor <span className="required">*</span>
             </label>
             <input id="v-name" name="name" type="text" className="form-control" placeholder="e.g. Honda Beat 2022" value={form.name} onChange={handleChange} required />
           </div>
@@ -493,13 +494,13 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
           <div className="form-row cols-2">
             <div className="form-group">
               <label className="form-label" htmlFor="v-plate">
-                <Icon fa="fa-solid fa-id-card" style={{ marginRight: '6px' }} /> Plat Nomor <span className="required">*</span>
+                Plat Nomor <span className="required">*</span>
               </label>
               <input id="v-plate" name="plate_number" type="text" className="form-control" placeholder="DK 1234 AB" value={form.plate_number} onChange={handleChange} required />
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="v-cat">
-                <Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '6px' }} /> Merek / Kategori Motor <span className="required">*</span>
+                Merek / Kategori Motor <span className="required">*</span>
               </label>
               <select
                 id="v-cat"
@@ -544,7 +545,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
           <div className="form-row cols-2">
             <div className="form-group">
               <label className="form-label" htmlFor="v-year">
-                <Icon fa="fa-solid fa-calendar-days" style={{ marginRight: '6px' }} /> Tahun <span className="required">*</span>
+                Tahun <span className="required">*</span>
               </label>
               <input id="v-year" name="year" type="number" className="form-control" min="2000" max="2030" value={form.year} onChange={handleChange} required />
             </div>
@@ -553,7 +554,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
           <div className="form-row">
             <div className="form-group">
               <label className="form-label" htmlFor="v-color">
-                <Icon fa="fa-solid fa-palette" style={{ marginRight: '6px' }} /> Warna <span className="required">*</span>
+                Warna <span className="required">*</span>
               </label>
               <input id="v-color" name="color" type="text" className="form-control" placeholder="Hitam, Putih, Merah..." value={form.color} onChange={handleChange} required />
             </div>
@@ -572,18 +573,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                 <label className="form-label" htmlFor="v-rate">
                   Daily Rate (Rp) <span className="required">*</span>
                 </label>
-                <input
-                  id="v-rate"
-                  name="rate_per_day"
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  className="form-control"
-                  placeholder="150,000"
-                  value={form.rate_per_day}
-                  onChange={handleChange}
-                  required
-                />
+                <RupiahInput id="v-rate" placeholder="150.000" value={form.rate_per_day} onChange={v => setForm(prev => ({ ...prev, rate_per_day: v }))} />
                 <div className="tier-desc">per day / 1–6 days</div>
                 {form.rate_per_day > 0 && (
                   <div className="tier-preview">{formatRupiah(parseInt(form.rate_per_day) || 0)}/day</div>
@@ -595,17 +585,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                 <label className="form-label" htmlFor="v-rate-week">
                   Weekly Rate (Rp)
                 </label>
-                <input
-                  id="v-rate-week"
-                  name="rate_per_week"
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  className="form-control"
-                  placeholder="900,000"
-                  value={form.rate_per_week}
-                  onChange={handleChange}
-                />
+                <RupiahInput id="v-rate-week" placeholder="900.000" value={form.rate_per_week} onChange={v => setForm(prev => ({ ...prev, rate_per_week: v }))} />
                 <div className="tier-desc">per 7 days / best for 7–29 days</div>
                 {form.rate_per_week > 0 && (
                   <div className="tier-preview">{formatRupiah(parseInt(form.rate_per_week) || 0)}/week</div>
@@ -623,17 +603,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                 <label className="form-label" htmlFor="v-rate-month">
                   Monthly Rate (Rp)
                 </label>
-                <input
-                  id="v-rate-month"
-                  name="rate_per_month"
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  className="form-control"
-                  placeholder="2,500,000"
-                  value={form.rate_per_month}
-                  onChange={handleChange}
-                />
+                <RupiahInput id="v-rate-month" placeholder="2.500.000" value={form.rate_per_month} onChange={v => setForm(prev => ({ ...prev, rate_per_month: v }))} />
                 <div className="tier-desc">per 30 days / best for 30+ days</div>
                 {form.rate_per_month > 0 && (
                   <div className="tier-preview">{formatRupiah(parseInt(form.rate_per_month) || 0)}/month</div>
@@ -650,7 +620,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
 
           <div className="form-group">
               <label className="form-label">
-                <Icon fa="fa-solid fa-camera" style={{ marginRight: '6px' }} /> Upload Foto Motor
+                Upload Foto Motor
               </label>
               <label htmlFor="v-file-input" className="custom-file-btn">
                 <Icon fa="fa-solid fa-cloud-arrow-up" style={{ color: 'var(--brand-primary-light)', fontSize: '16px' }} />
@@ -729,7 +699,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                 <div className="form-row cols-2">
                   <div className="form-group">
                     <label className="form-label" htmlFor="v-owner-name">
-                      <Icon fa="fa-solid fa-user-tie" style={{ marginRight: '6px', color: '#1D4ED8' }} /> Nama Investor / Pemilik <span className="required">*</span>
+                      Nama Investor / Pemilik <span className="required">*</span>
                     </label>
                     <input
                       id="v-owner-name"
@@ -744,7 +714,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                   </div>
                   <div className="form-group">
                     <label className="form-label" htmlFor="v-owner-contact">
-                      <Icon fa="fa-brands fa-whatsapp" style={{ marginRight: '6px', color: '#1D4ED8' }} /> No. WA / HP Investor
+                      No. WA / HP Investor
                     </label>
                     <input
                       id="v-owner-contact"
@@ -761,7 +731,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                 <div className="form-row cols-2">
                   <div className="form-group">
                     <label className="form-label" htmlFor="v-share-pct">
-                      <Icon fa="fa-solid fa-percent" style={{ marginRight: '6px', color: '#1D4ED8' }} /> Bagi Hasil Investor (%)
+                      Bagi Hasil Investor (%)
                     </label>
                     <input
                       id="v-share-pct"
@@ -784,7 +754,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
 
           <div className="form-group">
             <label className="form-label" htmlFor="v-status">
-              <Icon fa="fa-solid fa-list-check" style={{ marginRight: '6px' }} /> Status Kendaraan
+              Status Kendaraan
             </label>
             <select id="v-status" name="status" className="form-control" value={form.status} onChange={handleChange}>
               <option value="available">Tersedia</option>

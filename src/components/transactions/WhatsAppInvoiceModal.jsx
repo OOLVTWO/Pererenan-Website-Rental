@@ -209,7 +209,7 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
           <div>
             <div className="form-group">
               <label className="form-label">
-                <Icon fa="fa-solid fa-pen-to-square" style={{ marginRight: '6px' }} /> Text Invoice Formal (Dapat Diedit):
+                Text Invoice Formal (Dapat Diedit):
               </label>
               <textarea
                 className="form-control"

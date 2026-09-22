@@ -429,9 +429,16 @@ textarea.form-control { min-height: 88px; }
   .dash2-seg button { min-width: 56px; padding: 0 10px; font-size: 13px; }
 }
 
-/* Isi halaman tidak tertutup bar menu bawah */
+/* Isi halaman tidak boleh tertutup bar menu bawah.
+   Ruangnya dipasang di KERANGKA (.shell-main), bukan di elemen isi, supaya
+   tetap berlaku pada halaman yang membungkus dirinya lagi (Tracking) atau
+   yang punya wadah sendiri (Transaksi). */
 @media (max-width: 900px) {
-  .shell-main > .page-content { padding-bottom: calc(104px + env(safe-area-inset-bottom, 0px)); }
+  .shell-main { padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
+  .shell-main > .page-content { padding-bottom: 20px !important; }
+  .page-content .page-content { padding-bottom: 0 !important; }
+  /* Toast & tombol melayang jangan bersembunyi di belakang bar menu */
+  [style*="bottom: 28px"] { bottom: calc(100px + env(safe-area-inset-bottom, 0px)) !important; }
 }
 
 /* Pemilih periode (Keuangan & Laporan) */
@@ -480,3 +487,23 @@ textarea.form-control { min-height: 88px; }
   .pay-method-actions { width: 100%; }
   .pay-method-actions .btn:first-child { flex: 1 1 auto; }
 }
+
+/* Input nominal rupiah */
+.rupiah-input { position: relative; display: block; }
+.rupiah-input .rupiah-prefix {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  font-size: 15px; color: var(--text-muted); pointer-events: none;
+}
+.rupiah-input .form-control { padding-left: 40px; }
+
+/* Daftar Transaksi di HP: satu tombol utama + menu aksi lain */
+.mlist-actions .mlist-more { flex: 0 0 48px; }
+.mlist-menu { grid-column: 1 / -1; display: flex; flex-direction: column; margin-top: 8px; border: 1px solid var(--bg-border); border-radius: 12px; overflow: hidden; }
+.mlist-menu button {
+  display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 14px;
+  border: 0; border-top: 1px solid var(--bg-border); background: #fff;
+  font: inherit; font-size: 14px; color: var(--text-primary); text-align: left; cursor: pointer;
+}
+.mlist-menu button:first-child { border-top: 0; }
+.mlist-menu button:hover { background: var(--bg-hover); }
+.mlist-menu button.danger { color: var(--status-danger); }

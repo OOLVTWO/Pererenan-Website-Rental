@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { formatRupiah, getLocalDateStr } from '@/lib/finance';
 import { SERVICE_ITEM_OPTIONS } from '@/lib/serviceLog';
 import Icon from '@/components/ui/Icon';
+import RupiahInput from '@/components/ui/RupiahInput';
 
 /**
  * Servis Motor — PENCATATAN saja (bukan deteksi jadwal servis).
@@ -120,7 +121,7 @@ function ServiceLogModal({ vehicles, editData, defaultVehicleId, onClose, onSave
                 return (
                   <button key={item} type="button" onClick={() => toggleItem(item)}
                     className={`page-tab${active ? ' active' : ''}`} aria-pressed={active}>
-                    {active && <Icon fa="fa-solid fa-check" aria-hidden="true" />}{item}
+                    {active && <Icon fa="fa-solid fa-check" size={14} />} {item}
                   </button>
                 );
               })}
@@ -141,8 +142,7 @@ function ServiceLogModal({ vehicles, editData, defaultVehicleId, onClose, onSave
             </div>
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label" htmlFor="svc-cost">Biaya (Rp)</label>
-              <input id="svc-cost" type="number" inputMode="numeric" min="0" className="form-control" placeholder="0"
-                value={form.cost} onChange={e => set('cost', e.target.value)} />
+              <RupiahInput id="svc-cost" value={form.cost} onChange={v => set('cost', v)} />
             </div>
           </div>
 

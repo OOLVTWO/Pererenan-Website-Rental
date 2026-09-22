@@ -11,6 +11,7 @@ import { formatTanggal as formatTanggalId } from '@/lib/period';
 import { getPeriodRange } from '@/lib/period';
 import { isPaidTransaction } from '@/lib/finance';
 import Icon from '@/components/ui/Icon';
+import RupiahInput from '@/components/ui/RupiahInput';
 
 const VALID_TYPE_TABS = ['all', 'income', 'expense'];
 
@@ -188,7 +189,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
           {/* TYPE TOGGLE SWITCH */}
           <div className="form-group mb-4">
             <label className="form-label">
-              <Icon fa="fa-solid fa-right-left" style={{ marginRight: '6px' }} /> Jenis Transaksi Keuangan <span className="required">*</span>
+              Jenis Transaksi Keuangan <span className="required">*</span>
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               <button
@@ -262,7 +263,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
 
           <div className="form-group">
             <label className="form-label" htmlFor="fin-title">
-              <Icon fa="fa-solid fa-file-signature" style={{ marginRight: '6px' }} /> Keterangan Transaksi <span className="required">*</span>
+              Keterangan Transaksi <span className="required">*</span>
             </label>
             <input
               id="fin-title"
@@ -279,7 +280,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
           <div className="form-row cols-2">
             <div className="form-group">
               <label className="form-label" htmlFor="fin-cat">
-                <Icon fa="fa-solid fa-list" style={{ marginRight: '6px' }} /> Kategori <span className="required">*</span>
+                Kategori <span className="required">*</span>
               </label>
               <select id="fin-cat" name="categoryKey" className="form-control" value={form.categoryKey} onChange={handleChange} required>
                 {isIncome ? (
@@ -295,15 +296,16 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="fin-amount">
-                <Icon fa="fa-solid fa-coins" style={{ marginRight: '6px' }} /> Jumlah Nominal (Rp) <span className="required">*</span>
+                Jumlah Nominal (Rp) <span className="required">*</span>
               </label>
-              <input id="fin-amount" name="amount" type="number" className="form-control" placeholder="150000" min="0" value={form.amount} onChange={handleChange} required />
+              <RupiahInput id="fin-amount" placeholder="150.000" value={form.amount}
+                onChange={v => setForm(prev => ({ ...prev, amount: v }))} required />
             </div>
           </div>
 
           <div className="form-group">
             <label className="form-label" htmlFor="fin-date">
-              <Icon fa="fa-solid fa-calendar-days" style={{ marginRight: '6px' }} /> Tanggal Transaksi <span className="required">*</span>
+              Tanggal Transaksi <span className="required">*</span>
             </label>
             <input id="fin-date" name="expense_date" type="date" className="form-control" value={form.expense_date} onChange={handleChange} required />
           </div>

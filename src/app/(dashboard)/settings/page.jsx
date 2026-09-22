@@ -869,7 +869,7 @@ export default function SettingsPage() {
             <form onSubmit={handleChangePassword}>
               <div className="form-group">
                 <label className="form-label" htmlFor="sec-new-pass">
-                  <Icon fa="fa-solid fa-key" style={{ marginRight: '6px' }} /> Password Baru <span className="required">*</span>
+                  Password Baru <span className="required">*</span>
                 </label>
                 <div style={{ position: 'relative' }}>
                   <input
@@ -893,7 +893,7 @@ export default function SettingsPage() {
 
               <div className="form-group">
                 <label className="form-label" htmlFor="sec-confirm-pass">
-                  <Icon fa="fa-solid fa-shield-halved" style={{ marginRight: '6px' }} /> Konfirmasi Password Baru <span className="required">*</span>
+                  Konfirmasi Password Baru <span className="required">*</span>
                 </label>
                 <input
                   id="sec-confirm-pass"
@@ -988,7 +988,7 @@ export default function SettingsPage() {
             <form onSubmit={handleSavePaymentMethod}>
               <div className="form-group">
                 <label className="form-label" htmlFor="pm-label">
-                  <Icon fa="fa-solid fa-tag" style={{ marginRight: '6px' }} /> Nama Metode Pembayaran <span className="required">*</span>
+                  Nama Metode Pembayaran <span className="required">*</span>
                 </label>
                 <input
                   id="pm-label"
@@ -1003,7 +1003,7 @@ export default function SettingsPage() {
 
               <div className="form-group">
                 <label className="form-label">
-                  <Icon fa="fa-solid fa-icons" style={{ marginRight: '6px' }} /> Pilih Ikon Font Awesome
+                  Pilih Ikon Font Awesome
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
                   {FA_ICON_OPTIONS.map((item) => (
@@ -1034,7 +1034,7 @@ export default function SettingsPage() {
 
               <div className="form-group">
                 <label className="form-label">
-                  <Icon fa="fa-solid fa-palette" style={{ marginRight: '6px' }} /> Warna Aksentuasi Badge
+                  Warna Aksentuasi Badge
                 </label>
                 <div style={{ display: 'flex', gap: '10px' }}>
                   {COLOR_OPTIONS.map(c => (
