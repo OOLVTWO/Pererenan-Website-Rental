@@ -106,3 +106,24 @@ describe('fitDimensions (kompresi foto)', () => {
     expect(fitDimensions(400, 300, 1280, 1280)).toEqual({ width: 400, height: 300 });
   });
 });
+
+import { resolveSupabaseConfig } from './supabase/config';
+
+describe('resolveSupabaseConfig', () => {
+  const NEW = 'https://fltfzhcvvfmregcsjovm.supabase.co';
+  it('pakai default kalau env kosong', () => {
+    expect(resolveSupabaseConfig('', '').url).toBe(NEW);
+  });
+  it('abaikan URL tidak valid (mis. hanya ID project)', () => {
+    const r = resolveSupabaseConfig('fltfzhcvvfmregcsjovm', 'sb_publishable_abcdefghijkl');
+    expect(r.url).toBe(NEW);
+    expect(r.source).toMatch(/diabaikan/);
+  });
+  it('abaikan project lama yang sudah dipensiunkan', () => {
+    expect(resolveSupabaseConfig('https://eedrziblypwrufdzctvd.supabase.co', 'sb_publishable_abcdefghijkl').url).toBe(NEW);
+  });
+  it('pakai env kalau valid', () => {
+    const r = resolveSupabaseConfig('https://abcdefghijklmnop.supabase.co/', 'sb_publishable_abcdefghijkl');
+    expect(r).toEqual({ url: 'https://abcdefghijklmnop.supabase.co', key: 'sb_publishable_abcdefghijkl', source: 'env' });
+  });
+});

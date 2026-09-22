@@ -14,30 +14,39 @@ import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from '@/lib/supabase/config';
 import { NextResponse } from 'next/server';
 
 export async function proxy(request) {
+  const { pathname } = request.nextUrl;
   let response = NextResponse.next({ request });
 
-  const supabase = createServerClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
+  let user = null;
+  try {
+    const supabase = createServerClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+            response = NextResponse.next({ request });
+            cookiesToSet.forEach(({ name, value, options }) =>
+              response.cookies.set(name, value, options)
+            );
+          },
         },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          response = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
-        },
-      },
-    }
-  );
+      }
+    );
 
-  // PENTING: getUser() (bukan getSession()) — validasi + refresh token.
-  const { data: { user } } = await supabase.auth.getUser();
-  const { pathname } = request.nextUrl;
+    // PENTING: getUser() (bukan getSession()) — validasi + refresh token.
+    const { data } = await supabase.auth.getUser();
+    user = data?.user ?? null;
+  } catch (err) {
+    // Jangan pernah membuat SELURUH situs error karena masalah koneksi/konfigurasi.
+    // Perlakukan sebagai belum login: /login tetap bisa dibuka.
+    console.error('proxy: gagal memeriksa sesi Supabase:', err?.message || err);
+    user = null;
+  }
 
   // Area dashboard wajib login
   if (!user && pathname.startsWith('/dashboard')) {
