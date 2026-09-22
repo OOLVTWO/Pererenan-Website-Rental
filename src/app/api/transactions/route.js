@@ -23,6 +23,9 @@ export async function GET(request) {
   const startDate = searchParams.get('start_date');
   const endDate = searchParams.get('end_date');
   const view = searchParams.get('view');
+  const q = (searchParams.get('q') || '').trim();
+  const limit = Math.min(Number(searchParams.get('limit')) || 0, 200);
+  const offset = Math.max(Number(searchParams.get('offset')) || 0, 0);
 
   if (view === 'photo_ids') {
     // Hanya kolom id → sangat kecil; filter dievaluasi di database.
@@ -47,10 +50,16 @@ export async function GET(request) {
     if (status && status !== 'all') query = query.eq('status', status);
     if (startDate) query = query.gte('created_at', startDate.includes('T') ? startDate : `${startDate}T00:00:00Z`);
     if (endDate) query = query.lte('created_at', endDate.includes('T') ? endDate : `${endDate}T23:59:59Z`);
+    // Pencarian dijalankan di database (nama / nomor HP penyewa)
+    if (q) query = query.or(`renter_name.ilike.%${q}%,renter_phone.ilike.%${q}%`);
     return query;
   };
 
-  const { data, error } = await fetchAllRows(build);
+  // limit → satu halaman (daftar Transaksi); tanpa limit → semua baris dengan
+  // paging internal (dipakai laporan & export).
+  const { data, error } = limit
+    ? await build().range(offset, offset + limit - 1)
+    : await fetchAllRows(build);
   if (error) {
     console.error('GET /api/transactions error:', error.message);
     return NextResponse.json(

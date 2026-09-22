@@ -464,3 +464,19 @@ textarea.form-control { min-height: 88px; }
 .mlist-value { font-size: 14px; font-weight: 600; }
 .mlist-actions { grid-column: 1 / -1; display: flex; gap: 6px; margin-top: 8px; }
 .mlist-actions .btn { flex: 1 1 0; min-height: 40px; padding: 0; }
+
+/* Kartu metode pembayaran di Pengaturan: dulu teksnya terpecah satu huruf per
+   baris karena kolom kiri menyempit sampai nol di layar HP. */
+.pay-method-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  border-radius: 12px;
+}
+.pay-method-info { display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1 1 220px; }
+.pay-method-info > div:last-child { min-width: 0; }
+.pay-method-info code { word-break: break-all; }
+.pay-method-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+@media (max-width: 680px) {
+  .pay-method-info { flex: 1 1 100%; }
+  .pay-method-actions { width: 100%; }
+  .pay-method-actions .btn:first-child { flex: 1 1 auto; }
+}

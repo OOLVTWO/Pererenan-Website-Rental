@@ -1,24 +1,14 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/client';
-import { calcFinancialSummary, formatRupiah, getLocalMonthStr, getLocalDateStr, toLocalDateStr, isPaidTransaction, isIncomeEntry } from '@/lib/finance';
 import Icon from '@/components/ui/Icon';
+import { formatRupiah } from '@/lib/finance';
+import { formatTanggal } from '@/lib/period';
 
-const MONTH_NAMES = [
-  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
-];
-const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-
-function daysUntil(dateStr) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const end = new Date(dateStr);
-  end.setHours(0, 0, 0, 0);
-  return Math.floor((end - today) / 86400000);
-}
+const MONTH_NAMES = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const MONTH_SHORT = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const FIRST_YEAR = 2026;
 
 function shortRupiah(n) {
   const v = Number(n || 0);
@@ -28,356 +18,184 @@ function shortRupiah(n) {
   return v.toLocaleString('id-ID');
 }
 
-function txStatus(tx) {
+function statusPill(tx) {
   if (tx.status === 'active' && tx.payment_status === 'unpaid') return { label: 'Belum bayar', cls: 'strong' };
   if (tx.status === 'active') return { label: 'Aktif', cls: 'soft' };
   if (tx.status === 'completed') return { label: 'Selesai', cls: 'muted' };
-  return { label: 'Dibatalkan', cls: 'muted' };
+  return { label: 'Batal', cls: 'muted' };
 }
 
-export default function DashboardClient({ transactions, vehicles, loadedYear }) {
-  const [expenses, setExpenses] = useState([]);
-  const [periodMode, setPeriodMode] = useState('month');
-  const [selectedMonth, setSelectedMonth] = useState(getLocalMonthStr());
-  const [selectedYear, setSelectedYear] = useState(getLocalMonthStr().substring(0, 4));
-  // Fallback aman kalau prop loadedYear entah kenapa tidak terkirim.
-  const effectiveLoadedYear = loadedYear || Number(getLocalMonthStr().substring(0, 4));
-  // Tahun transaksi & expenses yang sudah dimuat dari server (tahun berjalan
-  // saat halaman pertama kali dibuka). Kalau user pindah ke tahun lain lewat
-  // selector, effect di bawah fetch data tahun itu on-demand dan menyimpannya
-  // di sini — tanpa ini, memilih tahun lampau akan tampak kosong karena
-  // datanya memang belum pernah diminta dari server.
-  const [extraYearData, setExtraYearData] = useState(null); // { year, transactions, expenses }
-  const [loadingYear, setLoadingYear] = useState(false);
+/**
+ * Dashboard (klien): hanya menampilkan angka yang SUDAH dihitung di database
+ * (migration 006). Ganti periode = satu panggilan ke /api/dashboard.
+ */
+export default function DashboardClient({ initialSummary, overview, initialMonthly, initialPeriod, error }) {
+  const now = new Date();
+  const [summary, setSummary] = useState(initialSummary);
+  const [monthly, setMonthly] = useState(initialMonthly || []);
+  const [period, setPeriod] = useState(initialPeriod);
+  const [mode, setMode] = useState('month');
+  const [month, setMonth] = useState(now.getMonth());
+  const [year, setYear] = useState(initialPeriod?.year || now.getFullYear());
+  const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState(error);
 
-  // Tahun mana yang SEDANG dilihat user, baik lewat mode Bulanan (tahun ikut
-  // bagian dari selectedMonth) maupun mode Tahunan (selectedYear).
-  const viewingYear = periodMode === 'year' ? selectedYear : selectedMonth.substring(0, 4);
-
-  useEffect(() => {
-    if (viewingYear === String(effectiveLoadedYear)) return; // sudah dimuat server, tidak perlu fetch
-    if (extraYearData?.year === viewingYear) return; // tahun ini sudah pernah di-fetch, jangan ulang
-
-    let cancelled = false;
-    (async () => {
-      setLoadingYear(true);
-      const start = `${viewingYear}-01-01`;
-      const end = `${viewingYear}-12-31`;
-      let tx = [];
-      let exp = [];
-      try {
-        const res = await fetch(`/api/transactions?start_date=${start}&end_date=${end}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data)) tx = data;
-        }
-      } catch (err) {
-        console.error('Fetch transaksi tahun lain error:', err);
-      }
-      try {
-        const res = await fetch(`/api/expenses?start_date=${start}&end_date=${end}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data)) exp = data;
-        }
-      } catch (err) {
-        console.error('Fetch expenses tahun lain error:', err);
-      }
-      if (!cancelled) {
-        setExtraYearData({ year: viewingYear, transactions: tx, expenses: exp });
-        setLoadingYear(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [viewingYear, effectiveLoadedYear, extraYearData]);
-
-  useEffect(() => {
-    (async () => {
-      let list = null;
-      // PERBAIKAN: dulu tanpa batas tanggal sama sekali — ikut ditarik
-      // seluruhnya setiap load, sama seperti masalah transactions di atas.
-      // Dibatasi ke tahun yang sama dengan transactions (loadedYear) supaya
-      // konsisten; tahun lain di-fetch on-demand lewat effect di atas.
-      const start = `${effectiveLoadedYear}-01-01`;
-      const end = `${effectiveLoadedYear}-12-31`;
-      try {
-        const res = await fetch(`/api/expenses?start_date=${start}&end_date=${end}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data)) list = data;
-        }
-      } catch (err) {
-        console.error('Fetch expenses via API error:', err);
-      }
-      if (list === null) {
-        try {
-          const supabase = createClient();
-          const { data, error } = await supabase
-            .from('expenses')
-            .select('*')
-            .gte('expense_date', start)
-            .lte('expense_date', end)
-            .order('expense_date', { ascending: false });
-          if (!error) list = data || [];
-        } catch (err) {
-          console.error('Fetch expenses via Supabase error:', err);
-        }
-      }
-      setExpenses(list || []);
-    })();
-  }, [effectiveLoadedYear]);
-
-  // Kalau user sedang melihat tahun selain yang dimuat server, pakai data
-  // on-demand (extraYearData); selain itu pakai data awal dari server/props.
-  const viewingExtraYear = extraYearData?.year === viewingYear && viewingYear !== String(effectiveLoadedYear);
-  const safeTx       = viewingExtraYear ? (extraYearData.transactions || []) : (Array.isArray(transactions) ? transactions : []);
-  const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
-  const safeExpenses = viewingExtraYear ? (extraYearData.expenses || []) : (Array.isArray(expenses) ? expenses : []);
-
-  const periodRange = useMemo(() => {
-    const currentYear = getLocalMonthStr().substring(0, 4);
-    if (periodMode === 'year') {
-      return {
-        start: `${selectedYear}-01-01`,
-        end: `${selectedYear}-12-31`,
-        label: `Tahun ${selectedYear}`,
-        isCurrent: selectedYear === currentYear,
-      };
+  const load = useCallback(async (nextMode, nextMonth, nextYear) => {
+    const start = nextMode === 'year' ? `${nextYear}-01-01` : `${nextYear}-${String(nextMonth + 1).padStart(2, '0')}-01`;
+    const lastDay = new Date(nextYear, nextMonth + 1, 0).getDate();
+    const end = nextMode === 'year' ? `${nextYear}-12-31` : `${nextYear}-${String(nextMonth + 1).padStart(2, '0')}-${lastDay}`;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/dashboard?start=${start}&end=${end}&year=${nextYear}`);
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Gagal memuat ringkasan.');
+      setSummary(json.summary);
+      setMonthly(json.monthly || []);
+      setPeriod({ start, end, year: nextYear });
+      setAlert(null);
+    } catch (err) {
+      setAlert(err.message);
+    } finally {
+      setLoading(false);
     }
-    const parts = selectedMonth.split('-').map(Number);
-    const y = parts[0];
-    const m = parts[1];
-    const lastDay = new Date(y, m, 0).getDate();
-    return {
-      start: `${selectedMonth}-01`,
-      end: `${selectedMonth}-${String(lastDay).padStart(2, '0')}`,
-      label: `${MONTH_NAMES[m - 1]} ${y}`,
-      isCurrent: selectedMonth === getLocalMonthStr(),
-    };
-  }, [periodMode, selectedMonth, selectedYear]);
-
-  const filteredTx = safeTx.filter(t => {
-    const d = toLocalDateStr(t.created_at);
-    return d >= periodRange.start && d <= periodRange.end;
-  });
-
-  const filteredExpenses = safeExpenses.filter(e => {
-    const d = e.expense_date || toLocalDateStr(e.created_at);
-    return d >= periodRange.start && d <= periodRange.end;
-  });
-
-  const yearOptions = useMemo(() => {
-    // PERBAIKAN: dulu daftar tahun di-derive dari transaksi yang SUDAH
-    // dimuat (safeTx) — tapi sekarang transaksi awal hanya mencakup tahun
-    // berjalan (lihat catatan performa di atas), jadi kalau tetap begini,
-    // dropdown tahun cuma akan pernah menampilkan SATU pilihan (tahun ini)
-    // selamanya — user tidak akan pernah bisa memilih tahun lalu sama
-    // sekali, karena data tahun lalu memang belum pernah dimuat untuk
-    // "ditemukan" oleh logic ini. Diganti ke rentang tetap (5 tahun ke
-    // belakang) yang tidak bergantung pada data yang sudah di-fetch —
-    // memilih tahun yang datanya belum dimuat akan otomatis memicu
-    // on-demand fetch (lihat useEffect viewingYear di atas).
-    const current = Number(getLocalMonthStr().substring(0, 4));
-    const years = [];
-    for (let y = current; y >= current - 4; y--) years.push(y);
-    return years;
   }, []);
 
-  const handleResetPeriod = () => {
-    setSelectedMonth(getLocalMonthStr());
-    setSelectedYear(getLocalMonthStr().substring(0, 4));
-  };
+  const changeMode = (m) => { setMode(m); load(m, month, year); };
+  const changeMonth = (m) => { setMonth(m); load(mode, m, year); };
+  const changeYear = (y) => { setYear(y); load(mode, month, y); };
 
-  const today        = getLocalDateStr();
-  const paidTx       = filteredTx.filter(isPaidTransaction);
-  const todayPaidTx  = paidTx.filter(t => toLocalDateStr(t.created_at) === today);
-  // "Pendapatan Hari Ini" = pendapatan sewa motor hari ini + pemasukan
-  // Keuangan hari ini (tip, biaya antar-jemput, klaim deposit, dll).
-  // Keuangan income yang benar-benar "rental_income" sudah dikecualikan
-  // dari kategori yang bisa dipilih saat input (lihat expenses/page.jsx),
-  // jadi menjumlahkan keduanya di sini tidak akan menghitung dobel.
-  const todayExpenses = safeExpenses.filter(e => (e.expense_date || toLocalDateStr(e.created_at)) === today);
-  const todayOtherIncome = todayExpenses.filter(isIncomeEntry).reduce((s, e) => s + Number(e.amount || 0), 0);
-  const todayRevenue = todayPaidTx.reduce((s, t) => s + Number(t.total_price || 0), 0) + todayOtherIncome;
-  const showToday    = periodRange.isCurrent && periodMode === 'month';
+  const s = summary || {};
+  const o = overview || {};
+  const netProfit = Number(s.rentalRevenue || 0) + Number(s.otherIncome || 0)
+    - Number(s.totalExpenses || 0) - Number(s.investorPayout || 0);
+  const periodLabel = mode === 'year' ? `Tahun ${year}` : `${MONTH_NAMES[month]} ${year}`;
 
-  const activeCount      = safeVehicles.filter(v => v.status === 'rented').length;
-  const availableCount   = safeVehicles.filter(v => v.status === 'available').length;
-
-  const summary = calcFinancialSummary({
-    transactions: filteredTx,
-    expenses: filteredExpenses,
-    vehicles: safeVehicles,
-  });
-  const { totalRevenue, totalExpenses, investorPayout, netProfit } = summary;
-
-  const hasInvestor = safeVehicles.some(v =>
-    v.owner_type === 'investor' || v.ownership_type === 'investor'
-  );
-
-  const activeTx           = safeTx.filter(t => t.status === 'active');
-  const completedTx        = filteredTx.filter(t => t.status === 'completed');
-  const totalDepositHeld   = activeTx.reduce((s, t) => s + Number(t.deposit || 0), 0);
-  const totalDepositReturned = completedTx.reduce((s, t) => s + Number(t.deposit || 0), 0);
-
-  const unpaidTx    = safeTx.filter(t => t.status === 'active' && t.payment_status === 'unpaid');
-  const totalUnpaid = unpaidTx.reduce((s, t) => s + Number(t.total_price || 0), 0);
-
-  const recentTx    = filteredTx.slice(0, 5);
-
-  // Reuse summary.totalRevenue (from calcFinancialSummary) rather than a
-  // separate transactions-only calculation, so this figure always matches
-  // the "Total Pemasukan" card lower on the page — same period, same
-  // rental + Keuangan income combination.
-  const periodRevenue = totalRevenue;
-
-
-  // ── Perlu perhatian: hanya yang ada isinya ──
-  const overdueTx = activeTx.filter(t => daysUntil(t.end_date) < 0);
-  const dueSoonTx = activeTx.filter(t => { const d = daysUntil(t.end_date); return d === 0 || d === 1; });
   const attention = [
-    overdueTx.length > 0 && { href: '/tracking?tab=overdue', icon: 'fa-solid fa-circle-exclamation', title: `${overdueTx.length} sewa lewat jatuh tempo`, sub: 'Hubungi penyewa sekarang' },
-    dueSoonTx.length > 0 && { href: '/tracking?tab=critical', icon: 'fa-regular fa-clock', title: `${dueSoonTx.length} sewa berakhir hari ini/besok`, sub: 'Kirim pengingat WhatsApp' },
-    unpaidTx.length > 0 && { href: '/transactions', icon: 'fa-solid fa-money-bill-wave', title: `${unpaidTx.length} sewa belum dibayar`, sub: `Total ${formatRupiah(totalUnpaid)}` },
+    Number(o.overdueCount) > 0 && { href: '/tracking?tab=overdue', icon: 'fa-solid fa-circle-exclamation', title: `${o.overdueCount} sewa lewat jatuh tempo`, sub: 'Hubungi penyewa sekarang' },
+    Number(o.dueSoonCount) > 0 && { href: '/tracking?tab=critical', icon: 'fa-regular fa-clock', title: `${o.dueSoonCount} sewa berakhir hari ini/besok`, sub: 'Kirim pengingat WhatsApp' },
+    Number(o.unpaidCount) > 0 && { href: '/transactions', icon: 'fa-solid fa-money-bill-wave', title: `${o.unpaidCount} sewa belum dibayar`, sub: `Total ${formatRupiah(o.unpaidTotal)}` },
   ].filter(Boolean);
 
-  // ── Pendapatan sewa per bulan (tahun yang sedang dilihat) ──
-  const nowMonth = getLocalMonthStr();
-  const monthly = MONTH_SHORT.map((label, i) => {
-    const key = `${viewingYear}-${String(i + 1).padStart(2, '0')}`;
-    const total = safeTx
-      .filter(t => isPaidTransaction(t) && toLocalDateStr(t.created_at).startsWith(key))
-      .reduce((s, t) => s + Number(t.total_price || 0), 0);
-    return { key, label, total };
-  }).filter(m => m.key <= nowMonth && (m.total > 0 || m.key.slice(0, 4) === nowMonth.slice(0, 4)));
-  const firstWithData = monthly.findIndex(m => m.total > 0);
-  const chartMonths = firstWithData >= 0 ? monthly.slice(firstWithData) : monthly.slice(-3);
+  const maxMonth = year === now.getFullYear() ? now.getMonth() : 11;
+  const chart = MONTH_SHORT
+    .map((label, i) => ({ label, idx: i, total: Number((monthly || []).find(m => Number(m.bulan) === i + 1)?.total || 0) }))
+    .filter(m => m.idx <= maxMonth);
+  const firstData = chart.findIndex(m => m.total > 0);
+  const chartMonths = firstData >= 0 ? chart.slice(firstData) : chart.slice(-3);
   const chartMax = Math.max(1, ...chartMonths.map(m => m.total));
-  const selectedMonthKey = periodMode === 'month' ? selectedMonth : null;
 
-  const totalFleet = safeVehicles.length || 1;
-  const pct = (n) => `${(n / totalFleet) * 100}%`;
+  const totalFleet = Number(o.totalVehicles) || 1;
+  const yearOptions = [];
+  for (let y = now.getFullYear(); y >= FIRST_YEAR; y -= 1) yearOptions.push(y);
 
   return (
     <div className="dash2">
-      {/* ── Judul + periode ── */}
       <div className="dash2-head">
         <div>
           <h1 className="page-title" style={{ marginBottom: 2 }}>Ringkasan</h1>
           <p className="dash2-muted">
-            {periodRange.label}
-            {loadingYear && <> · <Icon fa="fa-solid fa-spinner fa-spin" aria-hidden="true" /> memuat data {viewingYear}…</>}
+            {periodLabel}
+            {loading && <> · <Icon fa="fa-solid fa-spinner" spin /> memuat…</>}
           </p>
         </div>
         <div className="dash2-period">
           <div className="dash2-seg" role="group" aria-label="Jenis periode">
-            <button type="button" className={periodMode === 'month' ? 'active' : ''} onClick={() => setPeriodMode('month')}>Bulan</button>
-            <button type="button" className={periodMode === 'year' ? 'active' : ''} onClick={() => setPeriodMode('year')}>Tahun</button>
+            <button type="button" className={mode === 'month' ? 'active' : ''} onClick={() => changeMode('month')}>Bulan</button>
+            <button type="button" className={mode === 'year' ? 'active' : ''} onClick={() => changeMode('year')}>Tahun</button>
           </div>
-          {periodMode === 'month' && (
-            <select
-              className="form-control dash2-select"
-              aria-label="Pilih bulan"
-              value={selectedMonth.substring(5, 7)}
-              onChange={e => setSelectedMonth(`${selectedMonth.substring(0, 4)}-${e.target.value}`)}
-            >
-              {MONTH_NAMES.map((name, i) => (
-                <option key={i} value={String(i + 1).padStart(2, '0')}>{name}</option>
-              ))}
+          {mode === 'month' && (
+            <select className="form-control dash2-select" aria-label="Pilih bulan" value={month} onChange={e => changeMonth(Number(e.target.value))}>
+              {MONTH_NAMES.map((name, i) => <option key={name} value={i}>{name}</option>)}
             </select>
           )}
-          <select
-            className="form-control dash2-select"
-            aria-label="Pilih tahun"
-            value={periodMode === 'year' ? selectedYear : selectedMonth.substring(0, 4)}
-            onChange={e => {
-              if (periodMode === 'year') setSelectedYear(e.target.value);
-              else setSelectedMonth(`${e.target.value}-${selectedMonth.substring(5, 7)}`);
-            }}
-          >
-            {yearOptions.map(y => <option key={y} value={String(y)}>{y}</option>)}
+          <select className="form-control dash2-select" aria-label="Pilih tahun" value={year} onChange={e => changeYear(Number(e.target.value))}>
+            {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
           </select>
-          {!periodRange.isCurrent && (
-            <button type="button" className="btn btn-secondary btn-sm" onClick={handleResetPeriod}>Kembali ke sekarang</button>
-          )}
         </div>
         <Link href="/transactions?new=1" className="btn btn-primary dash2-cta">
-          <Icon fa="fa-solid fa-plus" aria-hidden="true" /> Transaksi baru
+          <Icon fa="fa-solid fa-plus" /> Transaksi baru
         </Link>
       </div>
 
+      {alert && <div className="alert">{alert}</div>}
+
       <div className="dash2-grid">
-        {/* ── Kolom 1: Keuangan ── */}
-        <section className="dash2-col" aria-labelledby="dash-keuangan">
+        <section className="dash2-col">
           <div className="dash2-section-head">
-            <h2 id="dash-keuangan">Keuangan</h2>
-            <Link href="/reports">Laporan <Icon fa="fa-solid fa-chevron-right" aria-hidden="true" /></Link>
+            <h2>Keuangan</h2>
+            <Link href="/reports">Laporan <Icon fa="fa-solid fa-chevron-right" size={12} /></Link>
           </div>
           <div className="list-card">
             <div className="dash2-hero">
-              <span className="dash2-muted">Pendapatan sewa · {paidTx.length} transaksi lunas</span>
-              <span className="dash2-big">{formatRupiah(summary.rentalRevenue)}</span>
-              {showToday && <span className="dash2-muted">Hari ini: <strong>{formatRupiah(todayRevenue)}</strong></span>}
+              <span className="dash2-muted">Pendapatan sewa · {Number(s.paidCount || 0)} transaksi lunas</span>
+              <span className="dash2-big">{formatRupiah(s.rentalRevenue)}</span>
+              <span className="dash2-muted">Hari ini: <strong>{formatRupiah(s.todayRevenue)}</strong></span>
             </div>
-            <div className="dash2-row"><span>Pemasukan lain</span><strong>{formatRupiah(summary.otherIncome)}</strong></div>
-            <div className="dash2-row"><span>Pengeluaran</span><strong>− {formatRupiah(totalExpenses)}</strong></div>
-            {hasInvestor && <div className="dash2-row"><span>Bagi hasil investor</span><strong>− {formatRupiah(investorPayout)}</strong></div>}
-            <div className="dash2-row total"><span>Laba bersih</span><strong>{formatRupiah(netProfit)}</strong></div>
-            {(totalDepositHeld > 0 || totalDepositReturned > 0) && (
-              <div className="dash2-row"><span>Deposit ditahan · dikembalikan</span><strong>{formatRupiah(totalDepositHeld)} · {formatRupiah(totalDepositReturned)}</strong></div>
+            <div className="dash2-row"><span>Pemasukan lain</span><strong>{formatRupiah(s.otherIncome)}</strong></div>
+            <div className="dash2-row"><span>Pengeluaran</span><strong>− {formatRupiah(s.totalExpenses)}</strong></div>
+            {Number(s.investorPayout) > 0 && (
+              <div className="dash2-row"><span>Bagi hasil investor</span><strong>− {formatRupiah(s.investorPayout)}</strong></div>
             )}
+            <div className="dash2-row total"><span>Laba bersih owner</span><strong>{formatRupiah(netProfit)}</strong></div>
           </div>
         </section>
 
-        {/* ── Kolom 2: Perlu perhatian + Armada ── */}
-        <section className="dash2-col" aria-labelledby="dash-perhatian">
-          <div className="dash2-section-head"><h2 id="dash-perhatian">Perlu perhatian</h2></div>
+        <section className="dash2-col">
+          <div className="dash2-section-head"><h2>Perlu perhatian</h2></div>
           <div className="list-card">
             {attention.length === 0 ? (
               <div className="list-row">
-                <span className="list-row-icon"><Icon fa="fa-solid fa-check" aria-hidden="true" /></span>
-                <span className="list-row-text"><span className="list-row-title">Semua aman</span><span className="list-row-sub">Tidak ada yang perlu ditindaklanjuti</span></span>
+                <span className="list-row-icon"><Icon fa="fa-solid fa-check" /></span>
+                <span className="list-row-text">
+                  <span className="list-row-title">Semua aman</span>
+                  <span className="list-row-sub">Tidak ada yang perlu ditindaklanjuti</span>
+                </span>
               </div>
             ) : attention.map(a => (
-              <Link key={a.href + a.title} href={a.href} className="list-row">
-                <span className="list-row-icon"><Icon fa={a.icon} aria-hidden="true" /></span>
-                <span className="list-row-text"><span className="list-row-title">{a.title}</span><span className="list-row-sub">{a.sub}</span></span>
-                <Icon fa="fa-solid fa-chevron-right list-row-chev" aria-hidden="true" />
+              <Link key={a.title} href={a.href} className="list-row">
+                <span className="list-row-icon"><Icon fa={a.icon} /></span>
+                <span className="list-row-text">
+                  <span className="list-row-title">{a.title}</span>
+                  <span className="list-row-sub">{a.sub}</span>
+                </span>
+                <Icon fa="fa-solid fa-chevron-right" className="list-row-chev" size={13} />
               </Link>
             ))}
           </div>
 
           <div className="dash2-section-head">
             <h2>Armada</h2>
-            <Link href="/tracking?view=armada">Status armada <Icon fa="fa-solid fa-chevron-right" aria-hidden="true" /></Link>
+            <Link href="/tracking?view=armada">Status armada <Icon fa="fa-solid fa-chevron-right" size={12} /></Link>
           </div>
           <div className="list-card dash2-pad">
             <div className="dash2-tiles">
-              <div><strong>{activeCount}</strong><span>Disewa</span></div>
-              <div><strong>{availableCount}</strong><span>Tersedia</span></div>
+              <div><strong>{Number(o.rentedCount || 0)}</strong><span>Disewa</span></div>
+              <div><strong>{Number(o.availableCount || 0)}</strong><span>Tersedia</span></div>
             </div>
             <div className="dash2-bar" aria-hidden="true">
-              <span style={{ width: pct(activeCount) }} className="b1"></span>
-              <span style={{ width: pct(availableCount) }} className="b2"></span>
+              <span className="b1" style={{ width: `${(Number(o.rentedCount || 0) / totalFleet) * 100}%` }}></span>
+              <span className="b2" style={{ width: `${(Number(o.availableCount || 0) / totalFleet) * 100}%` }}></span>
             </div>
             <span className="dash2-muted">
-              {Math.round((activeCount / totalFleet) * 100)}% dari {safeVehicles.length} motor sedang disewa
+              {Math.round((Number(o.rentedCount || 0) / totalFleet) * 100)}% dari {Number(o.totalVehicles || 0)} motor sedang disewa
             </span>
           </div>
         </section>
 
-        {/* ── Kolom 3: Grafik + transaksi terbaru ── */}
-        <section className="dash2-col" aria-labelledby="dash-grafik">
-          <div className="dash2-section-head"><h2 id="dash-grafik">Pendapatan sewa per bulan · {viewingYear}</h2></div>
+        <section className="dash2-col">
+          <div className="dash2-section-head"><h2>Pendapatan sewa per bulan · {year}</h2></div>
           <div className="list-card dash2-pad">
             {chartMonths.every(m => m.total === 0) ? (
               <span className="dash2-muted">Belum ada pendapatan di tahun ini.</span>
             ) : (
-              <div className="dash2-chart" role="img" aria-label={`Pendapatan sewa per bulan tahun ${viewingYear}`}>
+              <div className="dash2-chart" role="img" aria-label={`Pendapatan sewa per bulan tahun ${year}`}>
                 {chartMonths.map(m => (
-                  <div key={m.key} className="dash2-chart-col">
+                  <div key={m.label} className="dash2-chart-col">
                     <span className="dash2-chart-val">{m.total > 0 ? shortRupiah(m.total) : '–'}</span>
-                    <span className={`dash2-chart-bar${m.key === selectedMonthKey ? ' on' : ''}`} style={{ height: `${Math.max(4, (m.total / chartMax) * 120)}px` }}></span>
+                    <span
+                      className={`dash2-chart-bar${mode === 'month' && m.idx === month ? ' on' : ''}`}
+                      style={{ height: `${Math.max(4, (m.total / chartMax) * 120)}px` }}
+                    ></span>
                     <span className="dash2-chart-label">{m.label}</span>
                   </div>
                 ))}
@@ -387,18 +205,18 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
 
           <div className="dash2-section-head">
             <h2>Transaksi terbaru</h2>
-            <Link href="/transactions">Semua <Icon fa="fa-solid fa-chevron-right" aria-hidden="true" /></Link>
+            <Link href="/transactions">Semua <Icon fa="fa-solid fa-chevron-right" size={12} /></Link>
           </div>
           <div className="list-card">
-            {recentTx.length === 0 ? (
-              <div className="list-row"><span className="list-row-sub">Belum ada transaksi di {periodRange.label}.</span></div>
-            ) : recentTx.map(tx => {
-              const st = txStatus(tx);
+            {(o.recent || []).length === 0 ? (
+              <div className="list-row"><span className="list-row-sub">Belum ada transaksi.</span></div>
+            ) : (o.recent || []).map(tx => {
+              const st = statusPill(tx);
               return (
                 <Link key={tx.id} href="/transactions" className="list-row">
                   <span className="list-row-text">
                     <span className="list-row-title">{tx.renter_name}</span>
-                    <span className="list-row-sub">{tx.vehicles?.name || 'Motor'} · {tx.duration_days || 1} hari</span>
+                    <span className="list-row-sub">{tx.vehicle_name || 'Motor'} · {tx.duration_days || 1} hari</span>
                   </span>
                   <span className="dash2-tx-right">
                     <span className="list-row-value">{formatRupiah(tx.total_price)}</span>
@@ -410,6 +228,10 @@ export default function DashboardClient({ transactions, vehicles, loadedYear }) 
           </div>
         </section>
       </div>
+
+      <p className="dash2-muted" style={{ marginTop: 4 }}>
+        Periode: {formatTanggal(period?.start)} – {formatTanggal(period?.end)} · laba bersih sudah dikurangi bagi hasil investor.
+      </p>
     </div>
   );
 }

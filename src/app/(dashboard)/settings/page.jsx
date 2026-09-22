@@ -590,10 +590,8 @@ export default function SettingsPage() {
               {paymentMethods.map((method) => (
                 <div
                   key={method.id}
+                  className="pay-method-row"
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
                     padding: '14px 18px',
                     borderRadius: '10px',
                     border: `1px solid ${method.active ? 'var(--bg-border)' : 'rgba(30,58,138, 0.2)'}`,
@@ -602,9 +600,9 @@ export default function SettingsPage() {
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div className="pay-method-info">
                     <div style={{
-                      width: '40px', height: '40px', borderRadius: '10px',
+                      width: '40px', height: '40px', borderRadius: '10px', flexShrink: 0,
                       background: `${method.color}20`,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       color: method.color, fontSize: '18px'
@@ -621,7 +619,7 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div className="pay-method-actions">
                     <button
                       className={`btn btn-${method.active ? 'secondary' : 'success'} btn-sm`}
                       onClick={() => handleTogglePaymentActive(method.id)}
