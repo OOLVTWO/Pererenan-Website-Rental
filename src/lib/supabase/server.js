@@ -1,12 +1,12 @@
 import { createServerClient } from '@supabase/ssr';
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
+import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from './config';
 
 export async function createClient() {
   const cookieStore = await cookies();
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY,
     {
       cookies: {
         getAll() {
@@ -27,27 +27,13 @@ export async function createClient() {
 }
 
 /**
- * Admin client untuk API route.
- *  - Jika SUPABASE_SERVICE_ROLE_KEY di-set → service role (bypass RLS). Disarankan.
- *  - Jika TIDAK di-set → fallback ke session user yang login.
- *    (PERUBAHAN: sebelumnya fail-loud yang membuat dashboard/API mati saat env
- *    belum di-set di Vercel. Keamanan tetap dijaga oleh RLS policies —
- *    lihat supabase/migrations/001_schema.sql.)
+ * Client untuk API route (/api/*), dipanggil SETELAH requireAuth().
+ *
+ * Sengaja memakai sesi admin yang sedang login (bukan service role key):
+ * RLS memberi akses penuh ke user yang login, jadi hasilnya sama, tapi
+ * tidak ada secret yang perlu disimpan di Vercel — tidak ada yang bisa bocor.
+ * (Riwayat: secret key project lama pernah bocor di repo publik.)
  */
 export async function createAdminClient() {
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!serviceKey) {
-    console.warn(
-      'createAdminClient: SUPABASE_SERVICE_ROLE_KEY belum di-set — fallback ke session user. ' +
-      'Set env tsb di Vercel untuk mode admin penuh (bypass RLS).'
-    );
-    return createClient();
-  }
-
-  return createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    serviceKey,
-    { auth: { persistSession: false, autoRefreshToken: false } }
-  );
+  return createClient();
 }

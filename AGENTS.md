@@ -17,7 +17,10 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
 
 ## Workflow & keamanan
 - Bypass auth khusus sandbox untuk testing **tidak boleh pernah di-commit**. Cek diff sebelum commit.
-- Jangan commit secret (service role key, DB password, token GitHub). Semua lewat env Vercel / `.env.local`.
+- Jangan commit secret (service role key, DB password, token GitHub).
+- Aplikasi sengaja TIDAK memakai service role key: `createAdminClient()` = sesi admin yang login (RLS).
+  URL + publishable key project ada di `src/lib/supabase/config.js` (aman publik).
+- Akun admin dibuat manual di Supabase Auth; signup publik harus nonaktif (RLS memberi akses penuh ke user login).
 - Verifikasi minimal sebelum push: `npm run lint` (0 error), `npm test`, `npm run build`.
 - Perubahan skema = file baru di `supabase/migrations/NNN_*.sql`, idempotent, dengan RLS + grant eksplisit
   (Supabase mewajibkan grant eksplisit untuk tabel baru di Data API).

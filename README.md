@@ -24,21 +24,29 @@ Next.js 16 (App Router) + Supabase (Postgres, Auth, Storage), di-deploy di **Ver
 
 ```bash
 npm install
-cp .env.example .env.local   # isi nilainya
 npm run dev                  # http://localhost:3000
 ```
 
 Perintah lain: `npm run lint`, `npm test`, `npm run build`.
 
-## Environment variables
+## Koneksi Supabase
+
+Tidak ada env var yang wajib. Default-nya ada di `src/lib/supabase/config.js`
+(project **Pererenan Website Rental**). Env var berikut opsional, hanya untuk
+mengarahkan ke project lain:
 
 | Nama | Keterangan |
 |---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | URL project Supabase |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Publishable / anon key (memang publik) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Secret key — **server only**, untuk route `/api/*`. Jangan pernah di-commit. |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Publishable key (memang publik; aman karena RLS) |
 
-Di Vercel: Project → Settings → Environment Variables (Production + Preview).
+Aplikasi **tidak memakai secret / service role key**. Semua akses memakai sesi
+admin yang login, dilindungi RLS (hanya user yang login yang bisa membaca/menulis).
+
+### Akun admin
+Buat di Supabase → Authentication → Users → Add user (centang Auto Confirm).
+Matikan pendaftaran publik: Authentication → Sign In / Providers → nonaktifkan
+"Allow new users to sign up" — setiap user yang login punya akses penuh.
 
 ## Database
 
