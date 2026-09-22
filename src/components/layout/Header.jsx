@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { findNavItem } from '@/components/layout/navConfig';
 
@@ -13,7 +14,7 @@ export default function Header() {
   return (
     <header className="shell-topbar">
       <Link href="/dashboard" className="shell-brand compact" aria-label="Ke Dashboard">
-        <span className="shell-brand-mark">BR</span>
+        <Image className="shell-brand-mark" src="/images/logoCompany.png" alt="Boss Rent Pererenan" width={40} height={27} priority />
       </Link>
       <span className="shell-topbar-title">{title}</span>
     </header>

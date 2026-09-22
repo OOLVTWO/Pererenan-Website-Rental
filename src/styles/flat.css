@@ -328,3 +328,6 @@ pre, code { white-space: pre-wrap; word-break: break-word; }
 /* Ikon SVG (lucide) — animasi putar untuk status memuat */
 @keyframes icon-spin { to { transform: rotate(360deg); } }
 .icon-spin { animation: icon-spin 0.9s linear infinite !important; }
+
+/* Logo asli di sidebar & top bar (menggantikan kotak inisial) */
+.shell-brand-mark { background: transparent !important; border-radius: 8px; object-fit: contain; width: 40px; height: auto; }

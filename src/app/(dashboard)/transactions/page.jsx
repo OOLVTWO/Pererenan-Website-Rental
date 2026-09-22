@@ -540,7 +540,6 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
   const [totalPrice, setTotalPrice] = useState(0);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [showOptional, setShowOptional] = useState(false);
   const photoClient = useMemo(() => createClient(), []);
   const pendingUploadRef = useRef(null);   // foto yang sudah diunggah tapi belum disimpan
   const [photoChanged, setPhotoChanged] = useState(false);
@@ -637,7 +636,6 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
           notes: editData.notes || '',
         });
         setTotalPrice(editData.total_price || 0);
-        setShowOptional(false);
 
         if (editData.renter_phone) {
           const parts = editData.renter_phone.trim().split(' ');
@@ -672,7 +670,6 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
         setCountryCode('+62');
         setPhoneNumber('');
         setTotalPrice(0);
-        setShowOptional(false);
       }
       setPhotoChanged(false);
       pendingUploadRef.current = null;
@@ -950,67 +947,53 @@ function TransactionModal({ isOpen, onClose, onSubmit, vehicles, editData }) {
             <textarea id="tx-notes" name="notes" className="form-control" rows={2} placeholder="Catatan khusus, permintaan khusus, dll..." value={form.notes} onChange={handleChange} style={{ resize: 'vertical' }} />
           </div>
 
-          {/* ── Toggle Data Opsional ── */}
-          <button
-            type="button"
-            onClick={() => setShowOptional(prev => !prev)}
-            style={{ width: '100%', padding: '10px', background: 'var(--bg-elevated)', border: '1px dashed var(--bg-border)', borderRadius: '10px', color: 'var(--text-muted)', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}
-          >
-            <Icon fa={`fa-solid fa-chevron-${showOptional ? 'up' : 'down'}`} style={{ fontSize: '11px' }} />
-            {showOptional ? 'Sembunyikan Data Opsional' : 'Data Opsional: No. KTP & Foto Dokumentasi'}
-          </button>
+          {/* ── Identitas & foto serah terima — bagian tetap, tidak wajib diisi ── */}
+          <div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="tx-id-num">
+                <Icon fa="fa-solid fa-id-card" style={{ marginRight: '6px' }} /> No. Paspor / KTP / SIM <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(boleh dikosongkan)</span>
+              </label>
+              <input id="tx-id-num" name="renter_id_number" type="text" className="form-control" placeholder="mis. C1234567 — boleh dikosongkan" value={form.renter_id_number} onChange={handleChange} />
+            </div>
 
-          {/* ── Data Opsional (collapsed) ── */}
-          {showOptional && (
-            <div style={{ padding: '16px', background: 'var(--bg-elevated)', borderRadius: '10px', border: '1px solid var(--bg-border)', marginBottom: '12px' }}>
-
-              {/* No. KTP */}
-              <div className="form-group">
-                <label className="form-label" htmlFor="tx-id-num">
-                  <Icon fa="fa-solid fa-id-card" style={{ marginRight: '6px' }} /> No. KTP / Paspor / SIM
-                </label>
-                <input id="tx-id-num" name="renter_id_number" type="text" className="form-control" placeholder="Nomor identitas" value={form.renter_id_number} onChange={handleChange} />
-              </div>
-
-              {/* Foto Serah Terima (1 foto: penyewa + motor) — disimpan di Supabase Storage */}
-              <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--brand-primary-light)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Icon fa="fa-solid fa-camera-retro" /> Foto Serah Terima (Opsional)
-              </div>
-              <div className="form-group mb-0">
-                <label className="form-label" style={{ fontSize: '12px' }}>
-                  <Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '6px', color: '#3B82F6' }} /> Foto Penyewa + Motor saat serah terima
-                </label>
-                {form.handover_image_url ? (
-                  <div style={{ position: 'relative', width: '100%', maxWidth: '360px', height: '180px', borderRadius: '10px', overflow: 'hidden', border: '2px solid #3B82F6', background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {handoverPreview ? (
-                      <img src={handoverPreview} alt="Serah terima" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      <Icon fa="fa-solid fa-spinner fa-spin" style={{ color: 'var(--text-muted)' }} />
-                    )}
-                    <button type="button" onClick={handleRemovePhoto} title="Hapus foto"
-                      style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(30,58,138,0.9)', color: '#FFF', border: 'none', borderRadius: '50%', width: '26px', height: '26px', cursor: 'pointer', fontWeight: 800, fontSize: '12px' }}>✕</button>
-                    <span style={{ position: 'absolute', bottom: '6px', left: '6px', background: 'rgba(15,23,42,0.9)', color: '#3B82F6', padding: '2px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 800 }}>✓ Foto tersimpan</span>
-                  </div>
-                ) : (
-                  <div>
-                    <input type="file" accept="image/*" id="tx-handover-photo-input" onChange={handleImageFile} style={{ display: 'none' }} disabled={uploading} />
-                    <label htmlFor="tx-handover-photo-input" className="custom-file-btn"
-                      style={{ height: '100px', maxWidth: '360px', flexDirection: 'column', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed #3B82F6', borderRadius: '10px', background: 'rgba(255,255,255,0.02)', cursor: 'pointer', padding: '12px', textAlign: 'center' }}>
-                      <Icon fa="fa-solid fa-camera" style={{ fontSize: '22px', color: '#3B82F6' }} />
-                      <span style={{ fontSize: '11px', fontWeight: 700, marginTop: '6px' }}>Ambil / pilih foto serah terima</span>
-                      <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Penyewa bersama motor</span>
-                    </label>
-                  </div>
-                )}
-              </div>
-
-              {uploading && (
-                <div style={{ fontSize: '11px', color: 'var(--brand-primary-light)', marginTop: '8px', textAlign: 'center' }}>
-                  <Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '4px' }} /> Mengompres & mengunggah foto...
+            {/* Foto Serah Terima (1 foto: penyewa + motor) — disimpan di Supabase Storage */}
+            <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--brand-primary-light)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Icon fa="fa-solid fa-camera-retro" /> Foto Serah Terima
+            </div>
+            <div className="form-group mb-0">
+              <label className="form-label" style={{ fontSize: '12px' }}>
+                <Icon fa="fa-solid fa-motorcycle" style={{ marginRight: '6px', color: '#3B82F6' }} /> Foto penyewa + motor saat serah terima (boleh dikosongkan)
+              </label>
+              {form.handover_image_url ? (
+                <div style={{ position: 'relative', width: '100%', maxWidth: '360px', height: '180px', borderRadius: '10px', overflow: 'hidden', border: '2px solid #3B82F6', background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {handoverPreview ? (
+                    <img src={handoverPreview} alt="Serah terima" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <Icon fa="fa-solid fa-spinner fa-spin" style={{ color: 'var(--text-muted)' }} />
+                  )}
+                  <button type="button" onClick={handleRemovePhoto} title="Hapus foto"
+                    style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(30,58,138,0.9)', color: '#FFF', border: 'none', borderRadius: '50%', width: '26px', height: '26px', cursor: 'pointer', fontWeight: 800, fontSize: '12px' }}>✕</button>
+                  <span style={{ position: 'absolute', bottom: '6px', left: '6px', background: 'rgba(15,23,42,0.9)', color: '#3B82F6', padding: '2px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 800 }}>✓ Foto tersimpan</span>
+                </div>
+              ) : (
+                <div>
+                  <input type="file" accept="image/*" id="tx-handover-photo-input" onChange={handleImageFile} style={{ display: 'none' }} disabled={uploading} />
+                  <label htmlFor="tx-handover-photo-input" className="custom-file-btn"
+                    style={{ height: '100px', maxWidth: '360px', flexDirection: 'column', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed #3B82F6', borderRadius: '10px', background: 'rgba(255,255,255,0.02)', cursor: 'pointer', padding: '12px', textAlign: 'center' }}>
+                    <Icon fa="fa-solid fa-camera" style={{ fontSize: '22px', color: '#3B82F6' }} />
+                    <span style={{ fontSize: '11px', fontWeight: 700, marginTop: '6px' }}>Ambil / pilih foto serah terima</span>
+                    <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Penyewa bersama motor</span>
+                  </label>
                 </div>
               )}
             </div>
-          )}
+
+            {uploading && (
+              <div style={{ fontSize: '11px', color: 'var(--brand-primary-light)', marginTop: '8px', textAlign: 'center' }}>
+                <Icon fa="fa-solid fa-spinner fa-spin" style={{ marginRight: '4px' }} /> Mengompres & mengunggah foto...
+              </div>
+            )}
+          </div>
 
           {/* ── Footer ── */}
           <div className="modal-footer">
@@ -2180,9 +2163,9 @@ const handleSubmit = async (formData) => {
                   <th>#</th>
                   <th>Customer</th>
                   <th>Motor</th>
-                  <th>Mulai / Selesai</th>
-                  <th>Total & Diskon</th>
-                  <th>Denda / Deposit</th>
+                  <th>Periode sewa</th>
+                  <th>Total sewa</th>
+                  <th>Deposit</th>
                   <th>Status</th>
                   <th>Aksi</th>
                 </tr>
@@ -2237,7 +2220,7 @@ const handleSubmit = async (formData) => {
                         </div>
                       </div>
                     </td>
-                    <td data-label="Mulai / Selesai">
+                    <td data-label="Periode sewa">
                       <div className="tx-date-cell">
                         <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>
                           <Icon fa="fa-solid fa-calendar-plus" style={{ marginRight: '6px', fontSize: '11px', color: '#1D4ED8' }} />
@@ -2252,7 +2235,7 @@ const handleSubmit = async (formData) => {
                         </div>
                       </div>
                     </td>
-                    <td data-label="Total & Diskon">
+                    <td data-label="Total sewa">
                       <div className="tx-price-cell">
                         <strong style={{ fontSize: '14px', color: '#1D4ED8' }}>{formatRupiah(tx.total_price)}</strong>
                         {tx.discount > 0 && (
@@ -2264,7 +2247,7 @@ const handleSubmit = async (formData) => {
                         )}
                       </div>
                     </td>
-                    <td data-label="Denda / Deposit">
+                    <td data-label="Deposit">
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', fontSize: '12px' }}>
                         <div>Dep: <strong>{formatRupiah(tx.deposit)}</strong></div>
                       </div>

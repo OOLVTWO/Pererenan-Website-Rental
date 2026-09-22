@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { NAV_GROUPS, isActivePath } from '@/components/layout/navConfig';
@@ -24,7 +25,7 @@ export default function Sidebar({ user, trackingAlerts = 0 }) {
   return (
     <aside className="shell-sidebar" aria-label="Menu utama">
       <Link href="/dashboard" className="shell-brand">
-        <span className="shell-brand-mark">BR</span>
+        <Image className="shell-brand-mark" src="/images/logoCompany.png" alt="" width={40} height={27} priority />
         <span className="shell-brand-text">
           <span className="shell-brand-name">Boss Rent</span>
           <span className="shell-brand-sub">Pererenan · Admin</span>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Icon from '@/components/ui/Icon';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -42,9 +43,14 @@ export default function LoginPage() {
       <div className="auth-card">
         {/* Logo */}
         <div className="auth-logo">
-          <div className="auth-logo-icon">
-            <Icon fa="fa-solid fa-motorcycle" />
-          </div>
+          <Image
+            src="/images/logoCompany.png"
+            alt="Boss Rent Pererenan"
+            width={168}
+            height={112}
+            priority
+            style={{ height: 'auto', maxWidth: '168px', marginBottom: '4px' }}
+          />
           <h1>Boss Rent Pererenan</h1>
           <p>Masuk ke panel admin</p>
         </div>
