@@ -23,6 +23,31 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
   // Saat menangkap gambar / mencetak, pratinjau dikembalikan ke ukuran asli
   // (1050px) supaya hasilnya tidak ikut mengecil.
   const [capturing, setCapturing] = useState(false);
+  // Pratinjau kartu invoice (lebar asli 1050px):
+  //  - "Muat layar": dikecilkan dengan transform + tinggi wadah ikut dihitung,
+  //    supaya seluruh kartu terlihat dan tidak terpotong
+  //  - "Ukuran asli": kartu ditampilkan 100% dan bisa digeser (seperti di desktop)
+  const previewRef = useRef(null);
+  const cardRef = useRef(null);
+  const [fitToWidth, setFitToWidth] = useState(true);
+  const [scale, setScale] = useState(1);
+  const [cardHeight, setCardHeight] = useState(0);
+
+  useEffect(() => {
+    if (activeTab !== 'visual') return undefined;
+    const measure = () => {
+      const avail = previewRef.current?.clientWidth || 0;
+      const h = cardRef.current?.offsetHeight || 0;
+      setCardHeight(h);
+      setScale(fitToWidth && avail > 0 ? Math.min(1, avail / 1050) : 1);
+    };
+    measure();
+    const t = setTimeout(measure, 150);
+    window.addEventListener('resize', measure);
+    return () => { clearTimeout(t); window.removeEventListener('resize', measure); };
+  }, [activeTab, fitToWidth, tx, capturing]);
+
+  const previewScale = capturing ? 1 : scale;
   const [downloaded, setDownloaded] = useState(false);
   const [sharing, setSharing] = useState(false);
 
@@ -266,8 +291,25 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
                 lets a phone user scroll sideways to preview it; the capture
                 itself is unaffected by scroll position since the card's actual
                 width is fixed either way. */}
-            <div className={`invoice-preview${capturing ? ' capturing' : ''}`}>
-            <div id="visual-invoice-card" style={{
+            <div className="no-print" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
+              <button type="button" className="btn btn-secondary btn-sm" onClick={() => setFitToWidth(v => !v)}>
+                <Icon fa={`fa-solid ${fitToWidth ? 'fa-magnifying-glass-plus' : 'fa-crop-simple'}`} style={{ marginRight: '6px' }} />
+                {fitToWidth ? 'Ukuran asli' : 'Muat layar'}
+              </button>
+            </div>
+
+            <div
+              ref={previewRef}
+              className={`invoice-preview${capturing ? ' capturing' : ''}`}
+              style={{
+                overflow: capturing ? 'visible' : (previewScale < 1 ? 'hidden' : 'auto'),
+                height: !capturing && previewScale < 1 && cardHeight ? `${Math.ceil(cardHeight * previewScale)}px` : undefined,
+                maxHeight: !capturing && previewScale >= 1 ? '60vh' : undefined,
+              }}
+            >
+            <div id="visual-invoice-card" ref={cardRef} style={{
+              transform: previewScale < 1 ? `scale(${previewScale})` : undefined,
+              transformOrigin: 'top left',
               background: '#FFFFFF',
               border: '1px solid #E2E8F0',
               padding: '32px',
