@@ -42,6 +42,7 @@ const BRANDS = [
 function VehicleCombobox({ vehicles, value, onChange }) {
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [query, setQuery] = useState('');
+  const [showPicker, setShowPicker] = useState(false);
 
   const selected = vehicles.find(v => v.id === value);
 
@@ -84,13 +85,34 @@ function VehicleCombobox({ vehicles, value, onChange }) {
 
   const handleVehicleSelect = (id) => {
     onChange(id);
+    setShowPicker(false);
     setQuery('');
   };
+
+  // Motor yang sudah dipilih tampil ringkas; daftar merek & unit disembunyikan
+  // sampai user menekan "Ganti" (desain form Opsi A).
+  if (selected && !showPicker) {
+    return (
+      <div className="form-group">
+        <label className="form-label">Motor</label>
+        <div className="picked-item">
+          <span className="picked-item-icon"><Icon fa="fa-solid fa-motorcycle" /></span>
+          <span className="picked-item-text">
+            <span className="picked-item-title">{selected.name}</span>
+            <span className="picked-item-sub">
+              {selected.plate_number} · {formatRupiah(selected.rate_per_day)}/hari
+            </span>
+          </span>
+          <button type="button" className="btn btn-secondary btn-sm" onClick={() => setShowPicker(true)}>Ganti</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="form-group">
       <label className="form-label">
-        Pilih Kendaraan Motor <span className="required">*</span>
+        Pilih motor <span className="required">*</span>
       </label>
 
       {/* STEP 1: Brand Filter Buttons */}
@@ -771,12 +793,11 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
 
         <form onSubmit={handleSubmit}>
 
-          <div className="form-section-title">Penyewa</div>
+          <section className="form-card">
+            <div className="form-card-head">
+              <h2 className="form-card-title">Motor &amp; periode sewa</h2>
+            </div>
           {/* ── Auto-fill Customer ── */}
-          {!editData && (
-            <CustomerPickerCombobox onSelectCustomer={handleSelectCustomer} />
-          )}
-
           {/* ── Pilih Motor ── */}
           {errors.vehicle_id && <div className="form-error" style={{ marginBottom: '8px' }}>{errors.vehicle_id}</div>}
           {noVehiclesAvailable && !editData ? (
@@ -797,6 +818,16 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
             />
           )}
 
+          </section>
+
+          <section className="form-card">
+            <div className="form-card-head">
+              <h2 className="form-card-title">Penyewa</h2>
+              <span className="form-card-sub">Cari customer lama untuk isi otomatis</span>
+            </div>
+          {!editData && (
+            <CustomerPickerCombobox onSelectCustomer={handleSelectCustomer} />
+          )}
           {/* ── Nama & No. HP ── */}
           <div className="form-row cols-2">
             <div className="form-group">
@@ -837,7 +868,6 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
             </div>
           </div>
 
-          <div className="form-section-title">Motor &amp; periode sewa</div>
           {/* ── Tanggal Mulai & Selesai ── */}
           <div className="form-row cols-2">
             <div className="form-group">
@@ -864,7 +894,12 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
             <input id="tx-address" name="renter_address" type="text" className="form-control" placeholder="e.g. Villa Bamboo, Jl. Pererenan" value={form.renter_address || ''} onChange={handleChange} />
           </div>
 
-          <div className="form-section-title">Pembayaran</div>
+          </section>
+
+          <section className="form-card">
+            <div className="form-card-head">
+              <h2 className="form-card-title">Pembayaran</h2>
+            </div>
           {/* ── Status Pembayaran ── */}
           <div className="form-group" style={{ marginBottom: '16px' }}>
             <label className="form-label">
@@ -890,16 +925,9 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
 
           {/* ── Info harga otomatis (muncul setelah motor + tanggal dipilih) ── */}
           {totalPrice > 0 && (
-            <div style={{ padding: '12px 16px', background: 'rgba(29,78,216,0.08)', border: '1px solid rgba(29,78,216,0.25)', borderRadius: '10px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Icon fa="fa-solid fa-calculator" style={{ color: '#1D4ED8' }} />
-                Harga Terbaik Otomatis
-                {form.discount > 0 && <span style={{ fontSize: '11px', color: '#1E40AF' }}>(sudah potong diskon)</span>}
-              </div>
-              <strong style={{ fontSize: '20px', color: '#1D4ED8', letterSpacing: '-0.5px' }}>
-                {formatRupiah(totalPrice)}
-              </strong>
-            </div>
+            <p className="form-note" style={{ marginBottom: '14px' }}>
+              Harga dihitung otomatis dari tarif motor &amp; durasi{form.discount > 0 ? ', sudah dipotong diskon' : ''}.
+            </p>
           )}
 
           {/* ── Diskon | Deposit | Metode Bayar ── */}
@@ -937,7 +965,13 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
             <textarea id="tx-notes" name="notes" className="form-control" rows={2} placeholder="Catatan khusus, permintaan khusus, dll..." value={form.notes} onChange={handleChange} style={{ resize: 'vertical' }} />
           </div>
 
-          <div className="form-section-title">Dokumen (boleh dikosongkan)</div>
+          </section>
+
+          <section className="form-card">
+            <div className="form-card-head">
+              <h2 className="form-card-title">Dokumen</h2>
+              <span className="form-card-sub">Boleh dikosongkan</span>
+            </div>
           {/* ── Identitas & foto serah terima ── */}
           <div>
             <div className="form-group">
@@ -986,8 +1020,16 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
             )}
           </div>
 
-          {/* ── Footer ── */}
+          </section>
+
+          {/* ── Footer: total menempel di atas tombol ── */}
           <div className="modal-footer">
+            {totalPrice > 0 && (
+              <div className="form-total">
+                <span>Total sewa{form.discount > 0 ? ' (setelah diskon)' : ''}</span>
+                <strong>{formatRupiah(totalPrice)}</strong>
+              </div>
+            )}
             <button type="button" className="btn btn-secondary" onClick={handleClose}>Batal</button>
             <button type="submit" className="btn btn-primary" disabled={loading || uploading}>
               {loading ? (

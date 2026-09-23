@@ -528,3 +528,38 @@ select.form-control {
 .mlist-actions { gap: 8px; align-items: center; }
 .mlist-actions .btn { flex: 0 0 auto; min-height: 40px; padding: 0 16px; font-size: 14px; }
 .mlist-actions .mlist-more { flex: 0 0 44px; padding: 0; margin-left: auto; }
+
+/* ════════════ FORM: kartu per kelompok (desain Opsi A) ════════════ */
+.form-card {
+  background: var(--bg-surface); border: 1px solid var(--bg-border); border-radius: 16px;
+  padding: 16px; margin-bottom: 14px; display: block;
+}
+.form-card > .form-card-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 14px; }
+.form-card-title { margin: 0; font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.form-card-sub { font-size: 13px; color: var(--text-muted); }
+.form-card .form-group:last-child { margin-bottom: 0; }
+.form-note { font-size: 13px; color: var(--text-muted); margin-top: -4px; }
+
+/* Pilihan yang sudah dipilih (mis. motor) tampil ringkas + tombol Ganti */
+.picked-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px;
+  border: 1px solid var(--brand-soft-border); background: var(--brand-soft); border-radius: 12px;
+}
+.picked-item-icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  background: var(--bg-surface); color: var(--brand-primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.picked-item-text { display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; }
+.picked-item-title { font-size: 15px; font-weight: 600; }
+.picked-item-sub { font-size: 13px; color: var(--text-muted); }
+
+/* Ringkasan total menempel di atas tombol simpan */
+.form-total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 0 2px 10px; border-bottom: 0;
+}
+.form-total span { font-size: 13px; color: var(--text-muted); }
+.form-total strong { font-size: 20px; font-weight: 700; letter-spacing: -0.4px; }
+.modal-footer { flex-wrap: wrap; }
+.modal-footer .form-total { flex: 1 1 100%; }

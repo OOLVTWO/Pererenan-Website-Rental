@@ -99,6 +99,10 @@ function ServiceLogModal({ vehicles, editData, defaultVehicleId, onClose, onSave
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           {error && <div className="alert">{error}</div>}
 
+          <section className="form-card">
+            <div className="form-card-head">
+              <h2 className="form-card-title">Servis</h2>
+            </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label" htmlFor="svc-vehicle">Motor <span className="required">*</span></label>
             <select id="svc-vehicle" className="form-control" value={form.vehicle_id} onChange={e => set('vehicle_id', e.target.value)} required>
@@ -113,6 +117,12 @@ function ServiceLogModal({ vehicles, editData, defaultVehicleId, onClose, onSave
               max={getLocalDateStr()} onChange={e => set('service_date', e.target.value)} required />
           </div>
 
+          </section>
+
+          <section className="form-card">
+            <div className="form-card-head">
+              <h2 className="form-card-title">Pekerjaan yang dilakukan</h2>
+            </div>
           <fieldset style={{ border: 0, padding: 0, margin: 0 }}>
             <legend className="form-label" style={{ marginBottom: '8px' }}>Apa saja yang diservis?</legend>
             <div className="page-tabs" style={{ flexWrap: 'wrap', marginBottom: '8px' }}>
@@ -134,6 +144,13 @@ function ServiceLogModal({ vehicles, editData, defaultVehicleId, onClose, onSave
             </div>
           </fieldset>
 
+          </section>
+
+          <section className="form-card">
+            <div className="form-card-head">
+              <h2 className="form-card-title">Biaya & catatan</h2>
+              <span className="form-card-sub">Biaya boleh dikosongkan</span>
+            </div>
           <div className="form-row cols-2">
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label" htmlFor="svc-workshop">Bengkel / mekanik</label>
@@ -151,6 +168,8 @@ function ServiceLogModal({ vehicles, editData, defaultVehicleId, onClose, onSave
             <textarea id="svc-notes" className="form-control" rows={2} placeholder="Part yang diganti, temuan, dll."
               value={form.notes} onChange={e => set('notes', e.target.value)} />
           </div>
+
+          </section>
 
           <label style={{ display: 'flex', alignItems: 'center', gap: '10px', minHeight: '44px', fontSize: '14px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
             <input type="checkbox" checked={form.record_expense} onChange={e => set('record_expense', e.target.checked)} style={{ width: '20px', height: '20px' }} />

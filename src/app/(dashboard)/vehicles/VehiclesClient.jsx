@@ -484,6 +484,10 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
         </div>
 
         <form onSubmit={handleSubmit}>
+          <section className="form-card">
+            <div className="form-card-head">
+              <h2 className="form-card-title">Identitas motor</h2>
+            </div>
           <div className="form-group">
             <label className="form-label" htmlFor="v-name">
               Nama Motor <span className="required">*</span>
@@ -560,13 +564,14 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
             </div>
           </div>
 
+          </section>
+
+          <section className="form-card">
+            <div className="form-card-head">
+              <h2 className="form-card-title">Tarif sewa</h2>
+            </div>
           {/* ── 3-Tier Pricing ── */}
           <div className="pricing-tier-section">
-            <div className="pricing-tier-header">
-              <Icon fa="fa-solid fa-tags" />
-              <span>Pricing Tiers</span>
-              <span className="pricing-tier-hint">Tarif harian, mingguan & bulanan</span>
-            </div>
             <div className="pricing-tier-grid">
               <div className="pricing-tier-card daily-tier">
                 <div className="tier-icon"><Icon fa="fa-solid fa-sun" /></div>
@@ -658,11 +663,13 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
             </div>
 
           {/* 🔒 OWNERSHIP & INVESTOR SECTION (PRIVACY MANAGEMENT ONLY) */}
-          <div style={{ background: 'rgba(29,78,216, 0.07)', border: '1px solid rgba(29,78,216, 0.28)', padding: '16px', borderRadius: '14px', marginBottom: '20px' }}>
-            <div style={{ fontSize: '13px', fontWeight: 800, color: '#1D4ED8', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Icon fa="fa-solid fa-user-shield" />
-              <span>Kepemilikan & Investor (Privasi Management)</span>
+          </section>
+
+          <section className="form-card">
+            <div className="form-card-head">
+              <h2 className="form-card-title">Kepemilikan & status</h2>
             </div>
+          <div>
 
             <div className="form-group mb-3">
               <label className="form-label" style={{ fontSize: '12px', fontWeight: 700 }}>
@@ -762,6 +769,8 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
             </select>
           </div>
 
+
+          </section>
 
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>Batal</button>

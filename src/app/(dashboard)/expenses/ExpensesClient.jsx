@@ -193,6 +193,10 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
 
         <form onSubmit={handleSubmit}>
           {/* TYPE TOGGLE SWITCH */}
+          <section className="form-card">
+            <div className="form-card-head">
+              <h2 className="form-card-title">Jenis transaksi</h2>
+            </div>
           <div className="form-group mb-4">
             <label className="form-label">
               Jenis Transaksi Keuangan <span className="required">*</span>
@@ -267,6 +271,12 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
             </div>
           )}
 
+          </section>
+
+          <section className="form-card">
+            <div className="form-card-head">
+              <h2 className="form-card-title">Rincian</h2>
+            </div>
           <div className="form-group">
             <label className="form-label" htmlFor="fin-title">
               Keterangan Transaksi <span className="required">*</span>
@@ -316,6 +326,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
             </label>
             <input id="fin-date" name="expense_date" type="date" className="form-control" value={form.expense_date} onChange={handleChange} required />
           </div>
+          </section>
 
 
           <div className="modal-footer">
