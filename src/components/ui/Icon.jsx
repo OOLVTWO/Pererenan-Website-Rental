@@ -12,7 +12,7 @@
  *   <Icon fa={item.icon} className="…" />
  */
 import { createElement } from 'react';
-import { ArrowDown, ArrowDownLeft, ArrowRightLeft, Banknote, Bell, Bike, BookUser, Building2, Calculator, CalendarCheck, CalendarDays, CalendarPlus, CalendarRange, CalendarX, Camera, ChartColumn, ChartLine, ChartPie, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Circle, CircleAlert, CircleArrowDown, CircleArrowUp, CircleCheck, CircleDot, CircleHelp, CircleX, Clock, CloudDownload, CloudUpload, Coins, Contrast, Copy, CreditCard, Crop, Crown, Database, Download, ExternalLink, Eye, FileSignature, FileSpreadsheet, FileText, Filter, Flag, Fuel, Globe, HandCoins, Headset, History, Hourglass, House, IdCard, Images, Info, Key, Landmark, LayoutGrid, Link, List, ListChecks, LoaderCircle, Lock, LogIn, LogOut, Mail, MapPin, MessageCircle, PaintRoller, Palette, Percent, Phone, PiggyBank, Plus, Printer, QrCode, Receipt, ReceiptText, RefreshCw, RotateCcw, RotateCw, Save, Scale, Search, Settings, Shapes, ShieldCheck, ShieldUser, SlidersHorizontal, SquarePen, Star, StickyNote, Store, Sun, Tag, Tags, Trash2, TrendingDown, TrendingUp, TriangleAlert, Truck, Upload, User, UserCheck, UserPen, UserPlus, UserRound, UserX, Users, Vault, Wallet, Wrench, X, Zap, ZoomIn } from 'lucide-react';
+import { ArrowDown, ArrowDownLeft, ArrowRightLeft, Banknote, Bell, Bike, BookUser, Building2, Calculator, CalendarCheck, CalendarDays, CalendarPlus, CalendarRange, CalendarX, Camera, ChartColumn, ChartLine, ChartPie, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Circle, CircleAlert, CircleArrowDown, CircleArrowUp, CircleCheck, CircleDot, CircleHelp, CircleX, Clock, CloudDownload, CloudUpload, Coins, Contrast, Copy, CreditCard, Crop, Crown, Database, Download, Ellipsis, EllipsisVertical, ExternalLink, Eye, FileSignature, FileSpreadsheet, FileText, Filter, Flag, Fuel, Globe, HandCoins, Headset, History, Hourglass, House, IdCard, Images, Info, Key, Landmark, LayoutGrid, Link, List, ListChecks, LoaderCircle, Lock, LogIn, LogOut, Mail, MapPin, MessageCircle, PaintRoller, Palette, Percent, Phone, PiggyBank, Plus, Printer, QrCode, Receipt, ReceiptText, RefreshCw, RotateCcw, RotateCw, Save, Scale, Search, Settings, Shapes, ShieldCheck, ShieldUser, SlidersHorizontal, SquarePen, Star, StickyNote, Store, Sun, Tag, Tags, Trash2, TrendingDown, TrendingUp, TriangleAlert, Truck, Upload, User, UserCheck, UserPen, UserPlus, UserRound, UserX, Users, Vault, Wallet, Wrench, X, Zap, ZoomIn } from 'lucide-react';
 
 const MAP = {
   'motorcycle': 'Bike',
@@ -136,6 +136,8 @@ const MAP = {
   'cloud-arrow-down': 'CloudDownload',
   'address-book': 'BookUser',
   'house': 'House',
+  'ellipsis': 'Ellipsis',
+  'ellipsis-vertical': 'EllipsisVertical',
   'grid': 'LayoutGrid',
   'circle-dot': 'CircleDot',
   'star': 'Star',
@@ -144,7 +146,7 @@ const MAP = {
   'link': 'Link'
 };
 
-const COMPONENTS = { ArrowDown, ArrowDownLeft, ArrowRightLeft, Banknote, Bell, Bike, BookUser, Building2, Calculator, CalendarCheck, CalendarDays, CalendarPlus, CalendarRange, CalendarX, Camera, ChartColumn, ChartLine, ChartPie, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Circle, CircleAlert, CircleArrowDown, CircleArrowUp, CircleCheck, CircleDot, CircleHelp, CircleX, Clock, CloudDownload, CloudUpload, Coins, Contrast, Copy, CreditCard, Crop, Crown, Database, Download, ExternalLink, Eye, FileSignature, FileSpreadsheet, FileText, Filter, Flag, Fuel, Globe, HandCoins, Headset, History, Hourglass, House, IdCard, Images, Info, Key, Landmark, LayoutGrid, Link, List, ListChecks, LoaderCircle, Lock, LogIn, LogOut, Mail, MapPin, MessageCircle, PaintRoller, Palette, Percent, Phone, PiggyBank, Plus, Printer, QrCode, Receipt, ReceiptText, RefreshCw, RotateCcw, RotateCw, Save, Scale, Search, Settings, Shapes, ShieldCheck, ShieldUser, SlidersHorizontal, SquarePen, Star, StickyNote, Store, Sun, Tag, Tags, Trash2, TrendingDown, TrendingUp, TriangleAlert, Truck, Upload, User, UserCheck, UserPen, UserPlus, UserRound, UserX, Users, Vault, Wallet, Wrench, X, Zap, ZoomIn };
+const COMPONENTS = { ArrowDown, ArrowDownLeft, ArrowRightLeft, Banknote, Bell, Bike, BookUser, Building2, Calculator, CalendarCheck, CalendarDays, CalendarPlus, CalendarRange, CalendarX, Camera, ChartColumn, ChartLine, ChartPie, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Circle, CircleAlert, CircleArrowDown, CircleArrowUp, CircleCheck, CircleDot, CircleHelp, CircleX, Clock, CloudDownload, CloudUpload, Coins, Contrast, Copy, CreditCard, Crop, Crown, Database, Download, Ellipsis, EllipsisVertical, ExternalLink, Eye, FileSignature, FileSpreadsheet, FileText, Filter, Flag, Fuel, Globe, HandCoins, Headset, History, Hourglass, House, IdCard, Images, Info, Key, Landmark, LayoutGrid, Link, List, ListChecks, LoaderCircle, Lock, LogIn, LogOut, Mail, MapPin, MessageCircle, PaintRoller, Palette, Percent, Phone, PiggyBank, Plus, Printer, QrCode, Receipt, ReceiptText, RefreshCw, RotateCcw, RotateCw, Save, Scale, Search, Settings, Shapes, ShieldCheck, ShieldUser, SlidersHorizontal, SquarePen, Star, StickyNote, Store, Sun, Tag, Tags, Trash2, TrendingDown, TrendingUp, TriangleAlert, Truck, Upload, User, UserCheck, UserPen, UserPlus, UserRound, UserX, Users, Vault, Wallet, Wrench, X, Zap, ZoomIn };
 
 export function iconComponent(fa) {
   if (!fa) return Circle;

@@ -728,9 +728,9 @@ const handleSubmit = async (formData) => {
                     </button>
                   )}
                   <button type="button" className="btn btn-secondary btn-sm mlist-more"
-                    aria-label="Aksi lain" aria-expanded={rowMenu === tx.id}
+                    aria-label="Aksi lain" title="Aksi lain" aria-expanded={rowMenu === tx.id}
                     onClick={() => setRowMenu(rowMenu === tx.id ? null : tx.id)}>
-                    <Icon fa="fa-solid fa-sliders" />
+                    <Icon fa="fa-solid fa-ellipsis" size={20} />
                   </button>
                 </div>
 

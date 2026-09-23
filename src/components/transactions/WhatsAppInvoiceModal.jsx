@@ -20,6 +20,9 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
   const [customMsg, setCustomMsg] = useState('');
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  // Saat menangkap gambar / mencetak, pratinjau dikembalikan ke ukuran asli
+  // (1050px) supaya hasilnya tidak ikut mengecil.
+  const [capturing, setCapturing] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
   const [sharing, setSharing] = useState(false);
 
@@ -80,12 +83,18 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
   // substantially cut that delay.
   const renderInvoiceCanvas = async () => {
     const html2canvas = (await import('html2canvas')).default;
+    setCapturing(true);
+    await new Promise(r => setTimeout(r, 60));
     const node = document.getElementById('visual-invoice-card');
-    return html2canvas(node, {
-      backgroundColor: '#FFFFFF',
-      scale: 1.5,
-      useCORS: true,
-    });
+    try {
+      return await html2canvas(node, {
+        backgroundColor: '#FFFFFF',
+        scale: 1.5,
+        useCORS: true,
+      });
+    } finally {
+      setCapturing(false);
+    }
   };
 
   // A5 is literally "A4 cut in half" (148 x 210mm) — the requested size.
@@ -156,7 +165,12 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
   };
 
   const handlePrint = () => {
-    window.print();
+    // Kembalikan ke ukuran asli dulu, lalu cetak (kertas A4 mendatar).
+    setCapturing(true);
+    setTimeout(() => {
+      window.print();
+      setCapturing(false);
+    }, 80);
   };
 
   const handleDownloadPdf = async () => {
@@ -254,7 +268,7 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
                 lets a phone user scroll sideways to preview it; the capture
                 itself is unaffected by scroll position since the card's actual
                 width is fixed either way. */}
-            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <div className={`invoice-preview${capturing ? ' capturing' : ''}`}>
             <div id="visual-invoice-card" style={{
               background: '#FFFFFF',
               border: '1px solid #E2E8F0',

@@ -563,3 +563,29 @@ select.form-control {
 .form-total strong { font-size: 20px; font-weight: 700; letter-spacing: -0.4px; }
 .modal-footer { flex-wrap: wrap; }
 .modal-footer .form-total { flex: 1 1 100%; }
+
+/* ════════════ Pratinjau invoice: muat layar, tidak terpotong ════════════
+   Kartu invoice sengaja lebar 1050px agar hasil PDF/cetak rapi. Untuk
+   pratinjau, kartunya dikecilkan supaya utuh terlihat di HP; saat menangkap
+   gambar atau mencetak, kelas .capturing mengembalikannya ke ukuran asli. */
+.invoice-preview { overflow: hidden; }
+.invoice-preview.capturing { overflow: visible; zoom: 1; }
+@media (max-width: 1100px) { .invoice-preview:not(.capturing) { zoom: 0.72; } }
+@media (max-width: 820px)  { .invoice-preview:not(.capturing) { zoom: 0.55; } }
+@media (max-width: 560px)  { .invoice-preview:not(.capturing) { zoom: 0.36; } }
+@media (max-width: 400px)  { .invoice-preview:not(.capturing) { zoom: 0.33; } }
+
+/* Cetak: kertas mendatar supaya kartu 1050px muat tanpa dipotong */
+@media print {
+  @page { size: A4 landscape; margin: 8mm; }
+  .invoice-preview { zoom: 1 !important; overflow: visible !important; }
+  .shell-bottom-nav, .shell-topbar, .shell-sidebar, .modal-footer, .page-tabs { display: none !important; }
+  #visual-invoice-card { width: 1050px !important; max-width: none !important; }
+}
+
+/* Tombol "aksi lain" di daftar: sejajar & jelas */
+.mlist-actions .mlist-more {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; border-radius: 12px;
+}
+.mlist-actions .btn { min-height: 44px; }
