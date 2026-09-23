@@ -154,6 +154,7 @@ export default function CustomersPage() {
   const [feedbackMsg, setFeedbackMsg] = useState(null);
 
   // Form State
+  const [formErrors, setFormErrors] = useState({});
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -243,15 +244,12 @@ export default function CustomersPage() {
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
-    if (!form.name.trim()) {
-      alert('Nama customer wajib diisi!');
-      return;
-    }
+    const nextErrors = {};
+    if (!form.name.trim()) nextErrors.name = 'Nama customer wajib diisi.';
+    if (!phoneNumberOnly.trim()) nextErrors.phone = 'Nomor WhatsApp wajib diisi.';
+    setFormErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
     const fullPhone = `${countryCode} ${phoneNumberOnly}`.trim();
-    if (!phoneNumberOnly.trim()) {
-      alert('Nomor telepon customer wajib diisi!');
-      return;
-    }
 
     const payload = {
       ...form,
@@ -637,7 +635,8 @@ export default function CustomersPage() {
                         </a>
                       </td>
 
-                      {/* ID Number */}
+                      <div className="form-section-title">Dokumen &amp; alamat (boleh dikosongkan)</div>
+              {/* ID Number */}
                       <td style={{ padding: '14px 16px', color: 'var(--text-secondary)' }}>
                         {customer.id_number ? (
                           <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{customer.id_number}</span>
@@ -717,6 +716,7 @@ export default function CustomersPage() {
             </div>
 
             <form onSubmit={handleSubmitForm} style={{ padding: '20px' }}>
+              <div className="form-section-title">Data customer</div>
               {/* Name */}
               <div className="form-group" style={{ marginBottom: '14px' }}>
                 <label className="form-label">
@@ -724,12 +724,13 @@ export default function CustomersPage() {
                 </label>
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control${formErrors.name ? ' is-invalid' : ''}`}
                   placeholder="Contoh: John Doe"
                   value={form.name}
                   onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
                   required
                 />
+                {formErrors.name && <div className="form-error">{formErrors.name}</div>}
               </div>
 
               {/* Phone with Country Code */}
@@ -744,13 +745,15 @@ export default function CustomersPage() {
                   />
                   <input
                     type="tel"
-                    className="form-control"
+                    inputMode="numeric"
+                    className={`form-control${formErrors.phone ? ' is-invalid' : ''}`}
                     placeholder="81234567890"
                     value={phoneNumberOnly}
                     onChange={e => setPhoneNumberOnly(e.target.value)}
                     required
                   />
                 </div>
+                {formErrors.phone && <div className="form-error">{formErrors.phone}</div>}
               </div>
 
               {/* ID Number */}

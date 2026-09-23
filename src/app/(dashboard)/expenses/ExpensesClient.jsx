@@ -98,6 +98,7 @@ UPDATE expenses SET type = 'expense' WHERE type IS NULL;
 
 // ===== FINANCIAL MODAL (PEMASUKAN & PENGELUARAN) =====
 function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expense' }) {
+  const [formErrors, setFormErrors] = useState({});
   const [form, setForm] = useState({
     type: 'expense',
     title: '',
@@ -146,6 +147,11 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const nextErrors = {};
+    if (!form.title.trim()) nextErrors.title = 'Judul wajib diisi.';
+    if (!Number(form.amount)) nextErrors.amount = 'Nominal wajib diisi.';
+    setFormErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
     setLoading(true);
 
     const isInc = form.type === 'income';
@@ -300,6 +306,7 @@ function FinanceModal({ isOpen, onClose, onSubmit, editData, defaultType = 'expe
               </label>
               <RupiahInput id="fin-amount" placeholder="150.000" value={form.amount}
                 onChange={v => setForm(prev => ({ ...prev, amount: v }))} required />
+              {formErrors.amount && <div className="form-error">{formErrors.amount}</div>}
             </div>
           </div>
 

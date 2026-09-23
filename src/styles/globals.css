@@ -1,11 +1,4 @@
-/* Inter font is self-hosted via next/font/google in src/app/layout.js
-   (see the --font-inter CSS variable applied to <html>) — no runtime
-   CDN request needed here anymore. */
 
-/* =========================================
-   DESIGN SYSTEM — Boss Rent Pererenan
-   Light theme default · Dark mode via [data-theme="dark"]
-   ========================================= */
 
 /* ── LIGHT MODE (default) ── */
 :root {
@@ -67,7 +60,6 @@
 }
 
 /* ── DARK MODE ── */
-
 
 /* =========================================
    RESET & BASE
@@ -131,9 +123,6 @@ body {
   display: none !important;
 }
 
-/* Modals and their internal scrollable lists — hide the scrollbar
-   visually (scroll still works via wheel/trackpad/touch) so long
-   forms don't show a distracting scroll track down the side. */
 .modal,
 .modal *,
 .autofill-dropdown-list,
@@ -220,21 +209,12 @@ a:hover {
   left: 0;
   width: var(--sidebar-width);
   height: 100vh; /* fallback for browsers without dvh support */
-  height: 100dvh; /* dynamic viewport height — on mobile, 100vh can be
-    calculated as if the browser's address bar is hidden even while it's
-    actually shown, making the sidebar taller than what's really visible
-    and pushing the footer below the fold with no visual indication.
-    100dvh tracks the real, current visible viewport instead. */
+  height: 100dvh; 
   background: var(--sidebar-bg);
   display: flex;
   flex-direction: column;
   z-index: 100;
-  /* Normal case: .sidebar-nav-scroll handles scrolling internally so the
-     footer/logout stays visibly pinned at the bottom. This overflow-y:auto
-     (was: hidden) is a safety net for edge cases the flex math above
-     doesn't anticipate — if content is ever taller than the sidebar's
-     height regardless, the whole sidebar becomes scrollable so the footer
-     is still reachable rather than being silently clipped and unreachable. */
+  
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -619,9 +599,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   overflow-x: auto;
   border-radius: var(--radius-lg);
   border: 1px solid var(--bg-border);
-  /* Scroll-shadow hint (pure CSS, no extra markup): a soft edge fade
-     appears on whichever side still has more columns to scroll to,
-     and disappears once you've scrolled all the way there. */
+  
   background:
     linear-gradient(to right, var(--bg-surface) 30%, rgba(255,255,255,0)) 0 0,
     linear-gradient(to right, rgba(255,255,255,0), var(--bg-surface) 70%) 100% 0,
@@ -679,12 +657,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: 600;
 }
 
-/* ── Mobile-responsive table → stacked cards ──
-   Opt-in via .table--stack-mobile on the <table> (alongside .table).
-   Below the breakpoint, each row becomes its own card and each cell
-   shows a label (from data-label on the <td>) instead of a header
-   row + horizontal scroll — much easier to actually read on a phone
-   for glanceable summary widgets than scrolling a cramped table. */
 @media (max-width: 680px) {
   .table.table--stack-mobile {
     min-width: 0 !important;
@@ -732,8 +704,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     text-align: left;
     flex-shrink: 0;
   }
-  /* Cells with richer multi-line content read better stacked (label
-     above content) instead of squeezed into one row */
+  
   .table--stack-mobile td[data-label-align="left"] {
     text-align: left;
     flex-direction: column;
@@ -1208,26 +1179,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   text-align: center;
 }
 
-.text-primary {
-  color: var(--text-primary) !important;
-}
-
-.text-muted {
-  color: var(--text-muted) !important;
-}
-
 .hidden {
   display: none;
 }
 
 .relative {
   position: relative;
-}
-
-.divider {
-  height: 1px;
-  background: var(--bg-border);
-  margin: var(--space-5) 0;
 }
 
 @keyframes pulse-badge {
@@ -1242,9 +1199,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
 }
 
-/* =========================================
-   TRACKING PAGE — Layout & Header
-   ========================================= */
 .tracking-page-header {
   display: flex;
   align-items: flex-start;
@@ -1427,9 +1381,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin-top: 4px;
 }
 
-/* =========================================
-   TRACKING — Filter & Search Controls
-   ========================================= */
 .tracking-controls {
   display: flex;
   align-items: center;
@@ -1828,9 +1779,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin-top: 8px;
 }
 
-/* =========================================
-   AVAILABILITY PAGE — Summary Bar
-   ========================================= */
 .avail-summary-bar {
   display: flex;
   align-items: center;
@@ -1932,9 +1880,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: 700;
 }
 
-/* =========================================
-   AVAILABILITY PAGE — Card Grid
-   ========================================= */
 .avail-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -2097,13 +2042,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding-top: var(--space-2);
 }
 
-.avail-km-sep {
-  margin: 0 2px;
-}
-
-/* =========================================
-   3-TIER PRICING SECTION — Vehicle Modal
-   ========================================= */
 .pricing-tier-section {
   background: var(--bg-surface);
   border: 1px solid var(--bg-border);
@@ -2173,11 +2111,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   align-items: center;
   gap: 4px;
 }
-
-/* =========================================
-   CROSS-PLATFORM & MOBILE RESPONSIVE SYSTEM
-   (Windows, macOS / iOS Apple, Android)
-   ========================================= */
 
 /* 1. iOS / Apple Retina & Safe Area Insets */
 @supports (padding-top: env(safe-area-inset-top)) {
@@ -2346,16 +2279,6 @@ textarea {
   }
 }
 
-@media (max-width: 600px) {
-  .header-left p {
-    display: none !important;
-  }
-
-  .header-left h2 {
-    font-size: 15px !important;
-  }
-}
-
 .bento-card {
   background: rgba(18,18,26, 0.75);
   backdrop-filter: blur(16px);
@@ -2393,15 +2316,6 @@ textarea {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-}
-
-.bento-table-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  flex-wrap: wrap;
-  width: 100%;
 }
 
 .bento-pill-tag.info {
@@ -2505,9 +2419,6 @@ textarea {
   }
 }
 
-/* =========================================
-   COMPREHENSIVE MOBILE UI & RESPONSIVE FIXES
-   ========================================= */
 @media (max-width: 768px) {
 
   /* Prevent text and elements from overflowing card boundaries */
@@ -2599,18 +2510,6 @@ textarea {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
-  }
-
-  .bento-table-header {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 12px !important;
-    width: 100% !important;
-  }
-
-  .bento-table-header #btn-add-transaction {
-    width: 100% !important;
-    justify-content: center !important;
   }
 
   .table-wrapper {
@@ -2726,9 +2625,6 @@ textarea {
   }
 }
 
-/* =========================================
-   TRANSACTION TABLE & BENTO STATUS PILL TAGS
-   ========================================= */
 .table th {
   padding: 14px 18px !important;
   font-size: 11.5px !important;
@@ -2840,12 +2736,6 @@ textarea {
   }
 }
 
-/* ============================================================
-   RESPONSIVE ENHANCEMENTS — Boss Rent Pererenan
-   Menyesuaikan grid & tata letak di SEMUA halaman agar rapi di
-   tablet & HP — tanpa mengubah desain desktop / identitas brand.
-   ============================================================ */
-
 /* Grid kontrol Image Adjuster (vehicles page) */
 .adj-controls {
   display: grid !important;
@@ -2903,12 +2793,6 @@ textarea {
   border-color: rgba(37,99,235, 0.2);
   font-weight: 600;
 }
-
-/* =========================================
-   LIGHT MODE — komponen overrides
-   Diperlukan karena beberapa komponen punya
-   hardcoded dark color yang harus di-override
-   ========================================= */
 
 /* Header */
 .header {
@@ -2999,9 +2883,6 @@ body { background-color: var(--bg-base); color: var(--text-primary); }
 .form-label { color: var(--text-secondary) !important; }
 .form-control::placeholder { color: var(--text-muted) !important; }
 
-/* Select — re-assert the chevron since the background-color rule above
-   only touches background-color now, but keep this explicit so select
-   styling doesn't silently break again if the rule above changes. */
 select.form-control {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%231F2A28'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
   background-repeat: no-repeat !important;
@@ -3009,17 +2890,6 @@ select.form-control {
   background-size: 18px 18px !important;
 }
 select.form-control option { background: var(--bg-surface); color: var(--text-primary); }
-
-/* Dark mode: the chevron above is a fixed dark navy stroke, which
-   disappears against the dark select background once [data-theme="dark"]
-   flips things. Re-assert with a light stroke color for dark mode.
-   Also re-assert repeat/position/size explicitly (not just the image) -
-   a later dark-mode rule sets the `background` shorthand on
-   .form-control, which resets these sub-properties to their browser
-   defaults (repeat/auto/0% 0%) for that specific property competition
-   even though this rule's specificity still wins for background-image
-   itself. Without repeating them here, the chevron visibly tiles
-   across the whole select instead of showing once. */
 
 /* Scrollable tabs */
 .scrollable-tabs-bar { border-bottom: 1px solid var(--bg-border) !important; }
@@ -3139,18 +3009,9 @@ select.form-control option { background: var(--bg-surface); color: var(--text-pr
 .dash-finance-item.income i { color: #1D4ED8; }
 .dash-finance-item.expense i { color: #1E3A8A; }
 .dash-finance-item.investor i { color: #1D4ED8; }
-.dash-finance-item.profit.positive i { color: #3B82F6; }
-.dash-finance-item.profit.negative i { color: #1E3A8A; }
 .dash-finance-item.income .fin-value { color: #1D4ED8; }
 .dash-finance-item.expense .fin-value { color: #1E3A8A; }
 .dash-finance-item.investor .fin-value { color: #1D4ED8; }
-.dash-finance-item.profit.positive .fin-value { color: #3B82F6; }
-.dash-finance-item.profit.negative .fin-value { color: #1E3A8A; }
-
-/* =========================================================
-   FULL-SITE MOBILE RESPONSIVE PASS
-   Header progressive-hide + Dashboard v2 breakpoint refinement
-   ========================================================= */
 
 /* ── HEADER — progressive de-cluttering as screen shrinks ── */
 @media (max-width: 768px) {
@@ -3166,18 +3027,6 @@ select.form-control option { background: var(--bg-surface); color: var(--text-pr
   }
 }
 
-/* ── Invoice print scoping ──
-   "Cetak / Print PDF" on the invoice modal calls window.print() directly —
-   without this, the browser prints the entire visible page (sidebar,
-   header, modal chrome, buttons) instead of just the invoice itself.
-   Explicitly hides the known dashboard chrome (.sidebar, .header) and
-   marks non-invoice modal UI with .no-print, rather than trying to
-   blanket-hide "everything except the modal" via a body-children
-   selector — the modal isn't a direct child of <body>, it's nested deep
-   inside the normal page tree, so that approach hid the invoice card
-   right along with everything else. The modal overlay stays
-   position:fixed with an opaque background so it still visually covers
-   the page content sitting behind it. */
 @media print {
   .sidebar,
   .header,

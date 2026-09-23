@@ -515,6 +515,7 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
   const [totalPrice, setTotalPrice] = useState(0);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [errors, setErrors] = useState({});
   const photoClient = useMemo(() => createClient(), []);
   const pendingUploadRef = useRef(null);   // foto yang sudah diunggah tapi belum disimpan
   const [photoChanged, setPhotoChanged] = useState(false);
@@ -715,8 +716,16 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const cleanVehicleId = (form.vehicle_id || '').trim();
-    if (!cleanVehicleId) {
-      alert('Silakan pilih unit motor terlebih dahulu!');
+    const nextErrors = {};
+    if (!cleanVehicleId) nextErrors.vehicle_id = 'Pilih motor dulu.';
+    if (!form.renter_name?.trim()) nextErrors.renter_name = 'Nama penyewa wajib diisi.';
+    if (!form.start_date) nextErrors.start_date = 'Tanggal mulai wajib diisi.';
+    if (!form.end_date) nextErrors.end_date = 'Tanggal selesai wajib diisi.';
+    else if (form.start_date && form.end_date < form.start_date) nextErrors.end_date = 'Tanggal selesai tidak boleh sebelum tanggal mulai.';
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      const first = document.getElementById(`tx-${Object.keys(nextErrors)[0] === 'vehicle_id' ? 'name' : Object.keys(nextErrors)[0].replace('renter_', '').replace('_date', '')}`);
+      first?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
     setShowConfirm(true);
@@ -762,12 +771,14 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
 
         <form onSubmit={handleSubmit}>
 
+          <div className="form-section-title">Penyewa</div>
           {/* ── Auto-fill Customer ── */}
           {!editData && (
             <CustomerPickerCombobox onSelectCustomer={handleSelectCustomer} />
           )}
 
           {/* ── Pilih Motor ── */}
+          {errors.vehicle_id && <div className="form-error" style={{ marginBottom: '8px' }}>{errors.vehicle_id}</div>}
           {noVehiclesAvailable && !editData ? (
             <div style={{ padding: '16px', background: 'rgba(30,58,138,0.08)', border: '1px solid rgba(30,58,138,0.35)', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#1E3A8A' }}>
               <Icon fa="fa-solid fa-triangle-exclamation" style={{ fontSize: '18px', flexShrink: 0 }} />
@@ -792,7 +803,8 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
               <label className="form-label" htmlFor="tx-name">
                 Nama Penyewa <span className="required">*</span>
               </label>
-              <input id="tx-name" name="renter_name" type="text" className="form-control" placeholder="Nama lengkap penyewa" value={form.renter_name} onChange={handleChange} required />
+              <input id="tx-name" name="renter_name" type="text" className={`form-control${errors.renter_name ? ' is-invalid' : ''}`} placeholder="Nama lengkap penyewa" value={form.renter_name} onChange={handleChange} required />
+              {errors.renter_name && <div className="form-error">{errors.renter_name}</div>}
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="tx-phone">
@@ -825,19 +837,22 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
             </div>
           </div>
 
+          <div className="form-section-title">Motor &amp; periode sewa</div>
           {/* ── Tanggal Mulai & Selesai ── */}
           <div className="form-row cols-2">
             <div className="form-group">
               <label className="form-label" htmlFor="tx-start">
                 Tanggal Mulai <span className="required">*</span>
               </label>
-              <input id="tx-start" name="start_date" type="date" className="form-control" value={form.start_date} onChange={handleChange} required />
+              <input id="tx-start" name="start_date" type="date" className={`form-control${errors.start_date ? ' is-invalid' : ''}`} value={form.start_date} onChange={handleChange} required />
+              {errors.start_date && <div className="form-error">{errors.start_date}</div>}
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="tx-end">
                 Tanggal Selesai <span className="required">*</span>
               </label>
-              <input id="tx-end" name="end_date" type="date" className="form-control" value={form.end_date} onChange={handleChange} min={form.start_date} required />
+              <input id="tx-end" name="end_date" type="date" className={`form-control${errors.end_date ? ' is-invalid' : ''}`} value={form.end_date} onChange={handleChange} min={form.start_date} required />
+              {errors.end_date && <div className="form-error">{errors.end_date}</div>}
             </div>
           </div>
 
@@ -849,7 +864,8 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
             <input id="tx-address" name="renter_address" type="text" className="form-control" placeholder="e.g. Villa Bamboo, Jl. Pererenan" value={form.renter_address || ''} onChange={handleChange} />
           </div>
 
-               {/* ── Status Pembayaran ── */}
+          <div className="form-section-title">Pembayaran</div>
+          {/* ── Status Pembayaran ── */}
           <div className="form-group" style={{ marginBottom: '16px' }}>
             <label className="form-label">
               Status Pembayaran <span className="required">*</span>
@@ -921,7 +937,8 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
             <textarea id="tx-notes" name="notes" className="form-control" rows={2} placeholder="Catatan khusus, permintaan khusus, dll..." value={form.notes} onChange={handleChange} style={{ resize: 'vertical' }} />
           </div>
 
-          {/* ── Identitas & foto serah terima — bagian tetap, tidak wajib diisi ── */}
+          <div className="form-section-title">Dokumen (boleh dikosongkan)</div>
+          {/* ── Identitas & foto serah terima ── */}
           <div>
             <div className="form-group">
               <label className="form-label" htmlFor="tx-id-num">
