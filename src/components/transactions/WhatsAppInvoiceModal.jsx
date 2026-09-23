@@ -203,24 +203,22 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
 
-        {/* Tab Selector */}
-        <div className="no-print" style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-          <button
-            className={`btn btn-${activeTab === 'text' ? 'primary' : 'secondary'} btn-sm`}
-            onClick={() => setActiveTab('text')}
-          >
-            <Icon fa="fa-brands fa-whatsapp" style={{ marginRight: '6px' }} /> Format Text WA
-          </button>
-          <button
-            className={`btn btn-${activeTab === 'visual' ? 'primary' : 'secondary'} btn-sm`}
-            onClick={() => setActiveTab('visual')}
-          >
-            <Icon fa="fa-solid fa-file-invoice" style={{ marginRight: '6px' }} /> Kartu Invoice Gambar / Print
-          </button>
+        {/* Tab: baris yang bisa digeser, label pendek agar tidak terpotong */}
+        <div className="modal-body-tabs no-print">
+          <div className="page-tabs" role="tablist" aria-label="Format invoice">
+            <button type="button" role="tab" aria-selected={activeTab === 'text'}
+              className={`page-tab${activeTab === 'text' ? ' active' : ''}`} onClick={() => setActiveTab('text')}>
+              <Icon fa="fa-brands fa-whatsapp" size={15} /> Teks WhatsApp
+            </button>
+            <button type="button" role="tab" aria-selected={activeTab === 'visual'}
+              className={`page-tab${activeTab === 'visual' ? ' active' : ''}`} onClick={() => setActiveTab('visual')}>
+              <Icon fa="fa-solid fa-file-invoice" size={15} /> Kartu invoice &amp; cetak
+            </button>
+          </div>
         </div>
 
         {activeTab === 'text' ? (
-          <div>
+          <div className="modal-body">
             <div className="form-group">
               <label className="form-label">
                 Text Invoice Formal (Dapat Diedit):
@@ -237,7 +235,7 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
             <div className="modal-footer" style={{ justifyContent: 'space-between' }}>
               <button className="btn btn-secondary" onClick={handleCopy}>
                 <Icon fa={`fa-solid ${copied ? 'fa-check' : 'fa-copy'}`} style={{ marginRight: '6px' }} />
-                {copied ? 'Tercopy!' : 'Copy Text Invoice'}
+                {copied ? 'Tercopy!' : 'Salin teks'}
               </button>
               <a
                 href={waUrl}
@@ -247,7 +245,7 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
                 style={{ textDecoration: 'none', background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff' }}
               >
                 <Icon fa="fa-brands fa-whatsapp" style={{ marginRight: '6px', fontSize: '16px' }} />
-                Buka WhatsApp & Kirim Pesan
+                Kirim ke WhatsApp
               </a>
             </div>
           </div>
@@ -256,7 +254,7 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
              document design (not a dark UI card). A printed invoice with a dark
              background reads as an app screenshot, not a formal document, and
              wastes ink if actually printed on paper. */
-          <div>
+          <div className="modal-body">
             {/* Fixed fixed-width scroll wrapper — the card itself always renders
                 at a real desktop-scale width (1050px) via the explicit width
                 below, regardless of the actual screen size viewing this modal.
@@ -459,11 +457,11 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <button className="btn btn-success" onClick={handleShareDirect} disabled={sharing} style={{ background: '#1D4ED8', borderColor: '#1D4ED8', color: '#fff' }}>
                     <Icon fa={`fa-solid ${sharing ? 'fa-spinner fa-spin' : 'fa-share-nodes'}`} style={{ marginRight: '6px' }} />
-                    {sharing ? 'Menyiapkan Invoice...' : 'Bagikan Langsung ke WhatsApp'}
+                    {sharing ? 'Menyiapkan…' : 'Bagikan ke WhatsApp'}
                   </button>
                   <button className="btn btn-primary" onClick={handleDownloadPdf} disabled={downloading}>
                     <Icon fa={`fa-solid ${downloading ? 'fa-spinner fa-spin' : downloaded ? 'fa-check' : 'fa-download'}`} style={{ marginRight: '6px' }} />
-                    {downloading ? 'Membuat PDF...' : downloaded ? 'Terunduh!' : 'Download PDF Invoice'}
+                    {downloading ? 'Membuat PDF…' : downloaded ? 'Terunduh!' : 'Download PDF'}
                   </button>
                   <button className="btn btn-secondary" onClick={handlePrint}>
                     <Icon fa="fa-solid fa-print" style={{ marginRight: '6px' }} /> Cetak

@@ -589,3 +589,30 @@ select.form-control {
   min-height: 44px; border-radius: 12px;
 }
 .mlist-actions .btn { min-height: 44px; }
+
+/* ════════════ Modal: isi tidak menempel tepi & tombol tidak meluber ════════════ */
+.modal-body { padding: 18px 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.modal-body-tabs { padding: 12px 20px 0; }
+.modal-body-tabs .page-tabs { margin-bottom: 0; }
+.modal > .modal-body { flex: 1 1 auto; min-height: 0; }
+.modal > .modal-body-tabs { flex-shrink: 0; }
+.modal > div:not(.modal-header):not(.modal-footer):not(.modal-body):not(.modal-body-tabs) { padding-left: 20px; padding-right: 20px; }
+.btn { max-width: 100%; white-space: normal; }
+.modal-footer > div { display: flex; gap: 8px; flex-wrap: wrap; min-width: 0; }
+
+@media (max-width: 680px) {
+  .modal-body { padding: 16px; }
+  .modal-body-tabs { padding: 12px 16px 0; }
+  .modal > div:not(.modal-header):not(.modal-footer):not(.modal-body):not(.modal-body-tabs) { padding-left: 16px; padding-right: 16px; }
+  /* Baris tombol: turun baris, bukan melebar keluar layar */
+  .modal-footer { flex-direction: column; align-items: stretch; gap: 8px; }
+  .modal-footer > div { flex-direction: column; align-items: stretch; width: 100%; }
+  .modal-footer .btn, .modal-footer > div .btn, .modal-footer a.btn { flex: 1 1 auto; width: 100%; }
+}
+
+/* Modal sederhana (konfirmasi / notifikasi): isi tetap punya jarak atas-bawah */
+.modal > *:not(.modal-header):not(.modal-footer):not(.modal-body):not(.modal-body-tabs):not(form) {
+  padding-top: 4px; padding-bottom: 4px;
+}
+.modal > *:first-child:not(.modal-header) { padding-top: 18px; }
+.modal > *:last-child:not(.modal-footer) { padding-bottom: 18px; }
