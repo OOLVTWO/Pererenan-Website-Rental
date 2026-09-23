@@ -1003,10 +1003,9 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, vehicles, 
               ) : (
                 <div>
                   <input type="file" accept="image/*" id="tx-handover-photo-input" onChange={handleImageFile} style={{ display: 'none' }} disabled={uploading} />
-                  <label htmlFor="tx-handover-photo-input" className="custom-file-btn"
-                    style={{ height: '100px', maxWidth: '360px', flexDirection: 'column', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed #3B82F6', borderRadius: '10px', background: 'rgba(255,255,255,0.02)', cursor: 'pointer', padding: '12px', textAlign: 'center' }}>
-                    <Icon fa="fa-solid fa-camera" style={{ fontSize: '22px', color: '#3B82F6' }} />
-                    <span style={{ fontSize: '11px', fontWeight: 700, marginTop: '6px' }}>Ambil / pilih foto serah terima</span>
+                  <label htmlFor="tx-handover-photo-input" className="photo-dropzone">
+                    <Icon fa="fa-solid fa-camera" size={24} />
+                    <span className="photo-dropzone-title">Ambil / pilih foto serah terima</span>
                     <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Penyewa bersama motor</span>
                   </label>
                 </div>

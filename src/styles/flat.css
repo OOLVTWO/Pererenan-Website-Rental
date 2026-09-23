@@ -613,3 +613,21 @@ select.form-control {
 }
 .modal > *:first-child:not(.modal-header) { padding-top: 18px; }
 .modal > *:last-child:not(.modal-footer) { padding-bottom: 18px; }
+
+/* ── Modal bisa digulir (bug: isi form melebihi modal → halaman belakang yang tergeser) ──
+   Flex item yang punya overflow WAJIB min-height: 0, kalau tidak ia menolak
+   mengecil sehingga isinya terpotong dan tidak bisa digulir. */
+.modal > form, .modal > .modal-body { min-height: 0; overscroll-behavior: contain; }
+.modal, .modal-overlay { overscroll-behavior: contain; }
+.modal-overlay { overflow: hidden; }
+
+/* ── Dropzone foto: selebar field lain, konsisten di semua ukuran layar ── */
+.photo-dropzone {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; box-sizing: border-box; min-height: 104px; padding: 16px; text-align: center; cursor: pointer;
+  border: 1px dashed var(--brand-soft-border); border-radius: 12px;
+  background: var(--brand-soft); color: var(--brand-primary);
+}
+.photo-dropzone:hover { border-color: var(--brand-primary); }
+.photo-dropzone-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.photo-dropzone span:last-child { font-size: 12.5px; color: var(--text-muted); }

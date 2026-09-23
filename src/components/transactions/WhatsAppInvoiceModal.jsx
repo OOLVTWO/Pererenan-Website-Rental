@@ -37,14 +37,22 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
     if (activeTab !== 'visual') return undefined;
     const measure = () => {
       const avail = previewRef.current?.clientWidth || 0;
-      const h = cardRef.current?.offsetHeight || 0;
-      setCardHeight(h);
+      // offsetHeight sudah termasuk transform? tidak — pakai tinggi asli kartu
+      const h = cardRef.current?.scrollHeight || cardRef.current?.offsetHeight || 0;
+      if (h > 0) setCardHeight(h);
       setScale(fitToWidth && avail > 0 ? Math.min(1, avail / 1050) : 1);
     };
     measure();
-    const t = setTimeout(measure, 150);
+    const timers = [setTimeout(measure, 120), setTimeout(measure, 400), setTimeout(measure, 1000)];
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+    if (ro && cardRef.current) ro.observe(cardRef.current);
+    if (ro && previewRef.current) ro.observe(previewRef.current);
     window.addEventListener('resize', measure);
-    return () => { clearTimeout(t); window.removeEventListener('resize', measure); };
+    return () => {
+      timers.forEach(clearTimeout);
+      ro?.disconnect();
+      window.removeEventListener('resize', measure);
+    };
   }, [activeTab, fitToWidth, tx, capturing]);
 
   const previewScale = capturing ? 1 : scale;
@@ -303,7 +311,7 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
               className={`invoice-preview${capturing ? ' capturing' : ''}`}
               style={{
                 overflow: capturing ? 'visible' : (previewScale < 1 ? 'hidden' : 'auto'),
-                height: !capturing && previewScale < 1 && cardHeight ? `${Math.ceil(cardHeight * previewScale)}px` : undefined,
+                height: !capturing && previewScale < 1 && cardHeight > 0 ? `${Math.ceil(cardHeight * previewScale)}px` : undefined,
                 maxHeight: !capturing && previewScale >= 1 ? '60vh' : undefined,
               }}
             >
