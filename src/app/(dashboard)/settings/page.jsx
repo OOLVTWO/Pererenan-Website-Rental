@@ -62,24 +62,25 @@ function readSavedBiz() {
 }
 
 const FA_ICON_OPTIONS = [
-  { icon: 'fa-solid fa-money-bill-wave', label: 'Uang Tunai' },
-  { icon: 'fa-solid fa-building-columns', label: 'Bank / Transfer' },
-  { icon: 'fa-solid fa-qrcode', label: 'QRIS / Barcode' },
-  { icon: 'fa-solid fa-credit-card', label: 'Kartu Kredit / Debit' },
-  { icon: 'fa-solid fa-globe', label: 'Wise / International' },
-  { icon: 'fa-solid fa-wallet', label: 'E-Wallet' },
-  { icon: 'fa-solid fa-receipt', label: 'Faktur / Invoice' },
-  { icon: 'fa-solid fa-vault', label: 'Deposit Jaminan' },
+  { icon: 'fa-solid fa-money-bill-wave', label: 'Tunai' },
+  { icon: 'fa-solid fa-building-columns', label: 'Transfer bank' },
+  { icon: 'fa-solid fa-qrcode', label: 'QRIS' },
+  { icon: 'fa-solid fa-credit-card', label: 'Kartu debit/kredit' },
+  { icon: 'fa-solid fa-globe', label: 'Transfer luar negeri' },
+  { icon: 'fa-solid fa-wallet', label: 'E-wallet' },
+  { icon: 'fa-solid fa-right-left', label: 'Transfer antar bank' },
+  { icon: 'fa-solid fa-hand-holding-dollar', label: 'Setoran / titipan' },
+  { icon: 'fa-solid fa-coins', label: 'Koin / kembalian' },
+  { icon: 'fa-solid fa-receipt', label: 'Tagihan' },
+  { icon: 'fa-solid fa-vault', label: 'Deposit jaminan' },
 ];
 
 const COLOR_OPTIONS = [
-  { hex: '#1D4ED8', label: 'Hijau' },
-  { hex: '#3B82F6', label: 'Biru' },
-  { hex: '#1D4ED8', label: 'Ungu' },
-  { hex: '#1E40AF', label: 'Kuning' },
-  { hex: '#1E3A8A', label: 'Merah' },
-  { hex: '#06B6D4', label: 'Cyan' },
-  { hex: '#1D4ED8', label: 'Pink' },
+  { hex: '#1D4ED8', label: 'Biru utama' },
+  { hex: '#3B82F6', label: 'Biru muda' },
+  { hex: '#1E40AF', label: 'Biru tua' },
+  { hex: '#1E3A8A', label: 'Navy' },
+  { hex: '#5B6474', label: 'Abu-abu' },
 ];
 
 export default function SettingsPage() {
@@ -94,7 +95,7 @@ export default function SettingsPage() {
   const [paymentMethods, setPaymentMethodsState] = useState([]);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [editPayment, setEditPayment] = useState(null);
-  const [paymentForm, setPaymentForm] = useState({ id: '', label: '', icon: 'fa-solid fa-building-columns', color: '#3B82F6', active: true });
+  const [paymentForm, setPaymentForm] = useState({ id: '', label: '', hint: '', icon: 'fa-solid fa-building-columns', color: '#1D4ED8', active: true });
 
   // Security / Password State
   const [passForm, setPassForm] = useState({ currentPass: '', newPass: '', confirmPass: '' });
@@ -579,7 +580,7 @@ export default function SettingsPage() {
                 <button className="btn btn-secondary btn-sm" onClick={handleResetPaymentMethods}>
                   <Icon fa="fa-solid fa-rotate-left" style={{ marginRight: '4px' }} /> Reset Default
                 </button>
-                <button className="btn btn-primary" onClick={() => { setEditPayment(null); setPaymentForm({ id: '', label: '', icon: 'fa-solid fa-building-columns', color: '#3B82F6', active: true }); setShowPaymentModal(true); }}>
+                <button className="btn btn-primary" onClick={() => { setEditPayment(null); setPaymentForm({ id: '', label: '', hint: '', icon: 'fa-solid fa-building-columns', color: '#1D4ED8', active: true }); setShowPaymentModal(true); }}>
                   <Icon fa="fa-solid fa-plus" style={{ marginRight: '6px' }} /> Tambah Metode Baru
                 </button>
               </div>
@@ -614,7 +615,7 @@ export default function SettingsPage() {
                         {method.label}
                       </div>
                       <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                        ID System: <code>{method.id}</code> | Status: {method.active ? <span style={{ color: '#1D4ED8' }}>Aktif ✓</span> : <span style={{ color: '#1E3A8A' }}>Non-Aktif ✕</span>}
+                        {method.hint || 'Metode pembayaran'}{!method.active && ' · disembunyikan dari form'}
                       </div>
                     </div>
                   </div>
@@ -999,6 +1000,19 @@ export default function SettingsPage() {
                   onChange={e => setPaymentForm(p => ({ ...p, label: e.target.value }))}
                   required
                 />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="pm-hint">Keterangan singkat</label>
+                <input
+                  id="pm-hint"
+                  type="text"
+                  className="form-control"
+                  placeholder="mis. Rekening bank BRI a.n. Boss Rent"
+                  value={paymentForm.hint || ''}
+                  onChange={e => setPaymentForm(p => ({ ...p, hint: e.target.value }))}
+                />
+                <div className="form-hint">Tampil di bawah nama metode pada halaman ini.</div>
               </div>
 
               <div className="form-group">

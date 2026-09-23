@@ -66,7 +66,7 @@ export default function WhatsAppInvoiceModal({ isOpen, onClose, tx, vehicle }) {
   // separately here rather than changing that shared source.
   const PAYMENT_LABEL_EN = {
     cash: 'Cash', transfer_bca: 'Bank Transfer (BCA)', transfer_mandiri: 'Bank Transfer (Mandiri)',
-    qris: 'QRIS / GoPay / OVO', card: 'Credit / Debit Card', wise: 'Wise / Revolut',
+    qris: 'QRIS (GoPay / OVO / DANA)', card: 'Debit / Credit Card', wise: 'Wise / Revolut',
     transfer: 'Bank Transfer',
   };
   const paymentLabelEn = PAYMENT_LABEL_EN[paymentMeta.id] || paymentMeta.label;
