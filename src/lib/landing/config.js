@@ -191,6 +191,23 @@ export const FAQ = [
     a: 'On delivery — cash, bank transfer or QRIS. Nothing is charged online.' },
 ];
 
+/**
+ * SYARAT & KETENTUAN — ditampilkan sebelum penyewa mengirim permintaan.
+ * Ini poin umum rental motor di Bali; sesuaikan dengan aturanmu sendiri.
+ */
+export const TERMS = [
+  'The rider must hold a valid motorcycle licence. An international driving permit is required by Indonesian law and is checked by police.',
+  'Helmets must be worn by the rider and passenger at all times. Two helmets are provided free with every rental.',
+  'The scooter may only be ridden by the person named in the booking. Lending it to anyone else voids any arrangement we make.',
+  'Riding under the influence of alcohol or drugs is strictly forbidden and ends the rental immediately, without refund.',
+  'Any damage, loss or theft of the scooter, keys or accessories is the renter’s responsibility. The rental does not include insurance.',
+  'A lost key is charged at Rp 500.000; a lost registration document (STNK) is charged at replacement cost.',
+  'Fuel is not included. The scooter is delivered with a full tank and may be returned at any level.',
+  'Rental is counted per 24 hours from the delivery time. A delay of more than 3 hours is charged as one extra day.',
+  'The scooter must not be taken to another island (for example Lombok, Java or Nusa Penida) without our written approval.',
+  'Payment is made on delivery in cash, bank transfer or QRIS. Bookings are only confirmed after we reply on WhatsApp.',
+];
+
 /** Foto besar (hero & pemisah). Ganti file-nya, nama tetap sama. */
 export const IMAGES = {
   hero: '/images/landing/hero.webp',

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
-import { BUSINESS, FLEET, MONTHLY_MIN_DAYS } from '@/lib/landing/config';
+import { BUSINESS, FLEET, MONTHLY_MIN_DAYS, TERMS } from '@/lib/landing/config';
 import {
   calcRental, calcEquipment, availableEquipment, daysBetween, addDays,
   formatRupiah, formatDateEn, buildWhatsAppMessage, whatsappUrl,
@@ -37,6 +37,8 @@ export default function BookingIsland({ variant = 'quick' }) {
   const [equipment, setEquipment] = useState({ helmet: 2, raincoat: 1 });
   const [open, setOpen] = useState(false);
   const [picking, setPicking] = useState(false);
+  const [step, setStep] = useState(1);      // 1 = isi data, 2 = ringkasan akhir
+  const [agreed, setAgreed] = useState(false);
 
   const vehicle = useMemo(() => FLEET.find(f => f.id === vehicleId) || FLEET[0], [vehicleId]);
   const endDate = useMemo(() => addDays(startDate, Math.max(1, days)), [startDate, days]);
@@ -47,8 +49,18 @@ export default function BookingIsland({ variant = 'quick' }) {
 
   const openFor = useCallback((id) => {
     if (id) setVehicleId(id);
+    setStep(1);
+    setAgreed(false);
     setOpen(true);
   }, []);
+
+  const close = useCallback(() => { setOpen(false); setPicking(false); }, []);
+
+  /** Ubah tanggal kembali → jumlah hari ikut menyesuaikan (dan sebaliknya). */
+  const setReturnDate = (value) => {
+    const d = daysBetween(startDate, value);
+    setDays(d);
+  };
 
   const setQty = (id, delta, max) => {
     setEquipment(prev => {
@@ -86,12 +98,15 @@ export default function BookingIsland({ variant = 'quick' }) {
               <span>Pick-up</span>
               <input type="date" value={startDate} min={todayStr()} onChange={e => setStartDate(e.target.value)} />
             </label>
-            <label className="lp-field lp-field-days">
-              <span>Days</span>
-              <input type="number" min="1" max="365" inputMode="numeric" value={days}
-                onChange={e => setDays(Math.max(1, Number(e.target.value) || 1))} />
+            <label className="lp-field">
+              <span>Return</span>
+              <input type="date" value={endDate} min={startDate} onChange={e => setReturnDate(e.target.value)} />
             </label>
           </div>
+          <span className="lp-hint">
+            <LIcon name="clock" size={15} /> {days} day{days > 1 ? 's' : ''}
+            {days >= 7 && ' · weekly rate applied'}
+          </span>
 
           <div className="lp-estimate">
             <span>Estimated total</span>
@@ -149,158 +164,229 @@ export default function BookingIsland({ variant = 'quick' }) {
     </>
   );
 
-  // ── Lembar ringkasan pesanan ──
+  // ── Lembar pesanan: langkah 1 (isi data) → langkah 2 (ringkasan akhir) ──
   function renderSheet() {
+    const stepBar = (
+      <div className="lp-steps-bar" aria-label={`Step ${step} of 2`}>
+        <span className={step === 1 ? 'active' : 'done'}>
+          <span className="num">{step > 1 ? <LIcon name="check" size={14} /> : '1'}</span> Details
+        </span>
+        <span className="bar" />
+        <span className={step === 2 ? 'active' : ''}>
+          <span className="num">2</span> Review &amp; send
+        </span>
+      </div>
+    );
+
     return (
-      <div className="lp-sheet-overlay" role="dialog" aria-modal="true" aria-label="Your booking"
-        onClick={() => setOpen(false)}>
+      <div className="lp-sheet-overlay" role="dialog" aria-modal="true" aria-label="Your booking" onClick={close}>
         <div className="lp-sheet" onClick={e => e.stopPropagation()}>
           <header className="lp-sheet-head">
             <span>
-              <strong>Your booking</strong>
-              <em>Review the details, then send on WhatsApp</em>
+              <strong>{step === 1 ? 'Your booking' : 'Check before sending'}</strong>
+              <em>{step === 1 ? 'Choose dates, delivery and add-ons' : 'Nothing is booked until we confirm'}</em>
             </span>
-            <button type="button" aria-label="Close" onClick={() => setOpen(false)}>
-              <LIcon name="x" size={18} />
-            </button>
+            <button type="button" aria-label="Close" onClick={close}><LIcon name="x" size={18} /></button>
           </header>
 
-          <div className="lp-sheet-body">
-            <div className="lp-picked">
-              <Image src={vehicle.photo} alt={vehicle.name} width={160} height={120} />
-              <span>
-                <strong>{vehicle.name}</strong>
-                <em>{formatRupiah(vehicle.price.daily)} / day · {vehicle.engine}</em>
-              </span>
-              <button type="button" onClick={() => setPicking(v => !v)}>
-                {picking ? 'Done' : 'Change'}
-              </button>
-            </div>
+          {stepBar}
 
-            {picking && (
-              <div className="lp-picker">
-                {FLEET.map(f => (
-                  <button key={f.id} type="button"
-                    className={f.id === vehicleId ? 'active' : ''}
-                    onClick={() => { setVehicleId(f.id); setPicking(false); }}>
-                    <span>{f.name}</span>
-                    <em>{formatRupiah(f.price.daily)} / day</em>
-                  </button>
-                ))}
-              </div>
-            )}
+          {step === 1 ? (
+            <>
+              <div className="lp-sheet-body">
+                <div className="lp-picked">
+                  <Image src={vehicle.photo} alt={vehicle.name} width={160} height={120} />
+                  <span>
+                    <strong>{vehicle.name}</strong>
+                    <em>{formatRupiah(vehicle.price.daily)} / day · {vehicle.engine}</em>
+                  </span>
+                  <button type="button" onClick={() => setPicking(v => !v)}>{picking ? 'Done' : 'Change'}</button>
+                </div>
 
-            <section className="lp-sheet-section">
-              <h4>Rental period</h4>
-              <div className="lp-field-row">
-                <label className="lp-field">
-                  <span>Pick-up date</span>
-                  <input type="date" value={startDate} min={todayStr()} onChange={e => setStartDate(e.target.value)} />
-                </label>
-                <label className="lp-field lp-field-days">
-                  <span>Days</span>
-                  <input type="number" min="1" max="365" inputMode="numeric" value={days}
-                    onChange={e => setDays(Math.max(1, Number(e.target.value) || 1))} />
-                </label>
-              </div>
-              <span className="lp-hint">
-                <LIcon name="clock" size={15} /> Return {formatDateEn(endDate)} · {days} day{days > 1 ? 's' : ''}
-                {days >= 7 && ' · weekly rate applied'}
-              </span>
-            </section>
+                {picking && (
+                  <div className="lp-picker">
+                    {FLEET.map(f => (
+                      <button key={f.id} type="button" className={f.id === vehicleId ? 'active' : ''}
+                        onClick={() => { setVehicleId(f.id); setPicking(false); }}>
+                        <span>{f.name}</span>
+                        <em>{formatRupiah(f.price.daily)} / day</em>
+                      </button>
+                    ))}
+                  </div>
+                )}
 
-            <section className="lp-sheet-section">
-              <h4>Delivery</h4>
-              <div className="lp-field-row">
-                <label className="lp-field">
-                  <span>Villa or hotel name</span>
-                  <input type="text" placeholder="e.g. Villa Bamboo, Pererenan"
-                    value={address} onChange={e => setAddress(e.target.value)} />
-                </label>
-                <label className="lp-field lp-field-days">
-                  <span>Time</span>
-                  <input type="time" value={time} onChange={e => setTime(e.target.value)} />
-                </label>
-              </div>
-              <span className="lp-hint">
-                <LIcon name="truck" size={15} /> Free delivery in {BUSINESS.deliveryAreas.slice(0, 3).join(', ')}
-              </span>
-            </section>
-
-            <section className="lp-sheet-section">
-              <h4>Add-ons</h4>
-              {equipmentList.map(item => {
-                const qty = Number(equipment[item.id]) || 0;
-                return (
-                  <div key={item.id} className={`lp-addon${item.disabled ? ' disabled' : ''}`}>
-                    <span className="lp-addon-icon"><LIcon name={item.icon} size={19} /></span>
-                    <span className="lp-addon-text">
-                      <span className="lp-addon-name">
-                        {item.name}
-                        <InfoDot text={item.info} />
-                      </span>
-                      <em>{item.note}</em>
-                    </span>
-                    <span className="lp-addon-right">
-                      <strong>{item.free ? 'FREE' : formatRupiah(item.price)}</strong>
-                      {item.disabled ? (
-                        <span className="lp-addon-locked">Monthly only</span>
-                      ) : (
-                        <span className="lp-stepper">
-                          <button type="button" aria-label={`Remove one ${item.name}`}
-                            onClick={() => setQty(item.id, -1, item.max)} disabled={qty === 0}>
-                            <LIcon name="minus" size={15} />
-                          </button>
-                          <span>{item.disabled ? 0 : qty}</span>
-                          <button type="button" aria-label={`Add one ${item.name}`}
-                            onClick={() => setQty(item.id, 1, item.max)} disabled={qty >= item.max}>
-                            <LIcon name="plus" size={15} />
-                          </button>
-                        </span>
-                      )}
+                <section className="lp-sheet-section">
+                  <h4>Rental period</h4>
+                  <div className="lp-field-row">
+                    <label className="lp-field">
+                      <span>Pick-up date</span>
+                      <input type="date" value={startDate} min={todayStr()} onChange={e => setStartDate(e.target.value)} />
+                    </label>
+                    <label className="lp-field">
+                      <span>Return date</span>
+                      <input type="date" value={endDate} min={startDate} onChange={e => setReturnDate(e.target.value)} />
+                    </label>
+                  </div>
+                  <div className="lp-field-row">
+                    <label className="lp-field lp-field-days">
+                      <span>Days</span>
+                      <input type="number" min="1" max="365" inputMode="numeric" value={days}
+                        onChange={e => setDays(Math.max(1, Number(e.target.value) || 1))} />
+                    </label>
+                    <span className="lp-hint" style={{ alignSelf: 'flex-end', paddingBottom: '14px' }}>
+                      <LIcon name="clock" size={15} /> Back on {formatDateEn(endDate)}
+                      {days >= 7 && ' · weekly rate applied'}
                     </span>
                   </div>
-                );
-              })}
-              {days < MONTHLY_MIN_DAYS && (
-                <span className="lp-hint">
-                  <LIcon name="info" size={15} /> Top box and surf rack unlock from {MONTHLY_MIN_DAYS} days.
-                </span>
-              )}
-            </section>
+                </section>
 
-            <div className="lp-total">
-              {rental.lines.map(l => (
-                <div key={l.label}><span>{l.label}</span><strong>{formatRupiah(l.amount)}</strong></div>
-              ))}
-              {eq.lines.map(l => (
-                <div key={l.id}>
-                  <span>{l.label}</span>
-                  <strong className={l.free ? 'free' : ''}>{l.free ? 'FREE' : formatRupiah(l.amount)}</strong>
+                <section className="lp-sheet-section">
+                  <h4>Delivery</h4>
+                  <div className="lp-field-row">
+                    <label className="lp-field">
+                      <span>Villa or hotel name</span>
+                      <input type="text" placeholder="e.g. Villa Bamboo, Pererenan"
+                        value={address} onChange={e => setAddress(e.target.value)} />
+                    </label>
+                    <label className="lp-field lp-field-days">
+                      <span>Time</span>
+                      <input type="time" value={time} onChange={e => setTime(e.target.value)} />
+                    </label>
+                  </div>
+                  <span className="lp-hint">
+                    <LIcon name="truck" size={15} /> Free delivery in {BUSINESS.deliveryAreas.slice(0, 3).join(', ')}
+                  </span>
+                </section>
+
+                <section className="lp-sheet-section">
+                  <h4>Add-ons</h4>
+                  {equipmentList.map(item => {
+                    const qty = Number(equipment[item.id]) || 0;
+                    return (
+                      <div key={item.id} className={`lp-addon${item.disabled ? ' disabled' : ''}`}>
+                        <span className="lp-addon-icon"><LIcon name={item.icon} size={19} /></span>
+                        <span className="lp-addon-text">
+                          <span className="lp-addon-name">{item.name}<InfoDot text={item.info} /></span>
+                          <em>{item.note}</em>
+                        </span>
+                        <span className="lp-addon-right">
+                          <strong>{item.free ? 'FREE' : formatRupiah(item.price)}</strong>
+                          {item.disabled ? (
+                            <span className="lp-addon-locked">Monthly only</span>
+                          ) : (
+                            <span className="lp-stepper">
+                              <button type="button" aria-label={`Remove one ${item.name}`}
+                                onClick={() => setQty(item.id, -1, item.max)} disabled={qty === 0}>
+                                <LIcon name="minus" size={15} />
+                              </button>
+                              <span>{qty}</span>
+                              <button type="button" aria-label={`Add one ${item.name}`}
+                                onClick={() => setQty(item.id, 1, item.max)} disabled={qty >= item.max}>
+                                <LIcon name="plus" size={15} />
+                              </button>
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
+                  {days < MONTHLY_MIN_DAYS && (
+                    <span className="lp-hint">
+                      <LIcon name="info" size={15} /> Top box and surf rack unlock from {MONTHLY_MIN_DAYS} days.
+                    </span>
+                  )}
+                </section>
+
+                <div className="lp-estimate">
+                  <span>Estimated total</span>
+                  <strong>{formatRupiah(total)}</strong>
                 </div>
-              ))}
-              <div className="lp-total-sum">
-                <span>Estimated total</span><strong>{formatRupiah(total)}</strong>
               </div>
-              <em>Paid on delivery — cash, bank transfer or QRIS.</em>
-            </div>
 
-            <div className="lp-notice">
-              <LIcon name="info" size={19} />
-              <span>
-                <strong>This is a booking request, not a confirmation.</strong> We&apos;ll check that this
-                scooter is free for your dates and reply on WhatsApp — usually within a few minutes
-                during opening hours.
-              </span>
-            </div>
-          </div>
+              <footer className="lp-sheet-foot">
+                <button type="button" className="lp-btn lp-btn-primary lp-btn-lg" onClick={() => setStep(2)}>
+                  Review booking <LIcon name="arrow" size={18} />
+                </button>
+                <span>Next: a final summary before anything is sent.</span>
+              </footer>
+            </>
+          ) : (
+            <>
+              <div className="lp-sheet-body">
+                <div className="lp-picked">
+                  <Image src={vehicle.photo} alt={vehicle.name} width={160} height={120} />
+                  <span>
+                    <strong>{vehicle.name}</strong>
+                    <em>{vehicle.engine} · {vehicle.riders}</em>
+                  </span>
+                </div>
 
-          <footer className="lp-sheet-foot">
-            <a className="lp-btn lp-btn-primary lp-btn-lg" href={waHref} target="_blank" rel="noopener noreferrer">
-              <LIcon name="wa" size={19} /> Send booking request
-            </a>
-            <span>Opens WhatsApp with every detail above already written.</span>
-          </footer>
+                <div className="lp-recap">
+                  <span className="lp-recap-title">Rental</span>
+                  <div className="lp-recap-row"><span>Pick-up</span><strong>{formatDateEn(startDate)} · {time}</strong></div>
+                  <div className="lp-recap-row"><span>Return</span><strong>{formatDateEn(endDate)}</strong></div>
+                  <div className="lp-recap-row"><span>Duration</span><strong>{days} day{days > 1 ? 's' : ''}</strong></div>
+                  <div className="lp-recap-row"><span>Delivery to</span><strong>{address || 'To be confirmed on WhatsApp'}</strong></div>
+                </div>
+
+                <div className="lp-recap">
+                  <span className="lp-recap-title">Add-ons</span>
+                  {eq.lines.length ? eq.lines.map(l => (
+                    <div key={l.id} className="lp-recap-row">
+                      <span>{l.label}</span>
+                      <strong>{l.free ? 'FREE' : formatRupiah(l.amount)}</strong>
+                    </div>
+                  )) : <div className="lp-recap-row"><span>None selected</span><strong>—</strong></div>}
+                </div>
+
+                <div className="lp-total">
+                  {rental.lines.map(l => (
+                    <div key={l.label}><span>{l.label}</span><strong>{formatRupiah(l.amount)}</strong></div>
+                  ))}
+                  {eq.total > 0 && (
+                    <div><span>Add-ons</span><strong>{formatRupiah(eq.total)}</strong></div>
+                  )}
+                  <div className="lp-total-sum"><span>Estimated total</span><strong>{formatRupiah(total)}</strong></div>
+                  <em>Paid on delivery — cash, bank transfer or QRIS.</em>
+                </div>
+
+                <details className="lp-terms">
+                  <summary>Rental terms &amp; conditions <LIcon name="down" size={18} /></summary>
+                  <ol>{TERMS.map(t => <li key={t}>{t}</li>)}</ol>
+                </details>
+
+                <label className="lp-agree">
+                  <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} />
+                  <span>I have read and agree to the rental terms &amp; conditions above.</span>
+                </label>
+
+                <div className="lp-notice">
+                  <LIcon name="info" size={19} />
+                  <span>
+                    <strong>This is a booking request, not a confirmation.</strong> We&apos;ll check that this
+                    scooter is free for your dates and reply on WhatsApp — usually within a few minutes
+                    during opening hours.
+                  </span>
+                </div>
+              </div>
+
+              <footer className="lp-sheet-foot">
+                <div className="lp-foot-row">
+                  <button type="button" className="lp-btn lp-btn-back" onClick={() => setStep(1)}>Back</button>
+                  {agreed ? (
+                    <a className="lp-btn lp-btn-primary lp-btn-lg" href={waHref} target="_blank" rel="noopener noreferrer">
+                      <LIcon name="wa" size={19} /> Send request
+                    </a>
+                  ) : (
+                    <button type="button" className="lp-btn lp-btn-primary lp-btn-lg" disabled>
+                      <LIcon name="wa" size={19} /> Send request
+                    </button>
+                  )}
+                </div>
+                <span>{agreed ? 'Opens WhatsApp with every detail already written.' : 'Please accept the terms to continue.'}</span>
+              </footer>
+            </>
+          )}
         </div>
       </div>
     );
