@@ -1,6 +1,14 @@
+import "@/styles/globals.css";
+import "@/styles/flat.css";
 import { createClient } from '@/lib/supabase/server';
 import { redirect, unstable_rethrow } from 'next/navigation';
 import DashboardShell from '@/components/layout/DashboardShell';
+
+// Panel admin tidak boleh muncul di mesin pencari.
+export const metadata = {
+  title: 'Boss Rent Pererenan — Admin',
+  robots: { index: false, follow: false },
+};
 
 export default async function DashboardLayout({ children }) {
   let user = null;

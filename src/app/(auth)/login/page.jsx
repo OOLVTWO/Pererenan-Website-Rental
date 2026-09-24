@@ -1,5 +1,7 @@
 'use client';
 
+import "@/styles/globals.css";
+import "@/styles/flat.css";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Icon from '@/components/ui/Icon';
