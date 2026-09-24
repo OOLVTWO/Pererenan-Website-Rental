@@ -429,3 +429,101 @@
 .lp-sheet-foot .lp-foot-row .lp-btn { flex: 1 1 auto; }
 
 
+
+/* ════════════════════════════════════════════════════════════
+   TAMPILAN LAYAR LEBAR — isi dipusatkan, tidak melar sampai tepi
+   ════════════════════════════════════════════════════════════ */
+@media (min-width: 720px) {
+  /* Lebar konten dikunci maksimal 1200px dan dipusatkan, berapa pun lebar layar */
+  .lp-header,
+  .lp-section,
+  .lp-band,
+  .lp-stats-wrap,
+  .lp-footer,
+  .lp-hero-inner { padding-inline: max(40px, calc((100% - 1200px) / 2)); }
+  .lp-hero { padding-inline: 0; }
+  .lp-hero-inner { padding-block: 64px 96px; }
+  .lp-band > * { max-width: 1200px; margin-inline: auto; width: 100%; }
+
+  .lp-section { gap: 24px; }
+  .lp-section-head h2 { font-size: 34px; line-height: 1.12; }
+  .lp-section-head p { font-size: 16px; }
+  .lp-hero h1 { font-size: 56px; letter-spacing: -0.03em; }
+
+  /* Kartu cek harga sedikit terangkat dari latar */
+  .lp-quick { box-shadow: 0 24px 60px rgba(7, 18, 45, 0.28); border-color: transparent; padding: 24px; }
+}
+
+/* ── Pita angka: kartu yang mengambang di atas hero ── */
+.lp-stats-wrap { padding: 0 20px; margin-top: -24px; position: relative; z-index: 2; }
+.lp-stats {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: var(--surf); border: 1px solid var(--line); border-radius: 18px;
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.07); overflow: hidden;
+}
+.lp-stat {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  padding: 18px; border-top: 1px solid var(--line); border-left: 1px solid var(--line);
+}
+.lp-stat:nth-child(-n+2) { border-top: 0; }
+.lp-stat:nth-child(odd) { border-left: 0; }
+.lp-stat-icon {
+  width: 34px; height: 34px; margin-bottom: 6px; border-radius: 10px;
+  background: var(--soft); color: var(--blue); display: flex; align-items: center; justify-content: center;
+}
+.lp-stat strong { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+.lp-stat-label { font-size: 13.5px; font-weight: 700; color: var(--txt); }
+.lp-stat-note { font-size: 12.5px; color: var(--muted); }
+
+@media (min-width: 720px) {
+  .lp-stats-wrap { margin-top: -44px; }
+  .lp-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .lp-stat { padding: 22px 24px; border-top: 0; }
+  .lp-stat:nth-child(odd) { border-left: 1px solid var(--line); }
+  .lp-stat:first-child { border-left: 0; }
+  .lp-stat strong { font-size: 32px; }
+}
+
+/* ── Kartu motor: sedikit terangkat saat disentuh/disorot ── */
+@media (hover: hover) {
+  .lp-bike { transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
+  .lp-bike:hover { transform: translateY(-3px); border-color: var(--soft-b); box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08); }
+  .lp-card.lp-why, .lp-review { transition: border-color 0.18s ease, box-shadow 0.18s ease; }
+  .lp-card.lp-why:hover, .lp-review:hover { border-color: var(--soft-b); box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06); }
+}
+
+/* ── Armada di layar lebar: 3 kolom, foto lebih lega ── */
+@media (min-width: 1000px) {
+  .lp-fleet-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .lp-bike-photo img { height: 210px; }
+  .lp-bike-body { padding: 20px; gap: 12px; }
+  .lp-bike-body h3 { font-size: 19px; }
+  .lp-bike-price strong { font-size: 27px; }
+}
+
+/* ── Nafas antar bagian & judul yang lebih tenang ── */
+@media (min-width: 720px) {
+  .lp-section { padding-block: 64px; }
+  .lp-band { padding-block: 60px; }
+  .lp-kicker { font-size: 12.5px; }
+  .lp-section-head { gap: 10px; max-width: 720px; }
+  .lp-steps { gap: 36px; }
+  .lp-divider { height: 300px; }
+  .lp-cta { padding: 44px 48px; }
+  .lp-cta h2 { font-size: 32px; }
+  .lp-price-card { padding: 26px; }
+  .lp-price-card strong { font-size: 30px; }
+  .lp-price-card.highlight { box-shadow: 0 18px 40px rgba(7, 18, 45, 0.24); }
+  .lp-area-text { padding: 28px; gap: 14px; }
+  .lp-area-text h2 { font-size: 24px; }
+  .lp-why { padding: 22px; }
+  .lp-review { padding: 22px; }
+  .lp-faq summary { min-height: 60px; font-size: 15.5px; }
+}
+
+/* Header sedikit lebih lega & garis tipis saat digulir */
+@media (min-width: 720px) {
+  .lp-header { padding-block: 16px; backdrop-filter: saturate(140%) blur(6px); }
+  .lp-brand { font-size: 16px; }
+  .lp-brand img { width: 44px; }
+}

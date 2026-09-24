@@ -28,10 +28,10 @@ export const BUSINESS = {
 
 /** Ringkasan armada untuk pita angka di bawah hero. */
 export const STATS = [
-  { value: '39', label: 'scooters' },
-  { value: '7', label: 'models' },
-  { value: '<1h', label: 'delivery' },
-  { value: '5.0', label: 'rating' },
+  { value: '39', label: 'Scooters ready', note: 'Serviced every month', icon: 'engine' },
+  { value: '7', label: 'Models to pick', note: 'From 110cc to 160cc', icon: 'box' },
+  { value: '<1h', label: 'Delivery time', note: 'Inside the Canggu area', icon: 'truck' },
+  { value: '5.0', label: 'Google rating', note: 'From guests like you', icon: 'star' },
 ];
 
 /**

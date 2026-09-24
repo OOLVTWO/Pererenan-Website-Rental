@@ -75,10 +75,17 @@ export default function LandingPage() {
       </section>
 
       {/* ── Angka ── */}
-      <section className="lp-stats" aria-label="At a glance">
-        {STATS.map(s => (
-          <div key={s.label}><strong>{s.value}</strong><span>{s.label}</span></div>
-        ))}
+      <section className="lp-stats-wrap" aria-label="At a glance">
+        <div className="lp-stats">
+          {STATS.map(s => (
+            <div key={s.label} className="lp-stat">
+              <span className="lp-stat-icon"><LIcon name={s.icon} size={18} /></span>
+              <strong>{s.value}</strong>
+              <span className="lp-stat-label">{s.label}</span>
+              <span className="lp-stat-note">{s.note}</span>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* ── Armada ── */}
