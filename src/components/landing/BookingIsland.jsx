@@ -37,6 +37,7 @@ export default function BookingIsland({ variant = 'quick' }) {
   const [equipment, setEquipment] = useState({ helmet: 2, raincoat: 1 });
   const [open, setOpen] = useState(false);
   const [picking, setPicking] = useState(false);
+  const [fleetFilter, setFleetFilter] = useState('all');
   const [step, setStep] = useState(1);      // 1 = isi data, 2 = ringkasan akhir
   const [agreed, setAgreed] = useState(false);
 
@@ -73,6 +74,38 @@ export default function BookingIsland({ variant = 'quick' }) {
     vehicle, startDate, endDate, days, time, address,
     equipment: eq.lines, rental: rental.total, equipmentTotal: eq.total,
   }));
+
+  // ── Bilah pemesanan mendatar yang menumpuk di bawah hero ──
+  if (variant === 'bar') {
+    return (
+      <>
+        <div className="lp-bar">
+          <label className="lp-bar-field">
+            <span>Scooter</span>
+            <select value={vehicleId} onChange={e => setVehicleId(e.target.value)}>
+              {FLEET.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
+            </select>
+          </label>
+          <label className="lp-bar-field">
+            <span>Pick-up</span>
+            <input type="date" value={startDate} min={todayStr()} onChange={e => setStartDate(e.target.value)} />
+          </label>
+          <label className="lp-bar-field">
+            <span>Return</span>
+            <input type="date" value={endDate} min={startDate} onChange={e => setReturnDate(e.target.value)} />
+          </label>
+          <div className="lp-bar-total">
+            <span>{days} day{days > 1 ? 's' : ''} · estimated</span>
+            <strong>{formatRupiah(rental.total)}</strong>
+          </div>
+          <button type="button" className="lp-btn lp-btn-primary lp-bar-cta" onClick={() => openFor()}>
+            Book now <LIcon name="arrow" size={18} />
+          </button>
+        </div>
+        {open && renderSheet()}
+      </>
+    );
+  }
 
   // ── Kartu cek harga di hero ──
   if (variant === 'quick') {
@@ -124,11 +157,28 @@ export default function BookingIsland({ variant = 'quick' }) {
     );
   }
 
-  // ── Tombol "Book now" pada kartu armada ──
+  // ── Armada + tab filter ──
+  const filters = [
+    { key: 'all', label: 'All models', test: () => true },
+    { key: 'budget', label: 'Under Rp 150k', test: f => f.price.daily < 150000 },
+    { key: 'small', label: '110–125cc', test: f => /1[01][05]cc|125cc/.test(f.engine) },
+    { key: 'big', label: '155cc & up', test: f => /15[05]cc|160cc/.test(f.engine) },
+  ];
+  const shown = FLEET.filter(filters.find(t => t.key === fleetFilter)?.test || (() => true));
+
   return (
     <>
+      <div className="lp-fleet-tabs" role="tablist" aria-label="Filter scooters">
+        {filters.map(t => (
+          <button key={t.key} type="button" role="tab" aria-selected={fleetFilter === t.key}
+            className={`lp-tab${fleetFilter === t.key ? ' active' : ''}`}
+            onClick={() => setFleetFilter(t.key)}>
+            {t.label}
+          </button>
+        ))}
+      </div>
       <div className="lp-fleet-grid">
-        {FLEET.map(f => (
+        {shown.map(f => (
           <article key={f.id} className="lp-bike">
             <div className="lp-bike-photo">
               <Image src={f.photo} alt={f.name} width={640} height={420} sizes="(max-width: 700px) 80vw, 33vw" />

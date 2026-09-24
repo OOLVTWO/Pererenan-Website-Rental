@@ -56,36 +56,45 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      {/* ── Hero ── */}
+      {/* ── Hero: teks kiri + foto kanan, angka menyatu di bawah tombol ── */}
       <section className="lp-hero" id="top">
-        <Image className="lp-hero-photo" src={IMAGES.hero} alt="" fill priority sizes="100vw" />
         <div className="lp-hero-inner">
           <div className="lp-hero-text">
-            <span className="lp-pill">
-              <LIcon name="truck" size={15} /> Free delivery · {BUSINESS.deliveryAreas.slice(0, 3).join(', ')}
-            </span>
+            <span className="lp-eyebrow">Scooter rental · Pererenan · Canggu · Berawa</span>
             <h1>{BUSINESS.tagline}</h1>
             <p>{BUSINESS.intro}</p>
-            <span className="lp-rating">
-              <LIcon name="star" size={16} /> <strong>{REVIEWS.rating}</strong> · Google reviews
-            </span>
-          </div>
-          <BookingIsland variant="quick" />
-        </div>
-      </section>
-
-      {/* ── Angka ── */}
-      <section className="lp-stats-wrap" aria-label="At a glance">
-        <div className="lp-stats">
-          {STATS.map(s => (
-            <div key={s.label} className="lp-stat">
-              <span className="lp-stat-icon"><LIcon name={s.icon} size={18} /></span>
-              <strong>{s.value}</strong>
-              <span className="lp-stat-label">{s.label}</span>
-              <span className="lp-stat-note">{s.note}</span>
+            <div className="lp-hero-cta">
+              <a className="lp-btn lp-btn-dark" href="#fleet">
+                Explore the fleet <LIcon name="arrow" size={18} />
+              </a>
+              <a className="lp-btn lp-btn-outline" href={simpleWa} target="_blank" rel="noopener noreferrer">
+                <LIcon name="wa" size={18} /> Chat with us
+              </a>
             </div>
-          ))}
+            <dl className="lp-hero-stats">
+              {STATS.map(s => (
+                <div key={s.label}>
+                  <dt>{s.value}</dt>
+                  <dd>{s.label}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <div className="lp-hero-media">
+            <Image src={IMAGES.hero} alt="Scooter parked on a quiet road in Pererenan"
+              width={1376} height={774} priority sizes="(max-width: 900px) 100vw, 55vw" />
+            <div className="lp-hero-badge">
+              <span className="lp-hero-badge-icon"><LIcon name="truck" size={18} /></span>
+              <span>
+                <strong>Free delivery</strong>
+                <em>Villa drop-off in under an hour</em>
+              </span>
+            </div>
+          </div>
         </div>
+
+        <BookingIsland variant="bar" />
       </section>
 
       {/* ── Armada ── */}
@@ -97,6 +106,36 @@ export default function LandingPage() {
         </div>
         <BookingIsland variant="fleet" />
         <span className="lp-swipe-hint">Swipe to see all {FLEET.length} models →</span>
+      </section>
+
+      {/* ── Sorotan satu motor (bagian gelap) ── */}
+      <section className="lp-showcase">
+        <span className="lp-showcase-ghost" aria-hidden="true">155</span>
+        <div className="lp-showcase-inner">
+          <div className="lp-showcase-media">
+            <Image src={FLEET[1].photo} alt={FLEET[1].name} width={800} height={520}
+              sizes="(max-width: 900px) 90vw, 46vw" loading="lazy" />
+          </div>
+          <div className="lp-showcase-text">
+            <span className="lp-eyebrow light">Most booked for long rides</span>
+            <h2>{FLEET[1].name}</h2>
+            <p>{FLEET[1].blurb}</p>
+            <ul className="lp-showcase-specs">
+              <li><LIcon name="engine" size={17} /> {FLEET[1].engine}</li>
+              <li><LIcon name="user" size={17} /> {FLEET[1].riders}</li>
+              <li><LIcon name="box" size={17} /> {FLEET[1].storage}</li>
+              <li><LIcon name="shield" size={17} /> Helmets &amp; raincoat included</li>
+            </ul>
+            <div className="lp-showcase-price">
+              <span>From</span>
+              <strong>{formatRupiah(FLEET[1].price.daily)}</strong>
+              <span>/ day</span>
+            </div>
+            <a className="lp-btn lp-btn-light" href="#fleet">
+              See all models <LIcon name="arrow" size={18} />
+            </a>
+          </div>
+        </div>
       </section>
 
       {/* ── Perbandingan harga ── */}
