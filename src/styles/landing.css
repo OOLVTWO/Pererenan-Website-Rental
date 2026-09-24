@@ -343,12 +343,6 @@
 @media (min-width: 720px) {
   .lp-section, .lp-band { padding: 52px 56px; }
   .lp-header { padding: 14px 56px; }
-  .lp-stats { padding: 22px 56px; }
-  .lp-stats div { align-items: flex-start; }
-  .lp-hero { padding: 52px 56px 60px; }
-  .lp-hero-inner { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
-  .lp-hero h1 { font-size: 52px; line-height: 1.04; }
-  .lp-hero p { font-size: 17px; }
   .lp-section-head h2 { font-size: 30px; }
   .lp-fleet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; overflow: visible; }
   .lp-bike { flex: 1 1 auto; }
@@ -434,18 +428,12 @@
   .lp-section,
   .lp-band,
   .lp-footer,
-  .lp-hero-inner { padding-inline: max(40px, calc((100% - 1200px) / 2)); }
-  .lp-hero { padding-inline: 0; }
-  .lp-hero-inner { padding-block: 64px 96px; }
   .lp-band > * { max-width: 1200px; margin-inline: auto; width: 100%; }
 
   .lp-section { gap: 24px; }
   .lp-section-head h2 { font-size: 34px; line-height: 1.12; }
   .lp-section-head p { font-size: 16px; }
-  .lp-hero h1 { font-size: 56px; letter-spacing: -0.03em; }
 
-  /* Kartu cek harga sedikit terangkat dari latar */
-  .lp-quick { box-shadow: 0 24px 60px rgba(7, 18, 45, 0.28); border-color: transparent; padding: 24px; }
 }
 
 /* ── Kartu motor: sedikit terangkat saat disentuh/disorot ── */
@@ -585,7 +573,7 @@
   .lp-hero { padding-bottom: 42px; }
   .lp-hero-inner {
     display: grid; grid-template-columns: 1fr 1.05fr; gap: 56px; align-items: center;
-    padding-block: 64px 40px;
+    padding: 64px max(40px, calc((100% - 1200px) / 2)) 40px;
   }
   .lp-hero h1 { font-size: 58px; }
   .lp-hero p { font-size: 17px; }
