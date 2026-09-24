@@ -428,7 +428,4 @@
 .lp-sheet-foot .lp-foot-row { display: flex; gap: 10px; }
 .lp-sheet-foot .lp-foot-row .lp-btn { flex: 1 1 auto; }
 
-/* ── Bagian syarat di halaman ── */
-.lp-terms-page { display: grid; gap: 10px 28px; }
-.lp-terms-page li { font-size: 13.5px; line-height: 1.65; color: var(--muted); }
-@media (min-width: 720px) { .lp-terms-page { grid-template-columns: 1fr 1fr; } }
+

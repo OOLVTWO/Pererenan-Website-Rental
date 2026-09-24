@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import '@/styles/landing.css';
-import { BUSINESS, STATS, FLEET, WHY_US, STEPS, REVIEWS, FAQ, TERMS, IMAGES, MONTHLY_MIN_DAYS } from '@/lib/landing/config';
+import { BUSINESS, STATS, FLEET, WHY_US, STEPS, REVIEWS, FAQ, IMAGES, MONTHLY_MIN_DAYS } from '@/lib/landing/config';
 import { formatRupiah, whatsappUrl } from '@/lib/landing/booking';
 import { LIcon } from '@/components/landing/LIcon';
 import BookingIsland from '@/components/landing/BookingIsland';
@@ -50,7 +50,6 @@ export default function LandingPage() {
           <a href="#prices">Prices</a>
           <a href="#how">How it works</a>
           <a href="#faq">FAQ</a>
-          <a href="#terms">Terms</a>
           <a className="lp-btn lp-btn-primary lp-btn-sm" href={simpleWa} target="_blank" rel="noopener noreferrer">
             <LIcon name="wa" size={17} /> WhatsApp
           </a>
@@ -213,18 +212,6 @@ export default function LandingPage() {
             </details>
           ))}
         </div>
-      </section>
-
-      {/* ── Syarat & ketentuan ── */}
-      <section className="lp-section" id="terms">
-        <div className="lp-section-head">
-          <span className="lp-kicker">Good to know</span>
-          <h2>Rental terms &amp; conditions</h2>
-          <p>The same list appears again before you send a booking request.</p>
-        </div>
-        <ol className="lp-terms-page">
-          {TERMS.map(t => <li key={t}>{t}</li>)}
-        </ol>
       </section>
 
       {/* ── Ajakan terakhir ── */}
