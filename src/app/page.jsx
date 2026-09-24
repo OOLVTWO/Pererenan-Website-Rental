@@ -56,8 +56,13 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      {/* ── Hero: teks kiri + foto kanan, angka menyatu di bawah tombol ── */}
+      {/* ── Hero: foto latar penuh + gradasi, teks di atasnya (gaya DriveX) ── */}
       <section className="lp-hero" id="top">
+        <div className="lp-hero-bg">
+          <Image src={IMAGES.hero} alt="" fill priority sizes="100vw" />
+          <span className="lp-hero-veil" aria-hidden="true" />
+        </div>
+
         <div className="lp-hero-inner">
           <div className="lp-hero-text">
             <span className="lp-eyebrow">Scooter rental · Pererenan · Canggu · Berawa</span>
@@ -81,31 +86,43 @@ export default function LandingPage() {
             </dl>
           </div>
 
-          <div className="lp-hero-media">
-            <Image src={IMAGES.hero} alt="Scooter parked on a quiet road in Pererenan"
-              width={1376} height={774} priority sizes="(max-width: 900px) 100vw, 55vw" />
-            <div className="lp-hero-badge">
-              <span className="lp-hero-badge-icon"><LIcon name="truck" size={18} /></span>
-              <span>
-                <strong>Free delivery</strong>
-                <em>Villa drop-off in under an hour</em>
-              </span>
-            </div>
+          <div className="lp-hero-chip">
+            <span className="lp-hero-chip-icon"><LIcon name="truck" size={18} /></span>
+            <span>
+              <strong>Free delivery</strong>
+              <em>At your villa in under an hour</em>
+            </span>
           </div>
         </div>
 
         <BookingIsland variant="bar" />
       </section>
 
-      {/* ── Armada ── */}
-      <section className="lp-section lp-section-white" id="fleet">
-        <div className="lp-section-head">
+      {/* ── Deretan model (strip tenang) ── */}
+      <section className="lp-strip" aria-label="Models we rent">
+        {FLEET.map(f => <span key={f.id}>{f.name}</span>)}
+      </section>
+
+      {/* ── Armada: teks kiri, kartu kanan ── */}
+      <section className="lp-section lp-section-white lp-fleet" id="fleet">
+        <div className="lp-fleet-intro">
           <span className="lp-kicker">Our fleet</span>
-          <h2>Every scooter, with the details that matter</h2>
-          <p>Capacity, engine size and storage for each model — so you know exactly what turns up.</p>
+          <h2>Handpicked for<br />your Bali ride</h2>
+          <p>
+            Capacity, engine size and storage for every model — so you know exactly what turns up
+            at your door. Every scooter is serviced monthly and comes with two helmets.
+          </p>
+          <a className="lp-btn lp-btn-dark" href={simpleWa} target="_blank" rel="noopener noreferrer">
+            Ask what&apos;s available <LIcon name="arrow" size={18} />
+          </a>
+          <span className="lp-fleet-note">
+            <LIcon name="check" size={16} /> Weekly &amp; monthly rates already discounted
+          </span>
         </div>
-        <BookingIsland variant="fleet" />
-        <span className="lp-swipe-hint">Swipe to see all {FLEET.length} models →</span>
+        <div className="lp-fleet-main">
+          <BookingIsland variant="fleet" />
+          <span className="lp-swipe-hint">Swipe to see all {FLEET.length} models →</span>
+        </div>
       </section>
 
       {/* ── Sorotan satu motor (bagian gelap) ── */}
