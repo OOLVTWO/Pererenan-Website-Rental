@@ -23,7 +23,15 @@
   overflow-x: hidden;
 }
 .lp *, .lp *::before, .lp *::after { box-sizing: border-box; }
-.lp h1, .lp h2, .lp h3, .lp h4 { margin: 0; letter-spacing: -0.03em; font-weight: 800; }
+.lp h1, .lp h2, .lp h3, .lp h4 {
+  margin: 0; letter-spacing: -0.03em; font-weight: 800;
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+}
+/* Angka besar ikut font judul, seperti di mockup */
+.lp-bar-total strong, .lp-estimate strong, .lp-bike-from strong, .lp-detail-price strong,
+.lp-rate-card strong, .lp-total-sum strong, .lp-step-num, .lp-hero-trust strong {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+}
 .lp p { margin: 0; }
 .lp img { max-width: 100%; height: auto; }
 .lp a { color: var(--blue); text-decoration: none; }

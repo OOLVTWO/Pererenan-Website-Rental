@@ -1,6 +1,14 @@
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Schibsted_Grotesk } from "next/font/google";
 
 // Self-hosted via Next.js at build time — no runtime CDN request.
+// Font judul halaman publik — sama persis dengan yang dipakai di mockup.
+const display = Schibsted_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-display",
+  display: "swap",
+});
+
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -26,7 +34,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={jakarta.variable}>
+    <html lang="en" className={`${jakarta.variable} ${display.variable}`}>
       <body>{children}</body>
     </html>
   );
