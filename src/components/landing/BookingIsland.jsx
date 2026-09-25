@@ -80,6 +80,10 @@ export default function BookingIsland({ variant = 'quick', initialVehicleId }) {
     return (
       <>
         <div className="lp-bar">
+          <div className="lp-bar-label">
+            <strong>Check price</strong>
+            <span>Weekly &amp; monthly rates applied automatically</span>
+          </div>
           <label className="lp-bar-field">
             <span>Scooter</span>
             <select value={vehicleId} onChange={e => setVehicleId(e.target.value)}>

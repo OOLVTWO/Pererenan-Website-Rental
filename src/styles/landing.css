@@ -573,6 +573,12 @@
 .lp-footer-map { border-radius: 18px; overflow: hidden; background: var(--surf); border: 1px solid var(--line); }
 .lp-footer-map img { width: 100%; height: auto; display: block; }
 
+/* ── 18e. Sel judul bilah pemesanan & kelompok judul armada ── */
+.lp-bar-label { display: flex; flex-direction: column; gap: 3px; }
+.lp-bar-label strong { font-size: 17px; font-weight: 800; letter-spacing: -0.02em; }
+.lp-bar-label span { font-size: 12.5px; line-height: 1.5; color: var(--muted); }
+.lp-fleet-titles { display: flex; flex-direction: column; gap: 12px; }
+
 /* ════════════════════════════════════════════════════════════
    19. MEDIA QUERY — tidak boleh ada aturan dasar di bawah sini
    ════════════════════════════════════════════════════════════ */
@@ -593,13 +599,14 @@
   .lp-hero-chip { display: flex; }
   .lp-bar {
     margin: -40px var(--pad) 0; padding: 18px 20px;
-    display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.1fr auto; gap: 18px; align-items: end;
+    display: grid; grid-template-columns: 1.05fr 1.15fr 0.95fr 0.95fr 1fr auto; gap: 20px; align-items: end;
   }
   .lp-bar-total { flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; }
   .lp-section { padding: 56px var(--pad); gap: 26px; }
   .lp-section-head h2, .lp-fleet-intro h2 { font-size: 42px; line-height: 1.06; }
   .lp-fleet { display: flex; flex-direction: column; gap: 26px; }
-  .lp-fleet-intro { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+  .lp-fleet-intro { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 40px; }
+  .lp-bar-label { justify-content: center; padding-bottom: 10px; }
   .lp-fleet-intro p { max-width: 340px; }
   .lp-fleet-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
   .lp-bike-body { gap: 12px; padding: 18px; }

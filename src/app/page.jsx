@@ -105,8 +105,10 @@ export default function LandingPage() {
       {/* ── Armada: teks kiri, kartu kanan ── */}
       <section className="lp-section lp-section-white lp-fleet" id="fleet">
         <div className="lp-fleet-intro">
-          <span className="lp-kicker">The fleet</span>
-          <h2>{FLEET.length} models, {STATS[0].value} scooters ready.</h2>
+          <div className="lp-fleet-titles">
+            <span className="lp-kicker">The fleet</span>
+            <h2>{FLEET.length} models, {STATS[0].value} scooters ready.</h2>
+          </div>
           <p>
             No hidden weekend surcharge. Weekly and monthly rates are already discounted, and the
             calculator applies the cheapest package for your dates.
@@ -119,7 +121,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Kenapa kami ── */}
-      <section className="lp-section lp-section-mist">
+      <section className="lp-section lp-section-white">
         <div className="lp-why-panel">
           <div className="lp-why-side">
             <span className="lp-kicker">Why us</span>
@@ -143,7 +145,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Cara sewa ── */}
-      <section className="lp-section lp-section-white" id="how">
+      <section className="lp-section lp-section-mist" id="how">
         <div className="lp-section-head">
           <span className="lp-kicker">How it works</span>
           <h2>Three steps, no paperwork</h2>
