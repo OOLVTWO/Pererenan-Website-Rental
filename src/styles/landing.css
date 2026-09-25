@@ -539,6 +539,40 @@
 .lp-announce span { font-size: 12.5px; line-height: 1.6; color: var(--txt2); }
 .lp-announce strong { color: var(--txt); }
 
+/* ── 18d. Baris bintang di hero, strip kepercayaan, panel why us, footer ── */
+.lp-hero-trust { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-top: 6px; }
+.lp-hero-trust span { font-size: 12.5px; color: rgba(255, 255, 255, 0.85); }
+.lp-hero-trust strong { color: #fff; font-weight: 800; }
+.lp-hero-trust i { width: 1px; height: 18px; background: rgba(255, 255, 255, 0.32); }
+.lp-stars { display: inline-flex; gap: 2px; color: var(--star); }
+.lp-stars svg { fill: var(--star); stroke: var(--star); }
+.lp-review-stars svg { fill: var(--star); stroke: var(--star); }
+
+.lp-trust { display: flex; flex-direction: column; padding: 22px var(--pad) 6px; }
+.lp-trust > div { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.lp-trust-icon {
+  width: 38px; height: 38px; flex-shrink: 0; border-radius: 11px;
+  background: var(--soft); color: var(--blue);
+  display: flex; align-items: center; justify-content: center;
+}
+.lp-trust > div > span:last-child { display: flex; flex-direction: column; gap: 1px; }
+.lp-trust strong { font-size: 14px; font-weight: 700; }
+.lp-trust em { font-style: normal; font-size: 12.5px; color: var(--muted); }
+
+.lp-why-panel { display: flex; flex-direction: column; gap: 20px; }
+.lp-why-side { display: flex; flex-direction: column; gap: 14px; }
+.lp-why-side h2 { font-size: 28px; line-height: 1.1; }
+.lp-why-media { display: none; border-radius: 20px; overflow: hidden; background: var(--soft); }
+.lp-why-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.lp-footer-top { display: flex; flex-direction: column; gap: 20px; }
+.lp-footer-lead { display: flex; flex-direction: column; gap: 14px; }
+.lp-footer-brand { display: flex; align-items: center; gap: 10px; }
+.lp-footer-brand img { width: 38px; height: auto; border-radius: 9px; }
+.lp-footer-cta { display: flex; flex-direction: column; gap: 10px; }
+.lp-footer-map { border-radius: 18px; overflow: hidden; background: var(--surf); border: 1px solid var(--line); }
+.lp-footer-map img { width: 100%; height: auto; display: block; }
+
 /* ════════════════════════════════════════════════════════════
    19. MEDIA QUERY — tidak boleh ada aturan dasar di bawah sini
    ════════════════════════════════════════════════════════════ */
@@ -571,7 +605,25 @@
   .lp-bike-body { gap: 12px; padding: 18px; }
   .lp-bike-body h3 { font-size: 19px; }
   .lp-bike-price strong { font-size: 24px; }
-  .lp-why-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .lp-why-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .lp-why-panel {
+    flex-direction: row; align-items: center; gap: 44px;
+    padding: 40px; background: var(--surf); border: 1px solid var(--line); border-radius: 26px;
+  }
+  .lp-why-side { flex: 1.05 1 0; gap: 22px; }
+  .lp-why-side h2 { font-size: 40px; line-height: 1.08; }
+  .lp-why-media { display: block; flex: 0.95 1 0; align-self: stretch; min-height: 380px; }
+  .lp-why { padding: 0; background: transparent; border: 0; }
+  .lp-trust {
+    flex-direction: row; padding: 30px var(--pad) 0;
+    border-bottom: 1px solid var(--line); padding-bottom: 22px;
+  }
+  .lp-trust > div { flex: 1 1 0; padding: 0 22px; border-bottom: 0; border-left: 1px solid var(--line); }
+  .lp-trust > div:first-child { padding-left: 0; border-left: 0; }
+  .lp-footer-top { flex-direction: row; align-items: center; gap: 56px; }
+  .lp-footer-lead { flex: 1.15 1 0; gap: 18px; }
+  .lp-footer-cta { flex-direction: row; }
+  .lp-footer-map { flex: 0.85 1 0; }
   .lp-why { padding: 22px; gap: 16px; }
   .lp-why h3 { font-size: 17px; }
   .lp-why p { font-size: 13.5px; }

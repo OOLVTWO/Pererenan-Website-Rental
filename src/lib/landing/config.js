@@ -13,8 +13,8 @@
 export const BUSINESS = {
   name: 'Boss Rent Pererenan',
   shortName: 'Boss Rent',
-  tagline: 'Your scooter, delivered before you drop your bags.',
-  intro: '39 automatics from Rp 100k a day. Helmet and raincoat included, always — and you keep your passport.',
+  tagline: 'Scooter rental made simple in Bali.',
+  intro: '39 automatics, serviced monthly and delivered free to your door in Canggu, Berawa and Pererenan. Helmets on the seat, and your passport stays with you.',
   phoneDisplay: '+62 812-3710-9751',
   phoneE164: '6281237109751',          // dipakai untuk link wa.me
   instagram: '@bossrentpererenan',
@@ -151,13 +151,13 @@ export const EQUIPMENT = [
 ];
 
 export const WHY_US = [
-  { icon: 'truck',  title: 'Free delivery',
+  { icon: 'truck',  title: 'Free delivery', short: 'Canggu · Berawa · Pererenan',
     text: 'We bring the scooter to your villa and collect it again — Canggu, Berawa and Pererenan.' },
-  { icon: 'wrench', title: 'Serviced every month',
+  { icon: 'wrench', title: 'Serviced every month', short: 'A service log per bike',
     text: 'Every bike has a service log. No bald tyres, no flat batteries.' },
-  { icon: 'helmet', title: 'Helmets & raincoat',
+  { icon: 'helmet', title: 'Helmets & raincoat', short: 'Two helmets, always included',
     text: 'Two helmets and a raincoat with every rental, at no extra cost.' },
-  { icon: 'shield', title: 'We don’t keep your passport',
+  { icon: 'shield', title: 'Your passport stays with you', short: 'A photo is enough',
     text: 'A photo is enough. A deposit is only needed on monthly rentals.' },
 ];
 

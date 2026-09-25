@@ -65,21 +65,23 @@ export default function LandingPage() {
                 <LIcon name="wa" size={18} /> Chat on WhatsApp
               </a>
             </div>
-            <dl className="lp-hero-stats">
-              {STATS.map(s => (
-                <div key={s.label}>
-                  <dt>{s.value}</dt>
-                  <dd>{s.label}</dd>
-                </div>
-              ))}
-            </dl>
+            <div className="lp-hero-trust">
+              <span className="lp-stars" aria-label="Rated 5 out of 5">
+                {[0, 1, 2, 3, 4].map(i => <LIcon key={i} name="star" size={15} />)}
+              </span>
+              <span><strong>{STATS[3].value}</strong> rating</span>
+              <i aria-hidden="true" />
+              <span><strong>{STATS[0].value}</strong> scooters</span>
+              <i aria-hidden="true" />
+              <span><strong>{STATS[1].value}</strong> models</span>
+            </div>
           </div>
 
           <div className="lp-hero-chip">
-            <span className="lp-hero-chip-icon"><LIcon name="truck" size={18} /></span>
+            <span className="lp-hero-chip-icon"><LIcon name="clock" size={18} /></span>
             <span>
-              <strong>Free delivery</strong>
-              <em>At your villa in under an hour</em>
+              <strong>Delivered in 1 hour</strong>
+              <em>{BUSINESS.hours}</em>
             </span>
           </div>
         </div>
@@ -87,26 +89,28 @@ export default function LandingPage() {
         <BookingIsland variant="bar" />
       </section>
 
-      {/* ── Deretan model (strip tenang) ── */}
-      <section className="lp-strip" aria-label="Models we rent">
-        {FLEET.map(f => <span key={f.id}>{f.name}</span>)}
+      {/* ── Strip kepercayaan ── */}
+      <section className="lp-trust" aria-label="What every rental includes">
+        {WHY_US.map(w => (
+          <div key={w.title}>
+            <span className="lp-trust-icon"><LIcon name={w.icon} size={19} /></span>
+            <span>
+              <strong>{w.title}</strong>
+              <em>{w.short}</em>
+            </span>
+          </div>
+        ))}
       </section>
 
       {/* ── Armada: teks kiri, kartu kanan ── */}
       <section className="lp-section lp-section-white lp-fleet" id="fleet">
         <div className="lp-fleet-intro">
-          <span className="lp-kicker">Our fleet</span>
-          <h2>Handpicked for<br />your Bali ride</h2>
+          <span className="lp-kicker">The fleet</span>
+          <h2>{FLEET.length} models, {STATS[0].value} scooters ready.</h2>
           <p>
-            Capacity, engine size and storage for every model — so you know exactly what turns up
-            at your door. Every scooter is serviced monthly and comes with two helmets.
+            No hidden weekend surcharge. Weekly and monthly rates are already discounted, and the
+            calculator applies the cheapest package for your dates.
           </p>
-          <a className="lp-btn lp-btn-ghost" href={simpleWa} target="_blank" rel="noopener noreferrer">
-            Ask what&apos;s available <LIcon name="arrow" size={18} />
-          </a>
-          <span className="lp-fleet-note">
-            <LIcon name="check" size={16} /> Weekly &amp; monthly rates already discounted
-          </span>
         </div>
         <div className="lp-fleet-main">
           <BookingIsland variant="fleet" />
@@ -116,25 +120,27 @@ export default function LandingPage() {
 
       {/* ── Kenapa kami ── */}
       <section className="lp-section lp-section-mist">
-        <div className="lp-section-head">
-          <span className="lp-kicker">Why us</span>
-          <h2>Booked in minutes, ridden all week</h2>
-        </div>
-        <div className="lp-why-grid">
-          {WHY_US.map(w => (
-            <div key={w.title} className="lp-card lp-why">
-              <span className="lp-why-icon"><LIcon name={w.icon} size={20} /></span>
-              <h3>{w.title}</h3>
-              <p>{w.text}</p>
+        <div className="lp-why-panel">
+          <div className="lp-why-side">
+            <span className="lp-kicker">Why us</span>
+            <h2>Rental without the usual traps.</h2>
+            <div className="lp-why-grid">
+              {WHY_US.map(w => (
+                <div key={w.title} className="lp-why">
+                  <span className="lp-why-icon"><LIcon name={w.icon} size={20} /></span>
+                  <div>
+                    <h3>{w.title}</h3>
+                    <p>{w.text}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+          <div className="lp-why-media">
+            <Image src={IMAGES.divider} alt="" width={1200} height={800} sizes="(max-width: 900px) 100vw, 46vw" loading="lazy" />
+          </div>
         </div>
       </section>
-
-      {/* ── Pemisah foto ── */}
-      <div className="lp-divider">
-        <Image src={IMAGES.divider} alt="" fill sizes="100vw" loading="lazy" />
-      </div>
 
       {/* ── Cara sewa ── */}
       <section className="lp-section lp-section-white" id="how">
@@ -183,27 +189,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Area antar ── */}
-      <section className="lp-section lp-section-white">
-        <div className="lp-card lp-area">
-          <div className="lp-area-text">
-            <h2>Free delivery area</h2>
-            <p>We drop the scooter off and pick it up again — no charge inside these areas.</p>
-            <div className="lp-chips">
-              {BUSINESS.deliveryAreas.map(a => <span key={a}>{a}</span>)}
-            </div>
-            <span className="lp-hint">{BUSINESS.deliveryNote}</span>
-            <a className="lp-link" href={BUSINESS.mapsUrl} target="_blank" rel="noopener noreferrer">
-              <LIcon name="pin" size={16} /> Open in Google Maps
-            </a>
-          </div>
-          <div className="lp-area-map">
-            <Image src={IMAGES.map} alt="Map of the delivery area around Pererenan" width={900} height={640}
-              sizes="(max-width: 860px) 100vw, 50vw" loading="lazy" />
-          </div>
-        </div>
-      </section>
-
       {/* ── FAQ (tanpa JavaScript) ── */}
       <section className="lp-section lp-section-white" id="faq">
         <div className="lp-section-head">
@@ -229,17 +214,35 @@ export default function LandingPage() {
 
       {/* ── Footer ── */}
       <footer className="lp-footer">
-        <div className="lp-footer-grid">
-          <div>
-            <strong>{BUSINESS.name}</strong>
-            <p>Scooter rental in Pererenan. Clean bikes, honest prices, delivered to your door.</p>
+        <div className="lp-footer-top">
+          <div className="lp-footer-lead">
+            <span className="lp-footer-brand">
+              <Image src="/images/logoCompany.png" alt="" width={38} height={26} />
+              <strong>{BUSINESS.name}</strong>
+            </span>
+            <p>Send us your dates and we reply with availability and a delivery time.</p>
+            <div className="lp-footer-cta">
+              <a className="lp-btn lp-btn-primary" href={simpleWa} target="_blank" rel="noopener noreferrer">
+                <LIcon name="wa" size={18} /> {BUSINESS.phoneDisplay}
+              </a>
+              <a className="lp-btn lp-btn-ghost" href={BUSINESS.mapsUrl} target="_blank" rel="noopener noreferrer">
+                <LIcon name="pin" size={17} /> Get directions
+              </a>
+            </div>
+            <div className="lp-chips">
+              {BUSINESS.deliveryAreas.map(a => <span key={a}>{a}</span>)}
+            </div>
           </div>
+          <div className="lp-footer-map">
+            <Image src={IMAGES.map} alt="Map of the delivery area around Pererenan" width={900} height={640}
+              sizes="(max-width: 860px) 100vw, 44vw" loading="lazy" />
+          </div>
+        </div>
+
+        <div className="lp-footer-grid">
           <div>
             <span className="lp-footer-label">Visit us</span>
             <p>{BUSINESS.address}</p>
-            <a href={BUSINESS.mapsUrl} target="_blank" rel="noopener noreferrer">
-              <LIcon name="pin" size={16} /> Open in Google Maps
-            </a>
           </div>
           <div>
             <span className="lp-footer-label">Talk to us</span>
@@ -249,9 +252,14 @@ export default function LandingPage() {
             <a href={BUSINESS.instagramUrl} target="_blank" rel="noopener noreferrer">
               <LIcon name="insta" size={16} /> {BUSINESS.instagram}
             </a>
+          </div>
+          <div>
+            <span className="lp-footer-label">Opening hours</span>
             <span className="lp-footer-hours"><LIcon name="clock" size={16} /> {BUSINESS.hours}</span>
+            <span className="lp-footer-hours"><LIcon name="truck" size={16} /> {BUSINESS.deliveryNote}</span>
           </div>
         </div>
+
         <div className="lp-footer-bottom">
           <span>© {new Date().getFullYear()} {BUSINESS.name}</span>
           <span>Add-ons: top box &amp; surf rack from {EQUIPMENT_MIN_DAYS} days</span>
