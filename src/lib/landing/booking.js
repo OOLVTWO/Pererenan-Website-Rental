@@ -85,6 +85,15 @@ export function calcEquipment(selection, days) {
   return { total, lines, selection: normalized };
 }
 
+export function formatShort(n) {
+  if (n >= 1000000) {
+    const jt = n / 1000000;
+    return `${String(jt % 1 === 0 ? jt : jt.toFixed(1)).replace('.', ',')}jt`;
+  }
+  if (n >= 100000) return `${Math.round(n / 1000)}rb`;
+  return `Rp ${Math.round(n / 1000)}k`;
+}
+
 export function formatRupiah(n) {
   return `Rp ${Math.round(Number(n) || 0).toLocaleString('id-ID')}`;
 }

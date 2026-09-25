@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { BUSINESS, FLEET, EQUIPMENT_MIN_DAYS, TERMS } from '@/lib/landing/config';
 import {
   calcRental, calcEquipment, availableEquipment, daysBetween, addDays,
-  formatRupiah, formatDateEn, buildWhatsAppMessage, whatsappUrl,
+  formatRupiah, formatShort, formatDateEn, buildWhatsAppMessage, whatsappUrl,
 } from '@/lib/landing/booking';
 import { LIcon } from '@/components/landing/LIcon';
 
@@ -104,7 +104,7 @@ export default function BookingIsland({ variant = 'quick', initialVehicleId }) {
             <strong>{formatRupiah(rental.total)}</strong>
           </div>
           <button type="button" className="lp-btn lp-btn-primary lp-bar-cta" onClick={() => openFor()}>
-            Book now <LIcon name="arrow" size={18} />
+            Continue <LIcon name="arrow" size={18} />
           </button>
         </div>
         {open && renderSheet()}
@@ -152,7 +152,7 @@ export default function BookingIsland({ variant = 'quick', initialVehicleId }) {
           </div>
 
           <button type="button" className="lp-btn lp-btn-primary" onClick={() => openFor()}>
-            Book now <LIcon name="arrow" size={18} />
+            Continue <LIcon name="arrow" size={18} />
           </button>
           <span className="lp-quick-note">You&apos;ll see a summary before anything is sent.</span>
         </div>
@@ -204,10 +204,10 @@ export default function BookingIsland({ variant = 'quick', initialVehicleId }) {
               <div className="lp-bike-price">
                 <span className="lp-bike-from">
                   <em>From</em>
-                  <strong>{formatRupiah(f.price.daily)}<i>/ day</i></strong>
+                  <strong>{formatShort(f.price.daily)}<i>/ day</i></strong>
                 </span>
                 <span className="lp-bike-week">
-                  week<br /><b>{formatRupiah(f.price.weekly)}</b>
+                  week<br /><b>{formatShort(f.price.weekly)}</b>
                 </span>
               </div>
               <div className="lp-bike-actions">

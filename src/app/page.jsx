@@ -110,13 +110,14 @@ export default function LandingPage() {
             <span className="lp-kicker">The fleet</span>
             <h2>Seven models, {STATS[0].value} scooters ready.</h2>
           </div>
-          <p>
-            No hidden weekend surcharge. Weekly and monthly rates are already discounted, and the
-            calculator applies the cheapest package for your dates.
-          </p>
         </div>
         <div className="lp-fleet-main">
           <BookingIsland variant="fleet" />
+        <p className="lp-fleet-note">
+          No hidden weekend surcharge — weekly and monthly rates are already discounted and applied
+          automatically. Top box and surf rack: {formatRupiah(350000)} each, on rentals of{' '}
+          {EQUIPMENT_MIN_DAYS} days or more, fitting included.
+        </p>
           <span className="lp-swipe-hint">Swipe to see all {FLEET.length} models →</span>
         </div>
       </section>
