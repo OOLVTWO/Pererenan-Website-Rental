@@ -32,7 +32,8 @@ export default function LandingPage() {
       <header className="lp-header">
         <a className="lp-brand" href="#top">
           <Image src="/images/logoCompany.png" alt="" width={40} height={27} priority />
-          <span>{BUSINESS.name}</span>
+          <span className="lp-brand-short">{BUSINESS.shortName}</span>
+          <span className="lp-brand-long">{BUSINESS.name}</span>
         </a>
         <nav className="lp-nav" aria-label="Main">
           <a href="#fleet">Fleet</a>
