@@ -47,6 +47,7 @@ export default function BookingIsland({ variant = 'quick', initialVehicleId }) {
   const eq = useMemo(() => calcEquipment(equipment, days), [equipment, days]);
   const equipmentList = useMemo(() => availableEquipment(days), [days]);
   const total = rental.total + eq.total;
+  const rateLabel = days >= 30 ? 'monthly rate applied' : days >= 7 ? 'weekly rate applied' : 'daily rate';
 
   const openFor = useCallback((id) => {
     if (id) setVehicleId(id);
@@ -99,7 +100,7 @@ export default function BookingIsland({ variant = 'quick', initialVehicleId }) {
             <input type="date" value={endDate} min={startDate} onChange={e => setReturnDate(e.target.value)} />
           </label>
           <div className="lp-bar-total">
-            <span>{days} day{days > 1 ? 's' : ''} · estimated</span>
+            <span>{days} day{days > 1 ? 's' : ''} · {rateLabel}</span>
             <strong>{formatRupiah(rental.total)}</strong>
           </div>
           <button type="button" className="lp-btn lp-btn-primary lp-bar-cta" onClick={() => openFor()}>
@@ -118,7 +119,7 @@ export default function BookingIsland({ variant = 'quick', initialVehicleId }) {
         <div className="lp-card lp-quick">
           <div className="lp-quick-head">
             <h2>Check price &amp; availability</h2>
-            <span>Takes 10 seconds. No account needed.</span>
+            <span>Weekly &amp; monthly rates applied automatically</span>
           </div>
 
           <label className="lp-field">
@@ -163,10 +164,10 @@ export default function BookingIsland({ variant = 'quick', initialVehicleId }) {
 
   // ── Armada + tab filter ──
   const filters = [
-    { key: 'all', label: 'All models', test: () => true },
-    { key: 'budget', label: 'Under Rp 150k', test: f => f.price.daily < 150000 },
+    { key: 'all', label: 'All', test: () => true },
+    { key: 'budget', label: 'Under 150k', test: f => f.price.daily < 150000 },
     { key: 'small', label: '110–125cc', test: f => /1[01][05]cc|125cc/.test(f.engine) },
-    { key: 'big', label: '155cc & up', test: f => /15[05]cc|160cc/.test(f.engine) },
+    { key: 'big', label: '155cc+', test: f => /15[05]cc|160cc/.test(f.engine) },
   ];
   const shown = FLEET.filter(filters.find(t => t.key === fleetFilter)?.test || (() => true));
 
@@ -187,12 +188,13 @@ export default function BookingIsland({ variant = 'quick', initialVehicleId }) {
             <div className="lp-bike-photo">
               <Image src={f.photo} alt={f.name} width={640} height={420} sizes="(max-width: 700px) 80vw, 33vw" />
               {f.tag && <span className="lp-bike-tag">{f.tag}</span>}
+              <span className="lp-bike-cc">{f.engine.split(' · ')[0]}</span>
             </div>
             <div className="lp-bike-body">
               <h3>{f.name}</h3>
               <div className="lp-bike-specs">
-                <span><LIcon name="user" size={15} /> {f.riders}</span>
-                <span><LIcon name="engine" size={15} /> {f.engine}</span>
+                <span>automatic</span>
+                <span>{f.riders}</span>
               </div>
               <span className="lp-bike-spec-row">
                 <LIcon name="box" size={15} /> {f.storage}
@@ -200,11 +202,13 @@ export default function BookingIsland({ variant = 'quick', initialVehicleId }) {
               </span>
               <p>{f.blurb}</p>
               <div className="lp-bike-price">
-                <strong>{formatRupiah(f.price.daily)}</strong><span>/ day</span>
-              </div>
-              <div className="lp-bike-rates">
-                <span>{formatRupiah(f.price.weekly)} / week</span>
-                <span>{formatRupiah(f.price.monthly)} / month</span>
+                <span className="lp-bike-from">
+                  <em>From</em>
+                  <strong>{formatRupiah(f.price.daily)}<i>/ day</i></strong>
+                </span>
+                <span className="lp-bike-week">
+                  week<br /><b>{formatRupiah(f.price.weekly)}</b>
+                </span>
               </div>
               <div className="lp-bike-actions">
                 <a className="lp-btn lp-btn-ghost" href={`/scooters/${f.id}`}>Details</a>

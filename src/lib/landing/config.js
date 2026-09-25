@@ -151,20 +151,20 @@ export const EQUIPMENT = [
 ];
 
 export const WHY_US = [
+  { icon: 'helmet', title: '2 helmets + raincoat', short: 'Always included',
+    text: 'Two helmets and a raincoat come with every rental, at no extra cost.' },
   { icon: 'truck',  title: 'Free delivery', short: 'Canggu · Berawa · Pererenan',
     text: 'We bring the scooter to your villa and collect it again — Canggu, Berawa and Pererenan.' },
-  { icon: 'wrench', title: 'Serviced every month', short: 'A service log per bike',
+  { icon: 'wrench', title: 'Serviced monthly', short: 'A service log per bike',
     text: 'Every bike has a service log. No bald tyres, no flat batteries.' },
-  { icon: 'helmet', title: 'Helmets & raincoat', short: 'Two helmets, always included',
-    text: 'Two helmets and a raincoat with every rental, at no extra cost.' },
-  { icon: 'shield', title: 'Your passport stays with you', short: 'A photo is enough',
+  { icon: 'shield', title: 'Passport stays with you', short: 'A photo is enough',
     text: 'A photo is enough. A deposit is only needed on monthly rentals.' },
 ];
 
 export const STEPS = [
-  { title: 'Choose your scooter', text: 'Pick a model and your dates.' },
-  { title: 'Review your booking', text: 'Add-ons, delivery address and total — all on one screen.' },
-  { title: 'Send on WhatsApp', text: 'We confirm availability, then deliver to your door.' },
+  { title: 'Pick your dates', text: 'Choose a scooter and the days you need it. The best rate is applied automatically.' },
+  { title: 'Confirm on WhatsApp', text: 'We reply with availability and the delivery time, usually within minutes.' },
+  { title: 'We deliver, you ride', text: 'Bike, helmets and raincoat at your door. We collect it at the end.' },
 ];
 
 /**

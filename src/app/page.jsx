@@ -108,7 +108,7 @@ export default function LandingPage() {
         <div className="lp-fleet-intro">
           <div className="lp-fleet-titles">
             <span className="lp-kicker">The fleet</span>
-            <h2>{FLEET.length} models, {STATS[0].value} scooters ready.</h2>
+            <h2>Seven models, {STATS[0].value} scooters ready.</h2>
           </div>
           <p>
             No hidden weekend surcharge. Weekly and monthly rates are already discounted, and the
@@ -118,6 +118,29 @@ export default function LandingPage() {
         <div className="lp-fleet-main">
           <BookingIsland variant="fleet" />
           <span className="lp-swipe-hint">Swipe to see all {FLEET.length} models →</span>
+        </div>
+      </section>
+
+      {/* ── Cara sewa ── */}
+      <section className="lp-section lp-how" id="how">
+        <div className="lp-section-head">
+          <span className="lp-kicker">How it works</span>
+          <h2>Three steps, no counter queue.</h2>
+        </div>
+        <ol className="lp-steps">
+          {STEPS.map((s, i) => (
+            <li key={s.title}>
+              <span className="lp-step-num">{i + 1}</span>
+              <span><strong>{s.title}</strong><em>{s.text}</em></span>
+            </li>
+          ))}
+        </ol>
+        <div className="lp-extras">
+          <b>Extras</b>
+          <span>Top box <strong>{formatRupiah(350000)}</strong></span>
+          <span>Surf rack <strong>{formatRupiah(350000)}</strong></span>
+          <span>Rentals of {EQUIPMENT_MIN_DAYS} days or more · fitting included</span>
+          <span>Helmets &amp; raincoat always free</span>
         </div>
       </section>
 
@@ -138,33 +161,13 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
+            <span className="lp-hint">
+              <LIcon name="check" size={15} /> Every bike is on a monthly service log, and the same team answers your messages.
+            </span>
           </div>
           <div className="lp-why-media">
             <Image src={IMAGES.divider} alt="" width={1200} height={800} sizes="(max-width: 900px) 100vw, 46vw" loading="lazy" />
           </div>
-        </div>
-      </section>
-
-      {/* ── Cara sewa ── */}
-      <section className="lp-section lp-section-mist" id="how">
-        <div className="lp-section-head">
-          <span className="lp-kicker">How it works</span>
-          <h2>Three steps, no paperwork</h2>
-        </div>
-        <ol className="lp-steps">
-          {STEPS.map((s, i) => (
-            <li key={s.title}>
-              <span className="lp-step-num">{i + 1}</span>
-              <span><strong>{s.title}</strong><em>{s.text}</em></span>
-            </li>
-          ))}
-        </ol>
-        <div className="lp-extras">
-          <b>Extras</b>
-          <span>Top box <strong>{formatRupiah(350000)}</strong></span>
-          <span>Surf rack <strong>{formatRupiah(350000)}</strong></span>
-          <span>Rentals of {EQUIPMENT_MIN_DAYS} days or more · fitting included</span>
-          <span>Helmets &amp; raincoat always free</span>
         </div>
       </section>
 
@@ -173,7 +176,7 @@ export default function LandingPage() {
         <div className="lp-reviews-head">
           <div className="lp-section-head">
             <span className="lp-kicker">Reviews</span>
-            <h2>What guests say</h2>
+            <h2>What renters say.</h2>
           </div>
           <a className="lp-btn lp-btn-ghost" href={BUSINESS.mapsUrl} target="_blank" rel="noopener noreferrer">
             Read all reviews on Google <LIcon name="arrow" size={16} />
@@ -196,7 +199,7 @@ export default function LandingPage() {
       <section className="lp-section lp-section-white" id="faq">
         <div className="lp-section-head">
           <span className="lp-kicker">FAQ</span>
-          <h2>Questions we get every day</h2>
+          <h2>Good to know.</h2>
         </div>
         <div className="lp-faq">
           {FAQ.slice(0, 5).map((f, i) => (

@@ -584,6 +584,22 @@
 .lp-bar-label span { font-size: 12.5px; line-height: 1.5; color: var(--muted); }
 .lp-fleet-titles { display: flex; flex-direction: column; gap: 12px; }
 
+/* ── 18f. Detail kartu motor seperti mockup ── */
+.lp-bike-cc {
+  position: absolute; top: 18px; right: 18px; padding: 5px 10px; border-radius: 999px;
+  background: var(--surf); border: 1px solid var(--line);
+  font-size: 11px; font-weight: 700; color: var(--txt2);
+}
+.lp-bike-price { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; }
+.lp-bike-from { display: flex; flex-direction: column; gap: 1px; }
+.lp-bike-from em { font-style: normal; font-size: 11px; font-weight: 600; color: var(--muted); }
+.lp-bike-from strong { font-size: 21px; font-weight: 800; letter-spacing: -0.03em; }
+.lp-bike-from i { font-style: normal; font-size: 12px; font-weight: 600; color: var(--muted); }
+.lp-bike-week { font-size: 11.5px; line-height: 1.5; text-align: right; color: var(--muted); }
+.lp-bike-week b { color: var(--txt2); }
+.lp-section.lp-fleet { background: var(--mist); }
+.lp-section.lp-how { background: var(--surf); }
+
 /* ════════════════════════════════════════════════════════════
    19. MEDIA QUERY — tidak boleh ada aturan dasar di bawah sini
    ════════════════════════════════════════════════════════════ */
@@ -616,6 +632,9 @@
   .lp-section { padding: 56px var(--pad); gap: 26px; }
   .lp-section-head h2, .lp-fleet-intro h2 { font-size: 42px; line-height: 1.06; }
   .lp-fleet { display: flex; flex-direction: column; gap: 26px; }
+  .lp-section.lp-fleet { background: var(--surf); }
+  .lp-section.lp-how { background: var(--mist); }
+  .lp-bike-from strong { font-size: 24px; }
   .lp-fleet-intro { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 40px; }
   .lp-bar-label { justify-content: center; padding-bottom: 10px; }
   .lp-fleet-intro p { max-width: 340px; }
