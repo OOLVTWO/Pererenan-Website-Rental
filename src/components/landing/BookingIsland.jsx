@@ -208,6 +208,14 @@ export default function BookingIsland({ variant = 'quick' }) {
             </div>
           </article>
         ))}
+        <article className="lp-bike-ask">
+          <span className="lp-bike-ask-icon"><LIcon name="wa" size={20} /></span>
+          <h3>Not sure which one?</h3>
+          <p>Tell us where you are going and how long. We pick the right scooter.</p>
+          <a className="lp-btn" href={`https://wa.me/${BUSINESS.phoneE164}`} target="_blank" rel="noopener noreferrer">
+            <LIcon name="wa" size={16} /> Ask us
+          </a>
+        </article>
       </div>
 
       {open && renderSheet()}

@@ -24,17 +24,6 @@ const simpleWa = whatsappUrl(
   "Hi Boss Rent! I'd like to rent a scooter. Could you tell me what's available?",
 );
 
-/** Harga contoh untuk bagian perbandingan (model paling sering disewa). */
-const HEADLINE_BIKE = FLEET[0];
-
-function priceRows() {
-  const p = HEADLINE_BIKE.price;
-  return [
-    { label: 'Daily', price: p.daily, note: 'per day', save: null },
-    { label: 'Weekly', price: p.weekly, note: '7 days', save: p.daily * 7 - p.weekly },
-    { label: 'Monthly', price: p.monthly, note: '30 days', save: p.daily * 30 - p.monthly, highlight: true },
-  ];
-}
 
 export default function LandingPage() {
   return (
@@ -47,8 +36,8 @@ export default function LandingPage() {
         </a>
         <nav className="lp-nav" aria-label="Main">
           <a href="#fleet">Fleet</a>
-          <a href="#prices">Prices</a>
           <a href="#how">How it works</a>
+          <a href="#reviews">Reviews</a>
           <a href="#faq">FAQ</a>
           <a className="lp-btn lp-btn-primary lp-btn-sm" href={simpleWa} target="_blank" rel="noopener noreferrer">
             <LIcon name="wa" size={17} /> WhatsApp
@@ -65,15 +54,15 @@ export default function LandingPage() {
 
         <div className="lp-hero-inner">
           <div className="lp-hero-text">
-            <span className="lp-eyebrow">Scooter rental · Pererenan · Canggu · Berawa</span>
+            <span className="lp-eyebrow light">Pererenan · Canggu · Berawa</span>
             <h1>{BUSINESS.tagline}</h1>
             <p>{BUSINESS.intro}</p>
             <div className="lp-hero-cta">
-              <a className="lp-btn lp-btn-dark" href="#fleet">
-                Explore the fleet <LIcon name="arrow" size={18} />
+              <a className="lp-btn lp-btn-primary" href="#fleet">
+                Book a scooter <LIcon name="arrow" size={18} />
               </a>
-              <a className="lp-btn lp-btn-outline" href={simpleWa} target="_blank" rel="noopener noreferrer">
-                <LIcon name="wa" size={18} /> Chat with us
+              <a className="lp-btn lp-btn-glass" href={simpleWa} target="_blank" rel="noopener noreferrer">
+                <LIcon name="wa" size={18} /> Chat on WhatsApp
               </a>
             </div>
             <dl className="lp-hero-stats">
@@ -112,7 +101,7 @@ export default function LandingPage() {
             Capacity, engine size and storage for every model — so you know exactly what turns up
             at your door. Every scooter is serviced monthly and comes with two helmets.
           </p>
-          <a className="lp-btn lp-btn-dark" href={simpleWa} target="_blank" rel="noopener noreferrer">
+          <a className="lp-btn lp-btn-ghost" href={simpleWa} target="_blank" rel="noopener noreferrer">
             Ask what&apos;s available <LIcon name="arrow" size={18} />
           </a>
           <span className="lp-fleet-note">
@@ -125,58 +114,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Sorotan satu motor (bagian gelap) ── */}
-      <section className="lp-showcase">
-        <span className="lp-showcase-ghost" aria-hidden="true">155</span>
-        <div className="lp-showcase-inner">
-          <div className="lp-showcase-media">
-            <Image src={FLEET[1].photo} alt={FLEET[1].name} width={800} height={520}
-              sizes="(max-width: 900px) 90vw, 46vw" loading="lazy" />
-          </div>
-          <div className="lp-showcase-text">
-            <span className="lp-eyebrow light">Most booked for long rides</span>
-            <h2>{FLEET[1].name}</h2>
-            <p>{FLEET[1].blurb}</p>
-            <ul className="lp-showcase-specs">
-              <li><LIcon name="engine" size={17} /> {FLEET[1].engine}</li>
-              <li><LIcon name="user" size={17} /> {FLEET[1].riders}</li>
-              <li><LIcon name="box" size={17} /> {FLEET[1].storage}</li>
-              <li><LIcon name="shield" size={17} /> Helmets &amp; raincoat included</li>
-            </ul>
-            <div className="lp-showcase-price">
-              <span>From</span>
-              <strong>{formatRupiah(FLEET[1].price.daily)}</strong>
-              <span>/ day</span>
-            </div>
-            <a className="lp-btn lp-btn-light" href="#fleet">
-              See all models <LIcon name="arrow" size={18} />
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Perbandingan harga ── */}
-      <section className="lp-band" id="prices">
-        <div className="lp-section-head lp-on-dark">
-          <span className="lp-kicker">Longer = cheaper</span>
-          <h2>{HEADLINE_BIKE.name} — what you pay</h2>
-          <p>Weekly and monthly rates are already discounted. The calculator applies them for you.</p>
-        </div>
-        <div className="lp-price-grid">
-          {priceRows().map(r => (
-            <div key={r.label} className={`lp-price-card${r.highlight ? ' highlight' : ''}`}>
-              <span className="lp-price-label">{r.label}</span>
-              <strong>{formatRupiah(r.price)}</strong>
-              <span className="lp-price-note">{r.note}</span>
-              {r.save > 0 && <span className="lp-price-save">Save {formatRupiah(r.save)}</span>}
-            </div>
-          ))}
-        </div>
-        <span className="lp-band-note">Same idea for every model — each card shows its weekly and monthly price.</span>
-      </section>
-
       {/* ── Kenapa kami ── */}
-      <section className="lp-section">
+      <section className="lp-section lp-section-mist">
         <div className="lp-section-head">
           <span className="lp-kicker">Why us</span>
           <h2>Booked in minutes, ridden all week</h2>
@@ -211,10 +150,17 @@ export default function LandingPage() {
             </li>
           ))}
         </ol>
+        <div className="lp-extras">
+          <b>Extras</b>
+          <span>Top box <strong>{formatRupiah(350000)}</strong></span>
+          <span>Surf rack <strong>{formatRupiah(350000)}</strong></span>
+          <span>Rentals of {MONTHLY_MIN_DAYS} days or more · fitting included</span>
+          <span>Helmets &amp; raincoat always free</span>
+        </div>
       </section>
 
       {/* ── Ulasan ── */}
-      <section className="lp-section" id="reviews">
+      <section className="lp-section lp-section-mist" id="reviews">
         <div className="lp-reviews-head">
           <div className="lp-section-head">
             <span className="lp-kicker">Reviews</span>
@@ -241,7 +187,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Area antar ── */}
-      <section className="lp-section">
+      <section className="lp-section lp-section-white">
         <div className="lp-card lp-area">
           <div className="lp-area-text">
             <h2>Free delivery area</h2>
@@ -268,25 +214,19 @@ export default function LandingPage() {
           <h2>Questions we get every day</h2>
         </div>
         <div className="lp-faq">
-          {FAQ.map((f, i) => (
+          {FAQ.slice(0, 5).map((f, i) => (
             <details key={f.q} open={i === 0}>
               <summary>{f.q}<LIcon name="down" size={18} /></summary>
               <p>{f.a}</p>
             </details>
           ))}
-        </div>
-      </section>
-
-      {/* ── Ajakan terakhir ── */}
-      <section className="lp-section">
-        <div className="lp-cta">
-          <div>
-            <h2>Ready to ride today?</h2>
-            <p>Send a request and we&apos;ll confirm availability in minutes.</p>
+          <div className="lp-faq-ask">
+            <h3>Still have a question?</h3>
+            <p>Send it over and we reply with a straight answer, usually within minutes.</p>
+            <a className="lp-btn" href={simpleWa} target="_blank" rel="noopener noreferrer">
+              <LIcon name="wa" size={16} /> Ask on WhatsApp
+            </a>
           </div>
-          <a className="lp-btn lp-btn-light lp-btn-lg" href={simpleWa} target="_blank" rel="noopener noreferrer">
-            <LIcon name="wa" size={19} /> Book on WhatsApp
-          </a>
         </div>
       </section>
 
