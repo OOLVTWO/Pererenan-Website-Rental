@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import '@/styles/landing.css';
-import { BUSINESS, STATS, FLEET, WHY_US, STEPS, REVIEWS, FAQ, IMAGES, MONTHLY_MIN_DAYS } from '@/lib/landing/config';
+import { BUSINESS, STATS, FLEET, WHY_US, STEPS, REVIEWS, FAQ, IMAGES, EQUIPMENT_MIN_DAYS } from '@/lib/landing/config';
 import { formatRupiah, whatsappUrl } from '@/lib/landing/booking';
 import { LIcon } from '@/components/landing/LIcon';
 import BookingIsland from '@/components/landing/BookingIsland';
@@ -154,7 +154,7 @@ export default function LandingPage() {
           <b>Extras</b>
           <span>Top box <strong>{formatRupiah(350000)}</strong></span>
           <span>Surf rack <strong>{formatRupiah(350000)}</strong></span>
-          <span>Rentals of {MONTHLY_MIN_DAYS} days or more · fitting included</span>
+          <span>Rentals of {EQUIPMENT_MIN_DAYS} days or more · fitting included</span>
           <span>Helmets &amp; raincoat always free</span>
         </div>
       </section>
@@ -170,9 +170,6 @@ export default function LandingPage() {
             Read all reviews on Google <LIcon name="arrow" size={16} />
           </a>
         </div>
-        {REVIEWS.isSample && (
-          <span className="lp-sample">Sample reviews — replace with real ones before launch</span>
-        )}
         <div className="lp-review-grid">
           {REVIEWS.items.map(r => (
             <figure key={r.name} className="lp-card lp-review">
@@ -257,7 +254,7 @@ export default function LandingPage() {
         </div>
         <div className="lp-footer-bottom">
           <span>© {new Date().getFullYear()} {BUSINESS.name}</span>
-          <span>Add-ons: top box &amp; surf rack from {MONTHLY_MIN_DAYS} days</span>
+          <span>Add-ons: top box &amp; surf rack from {EQUIPMENT_MIN_DAYS} days</span>
         </div>
       </footer>
 

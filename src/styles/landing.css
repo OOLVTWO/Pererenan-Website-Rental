@@ -485,6 +485,60 @@
 .lp-foot-row { display: flex; gap: 10px; }
 .lp-foot-row .lp-btn-primary { flex: 1 1 auto; }
 
+/* ── 18b. Halaman detail motor ── */
+.lp-subheader {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 12px var(--pad); background: var(--surf); border-bottom: 1px solid var(--line);
+}
+.lp-back { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--txt); }
+.lp-back svg { transform: rotate(180deg); color: var(--blue); }
+.lp-detail { display: flex; flex-direction: column; gap: 18px; padding: 20px var(--pad) 8px; }
+.lp-detail-media { position: relative; border-radius: 20px; overflow: hidden; background: var(--mist); padding: 14px; }
+.lp-detail-media img { width: 100%; height: auto; display: block; border-radius: 14px; background: var(--soft); }
+.lp-detail-text { display: flex; flex-direction: column; gap: 12px; }
+.lp-detail-text h1 { font-size: 32px; line-height: 1.08; }
+.lp-detail-text p { font-size: 14.5px; line-height: 1.75; color: var(--txt2); }
+.lp-detail-specs { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.lp-detail-specs li { display: flex; align-items: center; gap: 9px; font-size: 14px; color: var(--txt2); }
+.lp-detail-specs svg { color: var(--blue); flex-shrink: 0; }
+.lp-detail-price { display: flex; align-items: baseline; gap: 7px; padding-top: 12px; border-top: 1px solid var(--line); }
+.lp-detail-price span { font-size: 13px; font-weight: 600; color: var(--muted); }
+.lp-detail-price strong { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; }
+.lp-rate-grid { display: flex; flex-direction: column; gap: 10px; }
+.lp-rate-card {
+  display: flex; flex-direction: column; gap: 4px; padding: 16px;
+  background: var(--surf); border: 1px solid var(--line); border-radius: 16px;
+}
+.lp-rate-card strong { font-size: 25px; font-weight: 800; letter-spacing: -0.03em; }
+.lp-rate-label { font-size: 12px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); }
+.lp-rate-note { font-size: 12.5px; color: var(--muted); }
+.lp-rate-save { align-self: flex-start; padding: 4px 10px; border-radius: 999px; background: var(--soft); color: var(--blue-d); font-size: 11.5px; font-weight: 700; }
+.lp-other-grid { display: flex; flex-direction: column; gap: 10px; }
+.lp-other {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 10px;
+  background: var(--surf); border: 1px solid var(--line); border-radius: 14px; color: var(--txt);
+}
+.lp-other:hover { border-color: var(--soft-b); }
+.lp-other img { width: 74px; height: auto; border-radius: 9px; background: var(--mist); }
+.lp-other > span { display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; }
+.lp-other strong { font-size: 14.5px; font-weight: 700; }
+.lp-other em { font-style: normal; font-size: 12.5px; color: var(--muted); }
+.lp-other svg { color: var(--blue); flex-shrink: 0; }
+.lp-why > div { display: flex; flex-direction: column; gap: 4px; }
+
+/* ── 18c. Tombol ganda di kartu motor & pengumuman di lembar pesanan ── */
+.lp-bike-actions { display: flex; gap: 8px; margin-top: auto; }
+.lp-bike-actions .lp-btn { flex: 1 1 0; min-height: 44px; padding: 0 10px; font-size: 13px; }
+.lp-bike-actions .lp-btn-ghost { background: var(--surf); color: var(--txt2); border: 1px solid var(--line); }
+.lp .lp-bike-actions .lp-btn-primary { background: var(--blue); color: #fff; border: 0; }
+.lp-announce {
+  display: flex; gap: 11px; flex-shrink: 0;
+  padding: 12px 18px; background: var(--soft); border-bottom: 1px solid var(--soft-b);
+}
+.lp-announce svg { color: var(--blue); flex-shrink: 0; }
+.lp-announce span { font-size: 12.5px; line-height: 1.6; color: var(--txt2); }
+.lp-announce strong { color: var(--txt); }
+
 /* ════════════════════════════════════════════════════════════
    19. MEDIA QUERY — tidak boleh ada aturan dasar di bawah sini
    ════════════════════════════════════════════════════════════ */
@@ -545,6 +599,18 @@
   .lp-sheet { max-width: 720px; border-radius: 22px; max-height: 88vh; }
   .lp-quick { padding: 20px; }
   .lp-float { right: 28px; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
+}
+
+@media (min-width: 900px) {
+  .lp-detail { flex-direction: row; align-items: center; gap: 48px; padding: 40px var(--pad) 16px; }
+  .lp-detail-media { flex: 1 1 0; }
+  .lp-detail-text { flex: 1 1 0; gap: 16px; }
+  .lp-detail-text h1 { font-size: 48px; }
+  .lp-detail-text p { font-size: 16px; }
+  .lp-detail-specs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lp-rate-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .lp-rate-card { padding: 24px; }
+  .lp-other-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 }
 
 @media (min-width: 1024px) {

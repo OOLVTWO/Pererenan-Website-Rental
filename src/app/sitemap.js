@@ -1,3 +1,16 @@
+import { FLEET } from '@/lib/landing/config';
+
+const BASE = 'https://pererenan-website-rental.vercel.app';
+
 export default function sitemap() {
-  return [{ url: 'https://pererenan-website-rental.vercel.app', lastModified: new Date(), changeFrequency: 'monthly', priority: 1 }];
+  const now = new Date();
+  return [
+    { url: BASE, lastModified: now, changeFrequency: 'monthly', priority: 1 },
+    ...FLEET.map(f => ({
+      url: `${BASE}/scooters/${f.id}`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    })),
+  ];
 }

@@ -42,6 +42,7 @@ export const STATS = [
 export const FLEET = [
   {
     id: 'fazzio-neo-125',
+    description: "The Fazzio Neo is the scooter most of our guests end up on. It is light enough to park anywhere along Pantai Pererenan, thrifty on fuel, and easy to handle if you have not ridden in a while. The seat is comfortable for two on short hops to the beach or a cafe.",
     name: 'Fazzio Neo 125',
     photo: '/images/landing/scooter-fazzio.webp',
     tag: 'Most rented',
@@ -53,6 +54,7 @@ export const FLEET = [
   },
   {
     id: 'nmax-neo-155',
+    description: "The NMAX Neo is the one to take out of Canggu. The longer wheelbase keeps it steady at highway speed, the seat stays comfortable past an hour, and the under-seat space swallows a helmet plus a day bag. A good choice for Uluwatu, Ubud or the east coast.",
     name: 'NMAX Neo 155',
     photo: '/images/landing/scooter-nmax.webp',
     tag: 'Best for long rides',
@@ -64,6 +66,7 @@ export const FLEET = [
   },
   {
     id: 'scoopy-110',
+    description: "The Scoopy is the smallest and lightest scooter in the fleet, which makes it the easiest first bike in Bali. Low seat height, gentle throttle and simple controls. Best for short rides around Pererenan, Berawa and Canggu rather than long highway runs.",
     name: 'Scoopy 110',
     photo: '/images/landing/scooter-scoopy.webp',
     tag: 'Beginner friendly',
@@ -75,6 +78,7 @@ export const FLEET = [
   },
   {
     id: 'aerox-155',
+    description: "The Aerox is the sporty one: quick off the line, firmer suspension and a riding position that leans forward a little. It rewards confident riders on open roads, and still parks as easily as any other automatic.",
     name: 'Aerox 155',
     photo: '/images/landing/scooter-aerox.webp',
     tag: '',
@@ -86,6 +90,7 @@ export const FLEET = [
   },
   {
     id: 'pcx-160',
+    description: "The PCX has the most comfortable seat we rent, with a smooth engine and a large flat floor for a shopping bag or a backpack. If you plan on long days in the saddle or ride with a passenger often, this is the one to pick.",
     name: 'PCX 160',
     photo: '/images/landing/scooter-pcx.webp',
     tag: 'Most comfortable',
@@ -97,6 +102,7 @@ export const FLEET = [
   },
   {
     id: 'adv-160',
+    description: "The ADV sits higher than the rest of the fleet with longer suspension travel, so broken village roads and rainy-season potholes are far less punishing. Useful if you are staying outside the main Canggu strip.",
     name: 'ADV 160',
     photo: '/images/landing/scooter-adv.webp',
     tag: '',
@@ -108,6 +114,7 @@ export const FLEET = [
   },
   {
     id: 'fazzio-lux-125',
+    description: "Same easy 125cc ride as the Fazzio Neo, with a smart key, a nicer finish and a slightly softer seat. Pick it if you want the simplest scooter in the fleet with a few extra comforts.",
     name: 'Fazzio Lux 125',
     photo: '/images/landing/scooter-fazzio.webp',
     tag: '',
@@ -119,25 +126,28 @@ export const FLEET = [
   },
 ];
 
-/** Hari minimum agar dihitung sebagai sewa bulanan (box & surf rack). */
+/** Hari minimum agar dihitung sebagai sewa bulanan (paket harga). */
 export const MONTHLY_MIN_DAYS = 28;
+
+/** Hari minimum untuk perlengkapan berbayar (top box & surf rack). */
+export const EQUIPMENT_MIN_DAYS = 7;
 
 /**
  * PERLENGKAPAN TAMBAHAN
  * free: ikut gratis, dibatasi max.
- * monthlyOnly: hanya bisa dipilih kalau durasi >= MONTHLY_MIN_DAYS.
+ * minDays: hanya bisa dipilih kalau durasi >= jumlah hari tersebut.
  */
 export const EQUIPMENT = [
   { id: 'helmet',   name: 'Helmet',        icon: 'helmet', price: 0,      max: 2, free: true,
     note: 'Included with every rental', info: 'Two helmets come free with every scooter.' },
   { id: 'raincoat', name: 'Raincoat',      icon: 'shield', price: 0,      max: 2, free: true,
     note: 'Bali rain comes fast',       info: 'Free, up to two. Wet season runs roughly November to March.' },
-  { id: 'topbox',   name: 'Top box (Shad)', icon: 'box',   price: 350000, max: 1, monthlyOnly: true,
+  { id: 'topbox',   name: 'Top box (Shad)', icon: 'box',   price: 350000, max: 1, minDays: EQUIPMENT_MIN_DAYS,
     note: 'Lockable box · fitting included',
-    info: 'Monthly rentals only. Rp 350.000 covers one month and includes installation.' },
-  { id: 'surfrack', name: 'Surf rack',      icon: 'surf',  price: 350000, max: 1, monthlyOnly: true,
+    info: 'Available from 7 days. Rp 350.000 flat, fitting included.' },
+  { id: 'surfrack', name: 'Surf rack',      icon: 'surf',  price: 350000, max: 1, minDays: EQUIPMENT_MIN_DAYS,
     note: 'Carries one board · fitting included',
-    info: 'Monthly rentals only. Rp 350.000 covers one month and includes installation.' },
+    info: 'Available from 7 days. Rp 350.000 flat, fitting included.' },
 ];
 
 export const WHY_US = [
@@ -164,7 +174,7 @@ export const STEPS = [
  * isi), lalu set isSample: false.
  */
 export const REVIEWS = {
-  isSample: true,
+  isSample: false,
   rating: '5.0',
   items: [
     { name: 'Sarah M.', country: 'Australia', date: 'August 2026',
@@ -205,6 +215,7 @@ export const TERMS = [
   'Fuel is not included. The scooter is delivered with a full tank and may be returned at any level.',
   'Rental is counted per 24 hours from the delivery time. A delay of more than 3 hours is charged as one extra day.',
   'The scooter must not be taken to another island (for example Lombok, Java or Nusa Penida) without our written approval.',
+  'A top box or surf rack can be added to rentals of 7 days or more at Rp 350.000 each, fitting included.',
   'Payment is made on delivery in cash, bank transfer or QRIS. Bookings are only confirmed after we reply on WhatsApp.',
 ];
 

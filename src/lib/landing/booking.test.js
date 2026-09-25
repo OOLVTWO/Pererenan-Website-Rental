@@ -59,3 +59,19 @@ describe('daysBetween & pesan WhatsApp', () => {
     expect(msg).toContain('confirm');
   });
 });
+
+describe('perlengkapan berbayar mulai 7 hari', () => {
+  it('terkunci di bawah 7 hari', () => {
+    const list = availableEquipment(6);
+    expect(list.find(e => e.id === 'topbox').disabled).toBe(true);
+    expect(list.find(e => e.id === 'surfrack').disabled).toBe(true);
+    expect(list.find(e => e.id === 'helmet').disabled).toBe(false);
+  });
+
+  it('terbuka dari 7 hari dan ikut dihitung', () => {
+    const list = availableEquipment(7);
+    expect(list.find(e => e.id === 'topbox').disabled).toBe(false);
+    const eq = calcEquipment({ topbox: 1, helmet: 2 }, 7);
+    expect(eq.total).toBe(350000);
+  });
+});

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
-import { BUSINESS, FLEET, MONTHLY_MIN_DAYS, TERMS } from '@/lib/landing/config';
+import { BUSINESS, FLEET, EQUIPMENT_MIN_DAYS, TERMS } from '@/lib/landing/config';
 import {
   calcRental, calcEquipment, availableEquipment, daysBetween, addDays,
   formatRupiah, formatDateEn, buildWhatsAppMessage, whatsappUrl,
@@ -28,8 +28,8 @@ function InfoDot({ text }) {
  * tombol "Book now" di kartu motor, dan lembar ringkasan pesanan.
  * Semua sisanya dirender di server (tanpa JavaScript).
  */
-export default function BookingIsland({ variant = 'quick' }) {
-  const [vehicleId, setVehicleId] = useState(FLEET[0].id);
+export default function BookingIsland({ variant = 'quick', initialVehicleId }) {
+  const [vehicleId, setVehicleId] = useState(initialVehicleId || FLEET[0].id);
   const [startDate, setStartDate] = useState(todayStr());
   const [days, setDays] = useState(5);
   const [time, setTime] = useState('10:00');
@@ -202,9 +202,12 @@ export default function BookingIsland({ variant = 'quick' }) {
                 <span>{formatRupiah(f.price.weekly)} / week</span>
                 <span>{formatRupiah(f.price.monthly)} / month</span>
               </div>
-              <button type="button" className="lp-btn lp-btn-primary" onClick={() => openFor(f.id)}>
-                Book now <LIcon name="arrow" size={16} />
-              </button>
+              <div className="lp-bike-actions">
+                <a className="lp-btn lp-btn-ghost" href={`/scooters/${f.id}`}>Details</a>
+                <button type="button" className="lp-btn lp-btn-primary" onClick={() => openFor(f.id)}>
+                  Book now
+                </button>
+              </div>
             </div>
           </article>
         ))}
@@ -248,6 +251,14 @@ export default function BookingIsland({ variant = 'quick' }) {
           </header>
 
           {stepBar}
+
+          <div className="lp-announce">
+            <LIcon name="info" size={19} />
+            <span>
+              <strong>This is a request, not an instant booking.</strong> We check that this scooter is
+              free for your dates and reply on WhatsApp — usually within minutes during opening hours.
+            </span>
+          </div>
 
           {step === 1 ? (
             <>
@@ -330,7 +341,7 @@ export default function BookingIsland({ variant = 'quick' }) {
                         <span className="lp-addon-right">
                           <strong>{item.free ? 'FREE' : formatRupiah(item.price)}</strong>
                           {item.disabled ? (
-                            <span className="lp-addon-locked">Monthly only</span>
+                            <span className="lp-addon-locked">From {item.minDays} days</span>
                           ) : (
                             <span className="lp-stepper">
                               <button type="button" aria-label={`Remove one ${item.name}`}
@@ -348,9 +359,9 @@ export default function BookingIsland({ variant = 'quick' }) {
                       </div>
                     );
                   })}
-                  {days < MONTHLY_MIN_DAYS && (
+                  {days < EQUIPMENT_MIN_DAYS && (
                     <span className="lp-hint">
-                      <LIcon name="info" size={15} /> Top box and surf rack unlock from {MONTHLY_MIN_DAYS} days.
+                      <LIcon name="info" size={15} /> Top box and surf rack unlock from {EQUIPMENT_MIN_DAYS} days.
                     </span>
                   )}
                 </section>
@@ -418,14 +429,6 @@ export default function BookingIsland({ variant = 'quick' }) {
                   <span>I have read and agree to the rental terms &amp; conditions above.</span>
                 </label>
 
-                <div className="lp-notice">
-                  <LIcon name="info" size={19} />
-                  <span>
-                    <strong>This is a booking request, not a confirmation.</strong> We&apos;ll check that this
-                    scooter is free for your dates and reply on WhatsApp — usually within a few minutes
-                    during opening hours.
-                  </span>
-                </div>
               </div>
 
               <footer className="lp-sheet-foot">

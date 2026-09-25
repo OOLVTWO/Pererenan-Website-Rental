@@ -56,8 +56,8 @@ export function calcRental(price, days) {
 
 /** Perlengkapan yang boleh dipilih untuk durasi tertentu. */
 export function availableEquipment(days) {
-  const monthly = days >= MONTHLY_MIN_DAYS;
-  return EQUIPMENT.map(e => ({ ...e, disabled: !!e.monthlyOnly && !monthly }));
+  const d = Math.max(1, Math.floor(days) || 1);
+  return EQUIPMENT.map(e => ({ ...e, disabled: !!e.minDays && d < e.minDays }));
 }
 
 /** Batasi jumlah perlengkapan sesuai max & aturan bulanan. */
