@@ -34,6 +34,8 @@ const ACTION =
  * Chip aktif tidak punya border sehingga diregangkan flex 2px lebih tinggi.
  * <button> memusatkan isinya secara vertikal, <span> di referensi tidak —
  * `flex` membuat teks tombol kembali rata atas seperti referensi.
+ * `whitespace-nowrap`: di 1024–1259px (tidak ada mockup) label chip tidak
+ * boleh patah jadi dua baris; di lebar mockup tidak mengubah piksel apa pun.
  */
 function FilterChips({ size, active, onChange }) {
   return FLEET_FILTERS.map((f, i) => (
@@ -42,7 +44,7 @@ function FilterChips({ size, active, onChange }) {
       type="button"
       aria-pressed={i === active}
       onClick={() => onChange(i)}
-      className={`btn-reset flex ${size.chip} rounded-[999px] font-semibold ${
+      className={`btn-reset flex whitespace-nowrap ${size.chip} rounded-[999px] font-semibold ${
         i === active ? 'bg-[#1D4ED8] text-white' : 'bg-white border border-[#E4E9F0] text-[#475569]'
       }`}
     >

@@ -53,13 +53,14 @@ export function HowItWorksDesktop() {
           </div>
         ))}
       </div>
+      {/* Label harga diberi nowrap supaya "Rp 350.000" tidak terpotong di 1024–1259px. */}
       <div className="flex items-center gap-[22px] p-[18px_24px] border border-[#E4E9F0] rounded-[16px] bg-white">
         <span className="text-[13px] font-bold tracking-[1.4px] uppercase text-[#1D4ED8]">Extras</span>
         <span className="w-[1px] h-[26px] bg-[#E4E9F0]"></span>
-        <span className="text-[14px] text-[#475569]">
+        <span className="text-[14px] text-[#475569] whitespace-nowrap">
           Top box <strong className="text-[#0F172A]">Rp 350.000</strong>
         </span>
-        <span className="text-[14px] text-[#475569]">
+        <span className="text-[14px] text-[#475569] whitespace-nowrap">
           Surf rack <strong className="text-[#0F172A]">Rp 350.000</strong>
         </span>
         <span className="text-[13.5px] text-[#5B6474]">Rentals of 28 days or more · fitting included</span>

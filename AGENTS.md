@@ -62,6 +62,9 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
   Prioritasnya kemiripan dengan mockup — jangan "merapikan" nilai (px, warna, teks) tanpa mockup baru.
 - Kode: `src/app/page.jsx`, `src/components/landing/*`, teks/data di `src/lib/landing/content.js`.
 - < 1024px pakai layout HP (melebar), ≥ 1024px layout desktop (latar selebar layar, isi maks. 1160px).
+  Mockup desktop baru muat utuh mulai 1256px; di 1024–1255px teks biasa boleh turun baris, tapi chip
+  filter & label harga Extras diberi `whitespace-nowrap`. Tanggal di bar cek harga sengaja boleh terlipat
+  (nowrap membuat bar meluber di 1024–1055px; mockup sendiri melipat "Fazzio Neo 125").
 - Styling: Tailwind v4 (arbitrary value) di `src/styles/landing.css`, **TANPA preflight** — mockup memakai
   style bawaan browser (box-sizing content-box, svg inline). CSS ini hanya dimuat di `/`; aturan desain di
   bawah (flat, tanpa kuning, dll.) berlaku untuk panel admin, bukan landing.
