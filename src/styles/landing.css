@@ -15,6 +15,12 @@
 @source "../app/page.jsx";
 
 @layer base {
+  /* Cegah Chrome Android / iOS membesarkan teks sendiri saat HP diskalakan
+     dari lebar 390px (MobileFit). Tidak berpengaruh di desktop. */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
   body {
     margin: 0;
     font-family: var(--font-sans), system-ui, sans-serif;

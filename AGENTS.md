@@ -61,7 +61,9 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
 - Hasil konversi pixel-perfect 4 mockup HTML (papan HP 390px, sheet booking, desktop 1280px atas + bawah).
   Prioritasnya kemiripan dengan mockup — jangan "merapikan" nilai (px, warna, teks) tanpa mockup baru.
 - Kode: `src/app/page.jsx`, `src/components/landing/*`, teks/data di `src/lib/landing/content.js`.
-- < 1024px pakai layout HP (melebar), ≥ 1024px layout desktop (latar selebar layar, isi maks. 1160px).
+- HP (lebar perangkat ≤ 480px): papan HP 390px diskalakan proporsional ke lebar layar lewat meta viewport
+  `width=390` (`src/components/landing/MobileFit.jsx`) — proporsi & lipatan teks identik dengan mockup di semua HP.
+  481–1023px pakai layout HP (melebar), ≥ 1024px layout desktop (latar selebar layar, isi maks. 1160px).
   Mockup desktop baru muat utuh mulai 1256px; di 1024–1255px teks biasa boleh turun baris, tapi chip
   filter & label harga Extras diberi `whitespace-nowrap`. Tanggal di bar cek harga sengaja boleh terlipat
   (nowrap membuat bar meluber di 1024–1055px; mockup sendiri melipat "Fazzio Neo 125").
@@ -70,7 +72,10 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
   bawah (flat, tanpa kuning, dll.) berlaku untuk panel admin, bukan landing.
 - Elemen yang di mockup `<span>` tapi kini bisa diklik (chip, stepper, FAQ) memakai `<button class="btn-reset">`;
   `<button>` memusatkan isi secara vertikal, jadi beri `flex` bila tombol ikut diregangkan flex.
-- Tanggal & harga di cek harga / sheet booking masih statis (sesuai mockup); foto motor masih placeholder.
+- "Book this" membuka sheet booking dengan motor itu (state di `BookingProvider`); total = tarif harian × 5 hari
+  (mockup: Fazzio 5 × Rp 100k = Rp 500.000). Tanggal masih statis (sesuai mockup); foto motor masih placeholder.
+- Teks yang di mockup satu kesatuan jangan dipecah JSX (`Rp {x}k` → `{`Rp ${x}k`}`): text node terpisah
+  menggeser posisi subpiksel huruf di HP/Mac/Windows.
 
 ## Desain (sejak redesign flat)
 - Flat & ringan: putih + satu biru (`--brand-primary` #1D4ED8), abu hanya untuk teks/garis. Tanpa gradient,
