@@ -57,25 +57,30 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
 - Catatan servis ada di tabel `service_logs` (tanggal, pekerjaan, bengkel, biaya, catatan). Kolom KM di tabel
   dibiarkan kosong; kolom `vehicles.current_km / last_service_km / last_serviced_at` tidak dipakai lagi.
 
-## Halaman publik `/` (landing)
-- Hasil konversi pixel-perfect 4 mockup HTML (papan HP 390px, sheet booking, desktop 1280px atas + bawah).
-  Prioritasnya kemiripan dengan mockup — jangan "merapikan" nilai (px, warna, teks) tanpa mockup baru.
-- Kode: `src/app/page.jsx`, `src/components/landing/*`, teks/data di `src/lib/landing/content.js`.
-- HP (lebar perangkat ≤ 480px): papan HP 390px diskalakan proporsional ke lebar layar lewat meta viewport
-  `width=390` (`src/components/landing/MobileFit.jsx`) — proporsi & lipatan teks identik dengan mockup di semua HP.
-  481–1023px pakai layout HP (melebar), ≥ 1024px layout desktop (latar selebar layar, isi maks. 1160px).
-  Mockup desktop baru muat utuh mulai 1256px; di 1024–1255px teks biasa boleh turun baris, tapi chip
-  filter & label harga Extras diberi `whitespace-nowrap`. Tanggal di bar cek harga sengaja boleh terlipat
-  (nowrap membuat bar meluber di 1024–1055px; mockup sendiri melipat "Fazzio Neo 125").
-- Styling: Tailwind v4 (arbitrary value) di `src/styles/landing.css`, **TANPA preflight** — mockup memakai
-  style bawaan browser (box-sizing content-box, svg inline). CSS ini hanya dimuat di `/`; aturan desain di
-  bawah (flat, tanpa kuning, dll.) berlaku untuk panel admin, bukan landing.
-- Elemen yang di mockup `<span>` tapi kini bisa diklik (chip, stepper, FAQ) memakai `<button class="btn-reset">`;
-  `<button>` memusatkan isi secara vertikal, jadi beri `flex` bila tombol ikut diregangkan flex.
-- "Book this" membuka sheet booking dengan motor itu (state di `BookingProvider`); total = tarif harian × 5 hari
-  (mockup: Fazzio 5 × Rp 100k = Rp 500.000). Tanggal masih statis (sesuai mockup); foto motor masih placeholder.
-- Teks yang di mockup satu kesatuan jangan dipecah JSX (`Rp {x}k` → `{`Rp ${x}k`}`): text node terpisah
-  menggeser posisi subpiksel huruf di HP/Mac/Windows.
+## Halaman publik `/` (landing) + `/scooters/[id]`
+- Dibangun dari 4 mockup HTML yang disetujui (papan HP 390px, sheet booking, desktop 1280px atas + bawah)
+  + brief pemilik. Prioritas: SAMA dengan mockup — jangan "merapikan" nilai px/warna/teks tanpa mockup baru.
+- Sepenuhnya statis: SEMUA data (motor, harga, add-on, teks, FAQ, syarat, ulasan) di `src/lib/landing/config.js`.
+  Tidak ada query database / state server. Logika murni di `src/lib/landing/booking.js` (+ `booking.test.js`):
+  tarif = kombinasi paket termurah (bulan 30 hari, minggu 7 hari, harian), jumlah hari INKLUSIF seperti mockup
+  (24–28 Sep = 5 hari), top box & surf rack hanya ≥ 7 hari, pesan wa.me.
+- Rute di route group `src/app/(site)/` (layout memuat CSS landing, skrip viewport HP, sprite ikon sekali).
+  Halaman motor: `generateStaticParams` + `dynamicParams = false` (7 halaman prerender).
+- SATU client component saja: `src/components/landing/BookingIsland.jsx` (bilah cek harga / kartu pesan + sheet
+  2 langkah). Chip filter `[data-lp-filter]` & tombol `[data-lp-book]` di HTML statis dijalankan lewat event
+  delegation di island itu. FAQ HP = `<details>` native tanpa JS.
+- CSS: `src/styles/landing.css`, ditulis tangan, semua kelas `.lp-*`, TANPA Tailwind/preflight (mockup memakai
+  content-box & gaya bawaan browser). Aturan dasar (tampilan HP) di atas, media query HANYA di paling bawah.
+  Reset elemen pakai `:where(.lp) a` (specificity 0,0,1) — jangan tulis `.lp a {…}` (mengalahkan `.lp-brand` dkk).
+  Hati-hati juga `.lp h2.lp-h2` vs `.lp-fleet .lp-h2`: pernah membuat judul armada 44px bukan 46px.
+- Titik patah: < 720 satu kolom & nav disembunyikan; ≥ 720 hero dua kolom & seksi versi desktop; ≥ 900 armada
+  4 kolom; ≥ 960 bilah cek harga satu baris (960–1199 tanpa kolom judul). Helper `.lp-mb` (hanya HP) /
+  `.lp-dk` (hanya ≥ 720) untuk teks yang berbeda antara mockup HP & desktop.
+- HP (lebar perangkat ≤ 480px): meta viewport `width=390` (`MobileFit.jsx`) → papan 390px diskalakan
+  proporsional, proporsi identik dengan mockup di semua HP.
+- Teks yang di mockup satu kesatuan jangan dipecah JSX (`Rp {x}k` → `{`Rp ${x}k`}`), dan `<button>` yang
+  diregangkan flex perlu `display:flex` agar teks tidak turun 1px (lihat `.lp-chip`).
+- Ulasan masih contoh dari mockup → badge "SAMPLE — replace before launch" (`REVIEWS.sample` di config).
 
 ## Desain (sejak redesign flat)
 - Flat & ringan: putih + satu biru (`--brand-primary` #1D4ED8), abu hanya untuk teks/garis. Tanpa gradient,
