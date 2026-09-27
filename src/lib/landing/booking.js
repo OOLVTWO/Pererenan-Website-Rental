@@ -70,25 +70,30 @@ export function formatRange(a, b) {
 }
 
 /**
- * Normalisasi perubahan tanggal/durasi. Mengubah tanggal ambil atau kembali
+ * Normalisasi perubahan tanggal/durasi. Tanggal boleh belum dipilih (null) —
+ * bilah cek harga mulai kosong. Mengubah tanggal ambil atau kembali
  * menyesuaikan jumlah hari; mengubah jumlah hari menggeser tanggal kembali.
- * Tanggal ambil tidak boleh sebelum hari ini.
+ * Tanggal ambil tidak boleh sebelum hari ini; tanggal kembali tidak boleh
+ * sebelum tanggal ambil. `days` = null selama salah satu tanggal kosong.
  */
 export function updateDates(state, change, today) {
-  let { pickUp, returnDate } = state;
-  let days = rentalDays(pickUp, returnDate);
+  let pickUp = state.pickUp ?? null;
+  let returnDate = state.returnDate ?? null;
+  const before = pickUp && returnDate ? rentalDays(pickUp, returnDate) : null;
   if ('pickUp' in change) {
-    pickUp = change.pickUp < today ? today : change.pickUp;
-    if (returnDate < pickUp) returnDate = returnFor(pickUp, days);
+    pickUp = change.pickUp || null;
+    if (pickUp && today && pickUp < today) pickUp = today;
+    // Tanggal kembali terlewati: geser dengan lama sewa yang sama (atau kosongkan bila belum ada).
+    if (pickUp && returnDate && returnDate < pickUp) returnDate = before ? returnFor(pickUp, before) : null;
   }
   if ('returnDate' in change) {
-    returnDate = change.returnDate < pickUp ? pickUp : change.returnDate;
+    returnDate = change.returnDate || null;
+    if (pickUp && returnDate && returnDate < pickUp) returnDate = pickUp;
   }
-  if ('days' in change) {
-    days = Math.min(365, Math.max(1, Math.round(change.days) || 1));
-    returnDate = returnFor(pickUp, days);
+  if ('days' in change && pickUp) {
+    returnDate = returnFor(pickUp, Math.min(365, Math.max(1, Math.round(change.days) || 1)));
   }
-  return { pickUp, returnDate, days: rentalDays(pickUp, returnDate) };
+  return { pickUp, returnDate, days: pickUp && returnDate ? rentalDays(pickUp, returnDate) : null };
 }
 
 /* ── Tarif: kombinasi paket termurah ──────────────────────── */

@@ -128,9 +128,10 @@ export default function Hero() {
               </span>
             </p>
             <div className="lp-hero-cta">
-              <button type="button" className="lp-btn" data-lp-book="">
+              {/* Pilih motor dulu di daftar armada (form dibuka dari tombol "Book now" di kartu). */}
+              <a className="lp-btn" href="#fleet">
                 Book a scooter <Icon name="arrow" size="17" color="#fff" />
-              </button>
+              </a>
               <a className="lp-btn-glass" href={WA} target="_blank" rel="noopener noreferrer">
                 <Icon name="whatsapp" size="17" color="#fff" /> Chat on WhatsApp
               </a>

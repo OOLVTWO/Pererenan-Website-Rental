@@ -71,6 +71,9 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
   - Dihapus: strip 4 keunggulan di bawah cek harga (sudah ada di Why us), kartu "From Rp 100k /day" di hero,
     badge SAMPLE ulasan (ulasan asli). "Delivered in 1 hr" diganti jam buka.
   - Sheet booking punya tombol kembali (‹): langkah 1 menutup form, langkah 2 kembali ke langkah 1.
+  - Bilah cek harga mulai KOSONG ("Select scooter" / "Select date", harga "Rp —"); kartu pesan di halaman
+    motor: motornya terisi, tanggal kosong. Tombol lanjut saat isian belum lengkap membuka isian yang kosong
+    (bukan form). "Book a scooter" di hero = tautan ke `#fleet`; form dibuka dari "Book now" di kartu motor.
   - Why us: foto pemilik `why-riders.webp`; di HP foto tampil di bawah judul (`.lp-why-main{display:contents}`),
     di desktop seksi diberi jarak atas 62px dari How it works.
 - Sepenuhnya statis: SEMUA data (motor, harga, add-on, teks, FAQ, syarat, ulasan) di `src/lib/landing/config.js`.

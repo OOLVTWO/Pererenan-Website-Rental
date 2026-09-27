@@ -2,7 +2,8 @@
 
 /**
  * SATU-SATUNYA client component halaman publik.
- * - Bilah cek harga (beranda) atau kartu pesan (halaman detail motor).
+ * - Bilah cek harga (beranda) atau kartu pesan (halaman detail motor). Motor
+ *   (di beranda) & tanggal mulai kosong; harga tampil setelah semuanya dipilih.
  * - Sheet pemesanan 2 langkah (mockup "2-hp-sheet-booking").
  * - Lewat event delegation: chip filter armada [data-lp-filter] dan tombol
  *   [data-lp-book] di HTML statis (server component) ikut dijalankan di sini.
@@ -14,7 +15,6 @@ import { Icon } from './Icon';
 import { usePageChrome } from './usePageChrome';
 import { ADDONS, BUSINESS, FLEET, TERMS, findScooter } from '@/lib/landing/config';
 import {
-  addDays,
   addonStates,
   buildBookingMessage,
   calcAddons,
@@ -23,13 +23,11 @@ import {
   formatRange,
   formatRupiah,
   rentalDays,
-  returnFor,
   todayIso,
   updateDates,
   whatsappUrl,
 } from '@/lib/landing/booking';
 
-const DEFAULT_DAYS = 5;
 const noopSubscribe = () => () => {};
 
 function openPicker(e) {
@@ -37,6 +35,27 @@ function openPicker(e) {
     e.currentTarget.showPicker?.();
   } catch {
     /* browser lama: fokus biasa sudah cukup */
+  }
+}
+
+/**
+ * Tombol lanjut ditekan tapi isian belum lengkap: buka isian pertama yang
+ * masih kosong (daftar motor / pemilih tanggal) di dalam `box`.
+ */
+function openMissing(box, { scooter, pickUp, returnDate }) {
+  const target = !scooter
+    ? box?.querySelector('select[aria-label="Scooter"]')
+    : !pickUp
+      ? box?.querySelector('input[aria-label="Pick-up date"]')
+      : !returnDate
+        ? box?.querySelector('input[aria-label="Return date"]')
+        : null;
+  if (!target) return;
+  target.focus({ preventScroll: true });
+  try {
+    target.showPicker?.();
+  } catch {
+    /* browser lama: fokus saja sudah cukup */
   }
 }
 
@@ -52,14 +71,14 @@ function applyFilter(id) {
 }
 
 /** Isian bilah cek harga: tampilan mockup + kontrol asli transparan di atasnya. */
-function Field({ icon, label, value, children }) {
+function Field({ icon, label, value, placeholder, children }) {
   return (
     <label className="lp-field">
       <Icon name={icon} size="17" color="#1D4ED8" />
       <span className="lp-field-txt">
         <span className="lp-field-lb">{label}</span>
-        <span className="lp-field-val">
-          {value || ' '}
+        <span className={value ? 'lp-field-val' : 'lp-field-val is-empty'}>
+          {value || placeholder}
           <Icon name="chevron" size="16" color="#5B6474" />
         </span>
       </span>
@@ -69,12 +88,12 @@ function Field({ icon, label, value, children }) {
   );
 }
 
-function SheetField({ label, value, children }) {
+function SheetField({ label, value, placeholder, children }) {
   return (
     <label className="lp-sel">
       <span className="lp-sel-lb">{label}</span>
-      <span className="lp-sel-box">
-        {value || ' '}
+      <span className={value ? 'lp-sel-box' : 'lp-sel-box is-empty'}>
+        {value || placeholder}
         <Icon name="chevron" size="16" color="#5B6474" />
         {children}
       </span>
@@ -82,14 +101,24 @@ function SheetField({ label, value, children }) {
   );
 }
 
-function Stepper({ label, value, min = 0, max, onChange }) {
+function Stepper({ label, value, min = 0, max, disabled = false, onChange }) {
   return (
     <span className="lp-stepper">
-      <button type="button" aria-label={`Fewer ${label}`} disabled={value <= min} onClick={() => onChange(value - 1)}>
+      <button
+        type="button"
+        aria-label={`Fewer ${label}`}
+        disabled={disabled || value <= min}
+        onClick={() => onChange(value - 1)}
+      >
         <Icon name="minus" size="15" color="#0F172A" />
       </button>
-      <output aria-live="polite">{value}</output>
-      <button type="button" aria-label={`More ${label}`} disabled={value >= max} onClick={() => onChange(value + 1)}>
+      <output aria-live="polite">{value ?? '–'}</output>
+      <button
+        type="button"
+        aria-label={`More ${label}`}
+        disabled={disabled || value >= max}
+        onClick={() => onChange((value ?? 0) + 1)}
+      >
         <Icon name="plus" size="15" color="#0F172A" />
       </button>
     </span>
@@ -126,10 +155,10 @@ function SheetHead({ title, subtitle, step, onBack, backLabel }) {
   );
 }
 
-export default function BookingIsland({ variant = 'bar', scooterId: initialScooter = FLEET[0].id }) {
+export default function BookingIsland({ variant = 'bar', scooterId: initialScooter = null }) {
   const today = useSyncExternalStore(noopSubscribe, todayIso, () => null);
   const [scooterId, setScooterId] = useState(initialScooter);
-  const [dates, setDates] = useState(null);
+  const [dates, setDates] = useState({ pickUp: null, returnDate: null });
   const [addons, setAddons] = useState(() => Object.fromEntries(ADDONS.map((a) => [a.id, a.initial])));
   const [area, setArea] = useState(BUSINESS.areas[0]);
   const [agreed, setAgreed] = useState(false);
@@ -140,16 +169,21 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
   const triggerRef = useRef(null);
   usePageChrome(variant === 'bar');
 
-  const scooter = findScooter(scooterId) ?? FLEET[0];
-  // Tanggal bawaan: besok, 5 hari (seperti mockup). Dihitung di perangkat pengunjung.
-  const pickUp = dates?.pickUp ?? (today ? addDays(today, 1) : null);
-  const returnDate = dates?.returnDate ?? (pickUp ? returnFor(pickUp, DEFAULT_DAYS) : null);
-  const days = pickUp ? rentalDays(pickUp, returnDate) : DEFAULT_DAYS;
-  const rental = calcRental(scooter.price, days);
-  const extra = calcAddons(addons, days);
-  const total = rental.total + extra.total;
+  // Belum ada yang dipilih: motor (di beranda) & tanggal kosong, harga belum dihitung.
+  const scooter = findScooter(scooterId) ?? null;
+  const { pickUp, returnDate } = dates;
+  const days = pickUp && returnDate ? rentalDays(pickUp, returnDate) : null;
+  const rental = scooter && days ? calcRental(scooter.price, days) : null;
+  const extra = calcAddons(addons, days ?? 0);
+  const total = rental ? rental.total + extra.total : null;
+  const picked = { scooter, pickUp, returnDate };
+  const hint = !scooter ? 'Choose a scooter & dates' : 'Choose your dates';
 
-  const change = (patch) => setDates(updateDates({ pickUp, returnDate }, patch, today));
+  const change = (patch) =>
+    setDates((cur) => {
+      const next = updateDates(cur, patch, today);
+      return { pickUp: next.pickUp, returnDate: next.returnDate };
+    });
 
   const openSheet = (trigger) => {
     triggerRef.current = trigger ?? null;
@@ -232,7 +266,7 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
         type="date"
         className="lp-field-in"
         aria-label="Return date"
-        min={pickUp ?? undefined}
+        min={pickUp ?? today ?? undefined}
         value={returnDate ?? ''}
         onClick={openPicker}
         onChange={(e) => e.target.value && change({ returnDate: e.target.value })}
@@ -244,16 +278,23 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
     <div className="lp-check-foot">
       <div className="lp-check-sumbox">
         <span className="lp-check-sum">
-          <span className="lp-check-rate">{rental.label}</span>
-          <span className="lp-check-price">{formatRupiah(rental.total)}</span>
+          <span className="lp-check-rate">{rental ? rental.label : hint}</span>
+          <span className="lp-check-price">{rental ? formatRupiah(rental.total) : 'Rp —'}</span>
         </span>
-        <span className="lp-check-best">
-          best
-          <br />
-          price
-        </span>
+        {rental && (
+          <span className="lp-check-best">
+            best
+            <br />
+            price
+          </span>
+        )}
       </div>
-      <button type="button" className="lp-btn lp-check-go" aria-haspopup="dialog" onClick={(e) => openSheet(e.currentTarget)}>
+      <button
+        type="button"
+        className="lp-btn lp-check-go"
+        aria-haspopup="dialog"
+        onClick={(e) => (rental ? openSheet(e.currentTarget) : openMissing(e.currentTarget.closest('.lp-check'), picked))}
+      >
         {variant === 'bar' ? (
           <>
             <span className="lp-mb">Continue on WhatsApp</span>
@@ -269,8 +310,7 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
 
   const states = addonStates(days);
   const qty = extra.qty;
-  const waUrl =
-    pickUp && returnDate ? whatsappUrl(buildBookingMessage({ scooter, pickUp, returnDate, addons, area })) : '#';
+  const waUrl = rental ? whatsappUrl(buildBookingMessage({ scooter, pickUp, returnDate, addons, area })) : '#';
 
   return (
     <>
@@ -282,13 +322,16 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
             </span>
             <span className="lp-check-sub">Weekly &amp; monthly rates applied automatically</span>
           </div>
-          <Field icon="scooter" label="Scooter" value={scooter.name}>
+          <Field icon="scooter" label="Scooter" value={scooter?.name} placeholder="Select scooter">
             <select
               className="lp-field-in"
               aria-label="Scooter"
-              value={scooterId}
+              value={scooter ? scooterId : ''}
               onChange={(e) => setScooterId(e.target.value)}
             >
+              <option value="" disabled>
+                Select scooter
+              </option>
               {FLEET.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
@@ -296,10 +339,10 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
               ))}
             </select>
           </Field>
-          <Field icon="calendar" label="Pick-up" value={formatDate(pickUp)}>
+          <Field icon="calendar" label="Pick-up" value={formatDate(pickUp)} placeholder="Select date">
             {dateInputs.pickUp}
           </Field>
-          <Field icon="calendar" label="Return" value={formatDate(returnDate)}>
+          <Field icon="calendar" label="Return" value={formatDate(returnDate)} placeholder="Select date">
             {dateInputs.returnDate}
           </Field>
           {summary}
@@ -307,12 +350,12 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
       ) : (
         <div className="lp-check lp-check-card" id="book">
           <div className="lp-check-title">
-            <span className="lp-check-h">{`Book the ${scooter.name}`}</span>
+            <span className="lp-check-h">{`Book the ${scooter?.name ?? 'scooter'}`}</span>
           </div>
-          <Field icon="calendar" label="Pick-up" value={formatDate(pickUp)}>
+          <Field icon="calendar" label="Pick-up" value={formatDate(pickUp)} placeholder="Select date">
             {dateInputs.pickUp}
           </Field>
-          <Field icon="calendar" label="Return" value={formatDate(returnDate)}>
+          <Field icon="calendar" label="Return" value={formatDate(returnDate)} placeholder="Select date">
             {dateInputs.returnDate}
           </Field>
           {summary}
@@ -330,9 +373,9 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
           tabIndex={-1}
           onClick={(e) => e.target === e.currentTarget && closeSheet()}
         >
-          {used && (
+          {used && scooter && (
             <>
-              {step === 1 ? (
+              {step === 1 || !rental ? (
                 <section className="lp-sheet-card">
                   <SheetHead
                     title="Your booking"
@@ -353,17 +396,24 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
                         Change
                       </button>
                     </div>
-                    <SheetField label="Pick-up date" value={formatDate(pickUp)}>
+                    <SheetField label="Pick-up date" value={formatDate(pickUp)} placeholder="Select date">
                       {dateInputs.pickUp}
                     </SheetField>
-                    <SheetField label="Return date" value={formatDate(returnDate)}>
+                    <SheetField label="Return date" value={formatDate(returnDate)} placeholder="Select date">
                       {dateInputs.returnDate}
                     </SheetField>
                     <div className="lp-sel">
                       <span className="lp-sel-lb">Rental length</span>
-                      <span className="lp-sel-box">
-                        {days === 1 ? '1 day' : `${days} days`}
-                        <Stepper label="days" value={days} min={1} max={365} onChange={(n) => change({ days: n })} />
+                      <span className={days ? 'lp-sel-box' : 'lp-sel-box is-empty'}>
+                        {days ? (days === 1 ? '1 day' : `${days} days`) : 'Select dates'}
+                        <Stepper
+                          label="days"
+                          value={days}
+                          min={1}
+                          max={365}
+                          disabled={!pickUp}
+                          onChange={(n) => change({ days: n })}
+                        />
                       </span>
                     </div>
                     <SheetField label="Delivery area" value={area}>
@@ -408,12 +458,18 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
                     </div>
                     <div className="lp-total">
                       <span className="lp-total-txt">
-                        <span>{rental.label}</span>
-                        <b>{formatRupiah(total)}</b>
+                        <span>{rental ? rental.label : hint}</span>
+                        <b>{rental ? formatRupiah(total) : 'Rp —'}</b>
                       </span>
                       <Icon name="arrow" size="20" color="#1D4ED8" />
                     </div>
-                    <button type="button" className="lp-btn lp-wide" onClick={() => setStep(2)}>
+                    <button
+                      type="button"
+                      className="lp-btn lp-wide"
+                      onClick={(e) =>
+                        rental ? setStep(2) : openMissing(e.currentTarget.closest('.lp-sheet-card'), picked)
+                      }
+                    >
                       Review booking <Icon name="arrow" size="17" color="#fff" />
                     </button>
                   </div>
