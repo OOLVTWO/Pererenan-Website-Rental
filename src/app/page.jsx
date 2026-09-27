@@ -9,6 +9,7 @@ import { WhyUsDesktop, WhyUsMobile } from '@/components/landing/WhyUs';
 import { ReviewsDesktop, ReviewsMobile } from '@/components/landing/Reviews';
 import { FaqDesktop, FaqMobile } from '@/components/landing/Faq';
 import { FooterDesktop, FooterMobile, WhatsAppFab } from '@/components/landing/Footer';
+import MobileFit from '@/components/landing/MobileFit';
 
 export const metadata = {
   title: 'Scooter Rental in Pererenan & Canggu — Boss Rent Pererenan',
@@ -26,7 +27,9 @@ export const metadata = {
 
 /*
  * Halaman publik, dibangun dari 4 file mockup:
- *  - < 1024px : papan HP ("1-hp-halaman-penuh"), melebar mengikuti layar.
+ *  - HP (≤ 480px): papan HP ("1-hp-halaman-penuh") diskalakan proporsional
+ *               dari 390px ke lebar layar (lihat MobileFit).
+ *  - 481–1023px : papan HP, melebar mengikuti layar.
  *  - ≥ 1024px : papan desktop ("3-desktop-hero-armada" + "4-desktop-seksi-bawah"),
  *               latar selebar layar, isi maks. 1160px.
  *  - Sheet booking ("2-hp-sheet-booking") dibuka dari tombol Book / Continue.
@@ -34,6 +37,7 @@ export const metadata = {
 export default function LandingPage() {
   return (
     <BookingProvider>
+      <MobileFit />
       <div className="flex flex-col bg-white lg:hidden">
         <HeroMobile />
         <CheckPriceMobile />

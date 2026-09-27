@@ -296,7 +296,7 @@ export default function BookingSheet({ open, step, scooter, onStepChange, onClos
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}
-        className={`sheet-anim absolute inset-x-0 bottom-0 max-h-[100dvh] overflow-y-auto p-[16px] outline-none transition-[translate,opacity] duration-200 ease-out lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:left-1/2 lg:w-[390px] lg:box-border lg:-translate-x-1/2 lg:-translate-y-1/2 ${open ? 'translate-y-0 lg:opacity-100' : 'translate-y-full lg:opacity-0'}`}
+        className={`sheet-anim absolute inset-x-0 bottom-0 max-h-[100dvh] box-border overflow-y-auto p-[16px] outline-none transition-[translate,opacity] duration-200 ease-out lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:left-1/2 lg:w-[390px] lg:-translate-x-1/2 lg:-translate-y-1/2 ${open ? 'translate-y-0 lg:opacity-100' : 'translate-y-full lg:opacity-0'}`}
       >
         <button type="button" className="sr-only" onClick={onClose}>
           Close
