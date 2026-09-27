@@ -6,8 +6,10 @@ import { rateLimit } from '@/lib/rateLimit';
  * Guard keamanan untuk SEMUA API route admin
  * (/api/vehicles, /api/transactions, /api/expenses).
  *
- * Route API memakai createAdminClient() (service role → bypass RLS), jadi WAJIB
- * diverifikasi dulu bahwa request datang dari user yang sudah login.
+ * Route API memakai createAdminClient() = sesi admin yang sedang login (BUKAN
+ * service role; RLS tetap berlaku: hanya akun di public.admin_users yang bisa
+ * membaca/menulis data). Tetap WAJIB diverifikasi dulu bahwa request datang dari
+ * user yang sudah login, supaya request tanpa sesi langsung ditolak (401).
  *
  * PERUBAHAN:
  *  - requireAuth(request) kini menerima request → rate limiting (429).
