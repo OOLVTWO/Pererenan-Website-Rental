@@ -491,6 +491,17 @@ html:has(.lp-sub) {
 .lp-field-val > svg {
   display: none;
 }
+/* Belum dipilih: teks petunjuk abu. */
+.lp-field-val.is-empty,
+.lp-sel-box.is-empty {
+  color: var(--lp-soft);
+  font-weight: 500;
+}
+/* Isian yang dibuka tombol lanjut (masih kosong) ditandai garis biru. */
+.lp-field:focus-within,
+.lp-sel-box:focus-within {
+  border-color: var(--lp-blue);
+}
 .lp-field-in {
   position: absolute;
   inset: 0;
@@ -2452,6 +2463,16 @@ html:has(.lp-sub) {
     border-left: 1px solid var(--lp-line);
     border-radius: 0;
     background: none;
+  }
+  .lp-bar .lp-field:focus-within {
+    border-color: var(--lp-line);
+  }
+  .lp-bar .lp-field:focus-within .lp-field-lb {
+    color: var(--lp-blue);
+  }
+  /* Petunjuk "Select scooter" muat sebaris di kolom motor yang sempit. */
+  .lp-bar .lp-field-val.is-empty {
+    font-size: 15px;
   }
   .lp-bar .lp-field > svg {
     display: none;

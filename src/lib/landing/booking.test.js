@@ -132,6 +132,22 @@ describe('tanggal', () => {
     expect(b).toEqual({ pickUp: '2026-09-24', returnDate: '2026-09-24', days: 1 });
   });
 
+  it('tanggal boleh belum dipilih (bilah mulai kosong)', () => {
+    const empty = { pickUp: null, returnDate: null };
+    expect(updateDates(empty, {}, '2026-09-20')).toEqual({ pickUp: null, returnDate: null, days: null });
+    const a = updateDates(empty, { pickUp: '2026-09-24' }, '2026-09-20');
+    expect(a).toEqual({ pickUp: '2026-09-24', returnDate: null, days: null });
+    expect(updateDates(a, { returnDate: '2026-09-28' }, '2026-09-20').days).toBe(5);
+    // Lama sewa lewat stepper butuh tanggal ambil; tanpa itu tidak berubah.
+    expect(updateDates(empty, { days: 5 }, '2026-09-20').returnDate).toBe(null);
+    expect(updateDates(a, { days: 3 }, '2026-09-20')).toEqual({ pickUp: '2026-09-24', returnDate: '2026-09-26', days: 3 });
+  });
+
+  it('tanggal kembali dipilih duluan lalu terlewati tanggal ambil → dikosongkan', () => {
+    const r = updateDates({ pickUp: null, returnDate: '2026-09-25' }, { pickUp: '2026-10-01' }, '2026-09-20');
+    expect(r).toEqual({ pickUp: '2026-10-01', returnDate: null, days: null });
+  });
+
   it('format tanggal & rentang', () => {
     expect(formatDate('2026-09-24')).toBe('24 Sep 2026');
     expect(formatRange('2026-09-24', '2026-09-28')).toBe('24 – 28 Sep 2026');
