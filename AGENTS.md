@@ -60,6 +60,19 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
 ## Halaman publik `/` (landing) + `/scooters/[id]`
 - Dibangun dari 4 mockup HTML yang disetujui (papan HP 390px, sheet booking, desktop 1280px atas + bawah)
   + brief pemilik. Prioritas: SAMA dengan mockup — jangan "merapikan" nilai px/warna/teks tanpa mockup baru.
+- Revisi yang disetujui pemilik (Sep 2026) — sengaja berbeda dari mockup awal, jangan dikembalikan:
+  - Header menempel (`position: fixed`): transparan di puncak halaman, `.is-solid` putih begitu digulir
+    (kalau tetap transparan, teks hero lewat di bawahnya & bertabrakan). `--lp-head-h` = ruang header di hero,
+    `scroll-padding-top: 64px` supaya anchor berhenti tepat di bawah header.
+  - Menu HP = laci dari kanan (290px, halaman tetap terlihat di kiri), TANPA tombol WhatsApp. Navbar desktop
+    juga tanpa tombol WhatsApp; hover + seksi aktif ditandai kapsul (`.is-active`, `aria-current`).
+  - Logo BOSS asli (`/images/landing/logo.webp`, dipangkas dari `public/images/logoCompany.png` dashboard)
+    di komponen `Brand` (header, laci, footer, halaman motor).
+  - Dihapus: strip 4 keunggulan di bawah cek harga (sudah ada di Why us), kartu "From Rp 100k /day" di hero,
+    badge SAMPLE ulasan (ulasan asli). "Delivered in 1 hr" diganti jam buka.
+  - Sheet booking punya tombol kembali (‹): langkah 1 menutup form, langkah 2 kembali ke langkah 1.
+  - Why us: foto pemilik `why-riders.webp`; di HP foto tampil di bawah judul (`.lp-why-main{display:contents}`),
+    di desktop seksi diberi jarak atas 62px dari How it works.
 - Sepenuhnya statis: SEMUA data (motor, harga, add-on, teks, FAQ, syarat, ulasan) di `src/lib/landing/config.js`.
   Tidak ada query database / state server. Logika murni di `src/lib/landing/booking.js` (+ `booking.test.js`):
   tarif = kombinasi paket termurah (bulan 30 hari, minggu 7 hari, harian), jumlah hari INKLUSIF seperti mockup
@@ -68,7 +81,9 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
   Halaman motor: `generateStaticParams` + `dynamicParams = false` (7 halaman prerender).
 - SATU client component saja: `src/components/landing/BookingIsland.jsx` (bilah cek harga / kartu pesan + sheet
   2 langkah). Chip filter `[data-lp-filter]` & tombol `[data-lp-book]` di HTML statis dijalankan lewat event
-  delegation di island itu. FAQ HP = `<details>` native tanpa JS.
+  delegation di island itu. FAQ HP = `<details>` native tanpa JS. Perilaku header (solid saat digulir, seksi
+  aktif `[data-lp-nav]`, laci `[data-lp-menu-open]`/`[data-lp-menu-close]`) ada di hook
+  `usePageChrome.js` yang dipanggil island; logika seksi aktif murni di `src/lib/landing/nav.js` (+ test).
 - CSS: `src/styles/landing.css`, ditulis tangan, semua kelas `.lp-*`, TANPA Tailwind/preflight (mockup memakai
   content-box & gaya bawaan browser). Aturan dasar (tampilan HP) di atas, media query HANYA di paling bawah.
   Reset elemen pakai `:where(.lp) a` (specificity 0,0,1) — jangan tulis `.lp a {…}` (mengalahkan `.lp-brand` dkk).
@@ -80,7 +95,7 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
   proporsional, proporsi identik dengan mockup di semua HP.
 - Teks yang di mockup satu kesatuan jangan dipecah JSX (`Rp {x}k` → `{`Rp ${x}k`}`), dan `<button>` yang
   diregangkan flex perlu `display:flex` agar teks tidak turun 1px (lihat `.lp-chip`).
-- Ulasan masih contoh dari mockup → badge "SAMPLE — replace before launch" (`REVIEWS.sample` di config).
+- Ulasan di `REVIEWS` = ulasan asli (dikonfirmasi pemilik); `show: false` menyembunyikan seksi & menunya.
 
 ## Desain (sejak redesign flat)
 - Flat & ringan: putih + satu biru (`--brand-primary` #1D4ED8), abu hanya untuk teks/garis. Tanpa gradient,

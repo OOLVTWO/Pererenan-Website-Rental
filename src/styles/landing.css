@@ -14,6 +14,14 @@ body {
   margin: 0;
   background: #fff;
 }
+/* Anchor (#fleet dst.) berhenti tepat di bawah header yang menempel. */
+html:has(.lp-head) {
+  scroll-padding-top: 64px;
+  scroll-behavior: smooth;
+}
+html:has(.lp-sub) {
+  scroll-padding-top: 73px;
+}
 
 .lp {
   --lp-blue: #1d4ed8;
@@ -26,6 +34,7 @@ body {
   --lp-tint: #eef3ff;
   --lp-tint-line: #d6e2ff;
   --lp-pad: 18px;
+  --lp-head-h: 72px;
   display: flex;
   flex-direction: column;
   background: #fff;
@@ -130,6 +139,12 @@ body {
   flex-direction: column;
   overflow: hidden;
 }
+/* Tempat header: header menempel (fixed) jadi tidak ikut alur hero. */
+.lp-hero::before {
+  content: '';
+  flex-shrink: 0;
+  height: var(--lp-head-h);
+}
 .lp-hero-photo {
   position: absolute;
   inset: 0;
@@ -140,13 +155,29 @@ body {
   inset: 0;
   background: linear-gradient(180deg, rgba(7, 17, 36, 0.74) 0%, rgba(7, 17, 36, 0.34) 42%, rgba(7, 17, 36, 0.88) 100%);
 }
+/* Header menempel: transparan di puncak halaman, putih (.is-solid) begitu digulir. */
 .lp-head {
-  position: relative;
-  z-index: 3;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 45;
+  box-sizing: border-box;
+  height: var(--lp-head-h);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px;
+  padding: 0 18px;
+  border-bottom: 1px solid transparent;
+  transition:
+    height 0.2s,
+    background-color 0.2s,
+    border-color 0.2s;
+}
+.lp-head.is-solid {
+  height: 64px;
+  background: #fff;
+  border-bottom-color: var(--lp-line);
 }
 .lp a.lp-brand {
   display: flex;
@@ -154,19 +185,14 @@ body {
   gap: 9px;
   color: #fff;
 }
-.lp-logo {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  background: var(--lp-blue);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.lp .lp-head.is-solid a.lp-brand {
+  color: var(--lp-ink);
 }
-.lp-logo svg {
-  width: 19px;
-  height: 19px;
+/* Logo BOSS (sama dengan dashboard) */
+.lp-logo {
+  display: block;
+  width: auto;
+  height: 38px;
 }
 .lp-brand-name {
   font-family: var(--font-display), system-ui, sans-serif;
@@ -179,15 +205,13 @@ body {
   color: rgba(255, 255, 255, 0.7);
   font-weight: 500;
 }
-.lp-nav,
-.lp-head-wa {
+.lp-head.is-solid .lp-brand-place {
+  color: var(--lp-soft);
+}
+.lp-nav {
   display: none;
 }
-.lp-menu {
-  position: relative;
-}
 .lp-menu-btn {
-  list-style: none;
   width: 44px;
   height: 44px;
   box-sizing: border-box;
@@ -197,39 +221,147 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
 }
-.lp-menu-btn::-webkit-details-marker {
-  display: none;
-}
-.lp-menu-panel {
-  position: absolute;
-  right: 0;
-  top: 52px;
-  width: 210px;
-  padding: 8px;
-  border: 1px solid var(--lp-line);
-  border-radius: 14px;
+.lp-head.is-solid .lp-menu-btn {
+  border-color: var(--lp-line);
   background: #fff;
-  box-shadow: 0 14px 34px rgba(11, 31, 58, 0.12);
+}
+.lp-head.is-solid .lp-menu-btn svg {
+  stroke: var(--lp-ink);
+}
+
+/* Laci menu HP: muncul dari kanan, halaman tetap terlihat di kiri. */
+.lp-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  visibility: hidden;
+  transition: visibility 0s 0.22s;
+}
+.lp-drawer.is-open {
+  visibility: visible;
+  transition: visibility 0s;
+}
+.lp-drawer-veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(7, 17, 36, 0.45);
+  opacity: 0;
+  transition: opacity 0.22s;
+}
+.lp-drawer.is-open .lp-drawer-veil {
+  opacity: 1;
+}
+.lp-drawer-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 290px;
+  max-width: calc(100% - 64px);
+  box-sizing: border-box;
+  border-radius: 22px 0 0 22px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateX(100%);
+  transition: transform 0.22s ease-out;
+}
+.lp-drawer.is-open .lp-drawer-panel {
+  transform: none;
+}
+.lp-drawer-top {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 12px 0;
+}
+.lp-drawer-close {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lp-drawer-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 2px 22px 28px;
+}
+.lp-drawer-brand img {
+  display: block;
+  width: auto;
+  height: 52px;
+}
+.lp-drawer-brand b {
+  display: block;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+}
+.lp-drawer-brand small {
+  display: block;
+  margin-top: 3px;
+  font-size: 13px;
+  color: var(--lp-soft);
+}
+.lp-drawer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 12px;
+}
+.lp .lp-drawer-nav a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 52px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--lp-ink);
+}
+.lp-drawer-nav svg {
+  flex-shrink: 0;
+  stroke: var(--lp-muted);
+}
+.lp .lp-drawer-nav a.is-active {
+  background: var(--lp-tint);
+  color: var(--lp-blue);
+}
+.lp-drawer-nav a.is-active svg {
+  stroke: var(--lp-blue);
+}
+.lp-drawer-foot {
+  margin-top: auto;
+  padding: 10px 12px 18px;
+  border-top: 1px solid var(--lp-line);
   display: flex;
   flex-direction: column;
 }
-.lp-menu-panel a {
+.lp-drawer-foot > span,
+.lp .lp-drawer-foot > a {
   display: flex;
   align-items: center;
-  min-height: 44px;
-  padding: 0 12px;
-  border-radius: 10px;
-  font-size: 14.5px;
-  font-weight: 600;
+  gap: 14px;
+  min-height: 46px;
+  padding: 0 14px;
+  font-size: 14px;
+  color: var(--lp-muted);
 }
-.lp-menu-panel a.lp-menu-wa {
-  margin-top: 4px;
-  gap: 8px;
-  justify-content: center;
-  background: var(--lp-blue);
-  color: #fff;
+.lp-drawer-foot svg {
+  flex-shrink: 0;
+}
+.lp-drawer-foot b {
+  color: var(--lp-ink);
+  font-weight: 600;
 }
 .lp-hero-body {
   position: relative;
@@ -412,40 +544,6 @@ body {
   margin: 0;
 }
 
-/* ── Strip kepercayaan ──────────────────────────────── */
-.lp-trust {
-  padding: 26px 18px 6px;
-}
-.lp-trust-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--lp-line);
-}
-.lp-trust-item .lp-tile {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-}
-.lp-trust-item .lp-tile svg {
-  width: 19px;
-  height: 19px;
-}
-.lp-trust-txt {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-.lp-trust-txt b {
-  font-size: 14px;
-  font-weight: 700;
-}
-.lp-trust-txt span {
-  font-size: 12.5px;
-  color: var(--lp-soft);
-}
-
 /* ── Judul seksi ────────────────────────────────────── */
 .lp-sec-title {
   display: flex;
@@ -467,7 +565,7 @@ body {
   flex-direction: column;
   gap: 14px;
   background: var(--lp-bg2);
-  margin-top: 12px;
+  margin-top: 26px;
 }
 .lp-fleet-head {
   display: flex;
@@ -598,8 +696,7 @@ body {
   font-weight: 700;
   letter-spacing: -0.03em;
 }
-.lp-from b span,
-.lp-per {
+.lp-from b span {
   font-size: 12px;
   font-weight: 600;
   color: var(--lp-soft);
@@ -733,11 +830,6 @@ body {
   flex-direction: column;
   gap: 14px;
 }
-.lp-why-main {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
 .lp-why-list {
   display: flex;
   flex-direction: column;
@@ -775,8 +867,26 @@ body {
   line-height: 1.6;
   color: var(--lp-muted);
 }
+/* HP: foto di bawah judul, sebelum daftar keunggulan. */
+.lp-why-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.lp-why-main {
+  display: contents;
+}
+.lp-why-list {
+  order: 2;
+}
 .lp-why-photo {
-  display: none;
+  order: 1;
+  display: block;
+  width: 100%;
+  height: 200px;
+  border-radius: 16px;
+  object-fit: cover;
+  background: var(--lp-tint);
 }
 
 /* ── Ulasan ─────────────────────────────────────────── */
@@ -791,16 +901,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 14px;
-}
-.lp-sample {
-  display: inline-flex;
-  align-self: flex-start;
-  padding: 5px 11px;
-  border-radius: 999px;
-  background: #fef3c7;
-  color: #7a4a12;
-  font-size: 11px;
-  font-weight: 700;
 }
 .lp-rev-grid {
   display: flex;
@@ -1012,14 +1112,6 @@ body {
 .lp-sheet.is-open .lp-sheet-panel {
   transform: none;
 }
-.lp-sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
 .lp-sheet-card {
   border-radius: 20px;
   background: #fff;
@@ -1031,9 +1123,23 @@ body {
   border-bottom: 1px solid var(--lp-line);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
+}
+/* Tombol kembali: langkah 1 menutup form, langkah 2 kembali ke langkah 1. */
+.lp-back {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid var(--lp-line);
+  border-radius: 11px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .lp-sheet-title {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -1383,12 +1489,16 @@ body {
 
 /* ── Halaman detail motor ───────────────────────────── */
 .lp-sub {
+  position: sticky;
+  top: 0;
+  z-index: 45;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 14px 18px;
   border-bottom: 1px solid var(--lp-line);
+  background: #fff;
 }
 .lp-sub a.lp-brand {
   color: var(--lp-ink);
@@ -1590,9 +1700,16 @@ body {
  * ════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
+  html:has(.lp-head) {
+    scroll-behavior: auto;
+  }
   .lp-sheet,
   .lp-sheet-veil,
-  .lp-sheet-panel {
+  .lp-sheet-panel,
+  .lp-head,
+  .lp-drawer,
+  .lp-drawer-veil,
+  .lp-drawer-panel {
     transition: none;
   }
 }
@@ -1608,6 +1725,7 @@ body {
 @media (min-width: 720px) {
   .lp {
     --lp-pad: max(48px, calc((100% - 1160px) / 2));
+    --lp-head-h: 85px;
   }
   .lp .lp-mb {
     display: none !important;
@@ -1624,21 +1742,15 @@ body {
   }
   .lp-head {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    padding: 20px var(--lp-pad);
+    grid-template-columns: 1fr auto;
+    padding: 0 var(--lp-pad);
     border-bottom: 1px solid rgba(255, 255, 255, 0.18);
   }
   .lp a.lp-brand {
     gap: 10px;
   }
   .lp-logo {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-  }
-  .lp-logo svg {
-    width: 21px;
-    height: 21px;
+    height: 42px;
   }
   .lp-brand-name {
     font-size: 18px;
@@ -1646,31 +1758,44 @@ body {
   .lp-brand-place {
     display: inline;
   }
-  .lp-menu {
+  .lp-menu-btn,
+  .lp-drawer {
     display: none;
   }
   .lp-nav {
     display: flex;
-    gap: 30px;
-    justify-self: center;
+    gap: 4px;
+    justify-self: end;
   }
+  /* Hover + seksi yang sedang dilihat (diatur usePageChrome). */
   .lp-nav a {
+    padding: 9px 14px;
+    border-radius: 999px;
     font-size: 14px;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
+    transition:
+      background-color 0.15s,
+      color 0.15s;
   }
-  .lp a.lp-head-wa {
-    justify-self: end;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 44px;
-    padding: 0 18px;
-    border-radius: 11px;
-    background: var(--lp-blue);
+  .lp .lp-nav a:hover {
+    background: rgba(255, 255, 255, 0.12);
     color: #fff;
-    font-size: 14px;
-    font-weight: 700;
+  }
+  .lp .lp-nav a.is-active {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+  }
+  .lp .lp-head.is-solid .lp-nav a {
+    color: var(--lp-muted);
+  }
+  .lp .lp-head.is-solid .lp-nav a:hover {
+    background: var(--lp-bg2);
+    color: var(--lp-ink);
+  }
+  .lp .lp-head.is-solid .lp-nav a.is-active {
+    background: var(--lp-tint);
+    color: var(--lp-blue);
   }
   .lp-hero-body {
     padding: 0 var(--lp-pad) 74px;
@@ -1771,51 +1896,9 @@ body {
     font-size: 12px;
     color: rgba(255, 255, 255, 0.78);
   }
-  .lp-side-price {
-    padding: 14px 16px;
-    border-radius: 14px;
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-  .lp-side-price > span {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--lp-soft);
-  }
-  .lp-side-price b {
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-  }
 
   .lp-check {
     margin: -26px var(--lp-pad) 0;
-  }
-
-  .lp-trust {
-    margin: 44px var(--lp-pad) 0;
-    padding: 22px 0;
-    border-top: 1px solid var(--lp-line);
-    border-bottom: 1px solid var(--lp-line);
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    row-gap: 18px;
-  }
-  .lp-trust-item {
-    padding: 0 24px;
-    border-bottom: 0;
-    border-left: 1px solid var(--lp-line);
-  }
-  .lp-trust-item .lp-tile {
-    width: 40px;
-    height: 40px;
-    border-radius: 11px;
-  }
-  .lp-trust-item .lp-tile svg {
-    width: 20px;
-    height: 20px;
   }
 
   .lp-sec-title {
@@ -1979,8 +2062,9 @@ body {
     margin-left: auto;
   }
 
+  /* Jarak atas supaya kartu tidak menempel ke seksi How it works. */
   .lp-why {
-    padding: 0 var(--lp-pad) 62px;
+    padding: 62px var(--lp-pad);
   }
   .lp-why-card {
     border: 1px solid var(--lp-line);
@@ -1991,6 +2075,10 @@ body {
     grid-template-columns: 1.05fr 0.95fr;
     gap: 48px;
     align-items: center;
+  }
+  .lp-why-main {
+    display: flex;
+    flex-direction: column;
   }
   .lp-why-main,
   .lp-why .lp-sec-title {
@@ -2406,9 +2494,6 @@ body {
   .lp-bar .lp-check-go {
     width: auto;
   }
-  .lp-trust {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 /* 720–959px: tidak ada mockup — rapatkan header supaya tidak bertumpuk */
@@ -2417,7 +2502,10 @@ body {
     display: none;
   }
   .lp-nav {
-    gap: 18px;
+    gap: 0;
+  }
+  .lp-nav a {
+    padding: 8px 10px;
   }
 }
 

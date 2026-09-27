@@ -27,9 +27,23 @@ export const BUSINESS = {
 
 export const IMAGES = {
   hero: '/images/landing/hero.webp',
-  shop: '/images/landing/divider.webp',
+  /** Logo BOSS (sama dengan dashboard, dipangkas dari public/images/logoCompany.png). */
+  logo: '/images/landing/logo.webp',
+  why: '/images/landing/why-riders.webp',
   map: '/images/landing/map.webp',
 };
+
+/**
+ * Navigasi halaman utama. `id` = id seksi yang ditandai aktif saat digulir.
+ * `drawerOnly` = hanya di laci menu HP (desktop memakai logo untuk kembali ke atas).
+ */
+export const NAV = [
+  { id: 'top', label: 'Home', icon: 'home', drawerOnly: true },
+  { id: 'fleet', label: 'Fleet', icon: 'scooter' },
+  { id: 'how-it-works', label: 'How it works', icon: 'calendar' },
+  { id: 'reviews', label: 'Reviews', icon: 'star' },
+  { id: 'faq', label: 'FAQ', icon: 'info' },
+];
 
 /** Paket: 1 minggu = 7 hari, 1 bulan = 30 hari. */
 export const WEEK_DAYS = 7;
@@ -167,15 +181,9 @@ export const STEPS = [
   { title: 'We deliver, you ride', text: 'Bike, helmets and raincoat at your door. We collect it at the end.' },
 ];
 
-/**
- * ULASAN — masih CONTOH dari mockup (bukan ulasan asli). Selama `sample`
- * true, badge "SAMPLE — replace before launch" tampil seperti di mockup.
- * Setelah diganti ulasan Google asli: ubah isinya lalu set sample: false.
- * `show: false` menyembunyikan seluruh seksi.
- */
+/** ULASAN — ulasan asli penyewa (dikonfirmasi pemilik). `show: false` menyembunyikan seksi & menunya. */
 export const REVIEWS = {
   show: true,
-  sample: true,
   items: [
     { initial: 'S', name: 'Sarah M.', country: 'Australia', text: 'Booked at nine in the morning and the scooter was at our villa before lunch. Spotless, with two helmets.' },
     { initial: 'L', name: 'Lukas B.', country: 'Germany', text: 'Three weeks on an NMAX. Fair monthly price and a same-day swap when a tyre went soft.' },

@@ -6,10 +6,12 @@
  * - Sheet pemesanan 2 langkah (mockup "2-hp-sheet-booking").
  * - Lewat event delegation: chip filter armada [data-lp-filter] dan tombol
  *   [data-lp-book] di HTML statis (server component) ikut dijalankan di sini.
+ * - Beranda: header menempel, penanda seksi aktif & laci menu (usePageChrome).
  */
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import { Icon } from './Icon';
+import { usePageChrome } from './usePageChrome';
 import { ADDONS, BUSINESS, FLEET, TERMS, findScooter } from '@/lib/landing/config';
 import {
   addDays,
@@ -106,9 +108,12 @@ function Notice() {
   );
 }
 
-function SheetHead({ title, subtitle, step }) {
+function SheetHead({ title, subtitle, step, onBack, backLabel }) {
   return (
     <div className="lp-sheet-head">
+      <button type="button" className="lp-back" onClick={onBack} aria-label={backLabel}>
+        <Icon name="back" size="20" color="#0F172A" />
+      </button>
       <span className="lp-sheet-title">
         <b id="lp-sheet-title">{title}</b>
         <span>{subtitle}</span>
@@ -133,6 +138,7 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
   const [used, setUsed] = useState(false);
   const panelRef = useRef(null);
   const triggerRef = useRef(null);
+  usePageChrome(variant === 'bar');
 
   const scooter = findScooter(scooterId) ?? FLEET[0];
   // Tanggal bawaan: besok, 5 hari (seperti mockup). Dihitung di perangkat pengunjung.
@@ -326,12 +332,15 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
         >
           {used && (
             <>
-              <button type="button" className="lp-sr" onClick={closeSheet}>
-                Close
-              </button>
               {step === 1 ? (
                 <section className="lp-sheet-card">
-                  <SheetHead title="Your booking" subtitle="Step 1 of 2 · details" step={1} />
+                  <SheetHead
+                    title="Your booking"
+                    subtitle="Step 1 of 2 · details"
+                    step={1}
+                    onBack={closeSheet}
+                    backLabel="Close booking"
+                  />
                   <Notice />
                   <div className="lp-sheet-body">
                     <div className="lp-bike">
@@ -411,7 +420,13 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
                 </section>
               ) : (
                 <section className="lp-sheet-card">
-                  <SheetHead title="Review & send" subtitle="Step 2 of 2 · confirm" step={2} />
+                  <SheetHead
+                    title="Review & send"
+                    subtitle="Step 2 of 2 · confirm"
+                    step={2}
+                    onBack={() => setStep(1)}
+                    backLabel="Back to details"
+                  />
                   <Notice />
                   <div className="lp-sheet-body is-review">
                     <div className="lp-row">

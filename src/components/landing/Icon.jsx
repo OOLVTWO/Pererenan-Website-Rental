@@ -23,6 +23,9 @@ const SYMBOLS = {
   users: '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 5.6"/><path d="M17.5 19a5.5 5.5 0 0 0-2.3-4.5"/>',
   box: '<path d="M4 8l8-4 8 4v8l-8 4-8-4z"/><path d="M4 8l8 4 8-4"/><path d="M12 12v8"/>',
   star: '<path d="M12 2.6l2.8 5.9 6.4.9-4.6 4.5 1.1 6.4-5.7-3.1-5.7 3.1 1.1-6.4L2.8 9.4l6.4-.9z"/>',
+  home: '<path d="M4 10.5l8-6.5 8 6.5V19a1.5 1.5 0 0 1-1.5 1.5H15V15H9v5.5H5.5A1.5 1.5 0 0 1 4 19z"/>',
+  close: '<path d="M6 6l12 12"/><path d="M18 6L6 18"/>',
+  back: '<path d="M15 6l-6 6 6 6"/>',
 };
 
 const SPRITE = Object.entries(SYMBOLS)
