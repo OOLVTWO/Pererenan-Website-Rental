@@ -72,10 +72,10 @@ export function WhyUs() {
         </div>
         <Image
           className="lp-why-photo"
-          src={IMAGES.shop}
-          alt="A quiet road through the rice fields near Pererenan"
-          width={1400}
-          height={460}
+          src={IMAGES.why}
+          alt="Two riders on a white scooter on a road through the rice fields in Bali"
+          width={1100}
+          height={614}
           unoptimized
           loading="lazy"
         />
@@ -94,7 +94,6 @@ export function Reviews() {
           <span className="lp-eyebrow">Guests</span>
           <h2 className="lp-h2">What renters say.</h2>
         </div>
-        {REVIEWS.sample && <span className="lp-sample">SAMPLE — replace before launch</span>}
       </div>
       <div className="lp-rev-grid">
         {REVIEWS.items.map((r) => (

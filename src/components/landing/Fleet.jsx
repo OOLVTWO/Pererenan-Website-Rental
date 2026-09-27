@@ -1,27 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Icon } from './Icon';
-import { BENEFITS, FLEET, FLEET_FILTERS, PAID_ADDON_MIN_DAYS, matchesFilter } from '@/lib/landing/config';
+import { FLEET, FLEET_FILTERS, PAID_ADDON_MIN_DAYS, matchesFilter } from '@/lib/landing/config';
 import { formatK, formatShort, whatsappUrl } from '@/lib/landing/booking';
-
-/** Strip kepercayaan 4 poin (di bawah kartu cek harga). */
-export function Trust() {
-  return (
-    <section className="lp-trust" aria-label="Why guests pick us">
-      {BENEFITS.map((b) => (
-        <div key={b.title} className="lp-trust-item">
-          <span className="lp-tile">
-            <Icon name={b.icon} size="19" color="#1D4ED8" />
-          </span>
-          <span className="lp-trust-txt">
-            <b>{b.title}</b>
-            <span>{b.text}</span>
-          </span>
-        </div>
-      ))}
-    </section>
-  );
-}
 
 export function ScooterCard({ scooter, priority = false }) {
   const tags = FLEET_FILTERS.filter((f) => matchesFilter(scooter, f.id))

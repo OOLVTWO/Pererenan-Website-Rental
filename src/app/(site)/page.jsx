@@ -1,7 +1,7 @@
 import { preload } from 'react-dom';
 import Hero from '@/components/landing/Hero';
 import BookingIsland from '@/components/landing/BookingIsland';
-import Fleet, { Trust } from '@/components/landing/Fleet';
+import Fleet from '@/components/landing/Fleet';
 import { Faq, HowItWorks, Reviews, WhyUs } from '@/components/landing/Sections';
 import Footer from '@/components/landing/Footer';
 import { BUSINESS, FLEET, IMAGES } from '@/lib/landing/config';
@@ -31,6 +31,7 @@ const JSON_LD = {
   '@type': 'LocalBusiness',
   name: BUSINESS.name,
   image: `${BUSINESS.siteUrl}${IMAGES.hero}`,
+  logo: `${BUSINESS.siteUrl}${IMAGES.logo}`,
   url: BUSINESS.siteUrl,
   telephone: BUSINESS.phoneDisplay,
   priceRange: 'Rp 100.000 – Rp 250.000 / day',
@@ -64,7 +65,6 @@ export default function LandingPage() {
     <div className="lp">
       <Hero />
       <BookingIsland variant="bar" />
-      <Trust />
       <Fleet />
       <HowItWorks />
       <WhyUs />
