@@ -73,7 +73,8 @@ const NAV = [
 function HeroStat({ value, label }) {
   return (
     <span className="text-[13.5px] text-[rgba(255,255,255,0.85)]">
-      <strong className="text-white">{value}</strong> {label}
+      <strong className="text-white">{value}</strong>
+      {` ${label}`}
     </span>
   );
 }
