@@ -123,29 +123,45 @@ export const TERMS = [
 
 /**
  * Nilai pemesanan yang tampil di mockup (cek harga & sheet booking).
- * Sengaja statis — belum ada pemilih tanggal / kalkulator tarif.
+ * Tanggal sengaja statis — belum ada pemilih tanggal / kalkulator tarif.
+ * Motor bisa diganti lewat "Book this"; total = tarif harian × durasi
+ * (mockup: Fazzio Neo 125, 5 hari × Rp 100k = Rp 500.000).
  */
 export const BOOKING = {
-  scooter: 'Fazzio Neo 125',
-  scooterMeta: '125cc · automatic',
   pickUp: '24 Sep 2026',
   return: '28 Sep 2026',
   dates: '24 – 28 Sep 2026',
+  days: 5,
   duration: '5 days',
   rate: '1 week package',
   area: 'Pererenan',
-  total: 'Rp 500.000',
 };
 
-export function bookingMessage({ helmets, raincoats }) {
+/** Motor bawaan formulir = motor di mockup. */
+export const DEFAULT_SCOOTER = FLEET[0];
+
+/** 500000 -> "Rp 500.000" (tanpa Intl supaya hasil server = client). */
+export function formatRupiah(amount) {
+  return `Rp ${String(amount).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+}
+
+export function bookingTotal(scooter) {
+  return formatRupiah(scooter.daily * 1000 * BOOKING.days);
+}
+
+export function scooterMeta(scooter) {
+  return `${scooter.cc}cc · automatic`;
+}
+
+export function bookingMessage({ scooter, helmets, raincoats }) {
   return [
     "Hi Boss Rent! I'd like to book a scooter.",
-    `Scooter: ${BOOKING.scooter}`,
+    `Scooter: ${scooter.name}`,
     `Dates: ${BOOKING.dates} (${BOOKING.duration})`,
     `Rate: ${BOOKING.rate}`,
     `Helmets: ${helmets} · Raincoats: ${raincoats}`,
     `Delivery: ${BOOKING.area}`,
-    `Total: ${BOOKING.total}`,
+    `Total: ${bookingTotal(scooter)}`,
     'I have read and agree to the rental terms.',
   ].join('\n');
 }

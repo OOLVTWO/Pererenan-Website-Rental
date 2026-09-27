@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Icon } from './icons';
 import { PhotoPlaceholder } from './ui';
-import { BOOKING, TERMS, bookingMessage, whatsappUrl } from '@/lib/landing/content';
+import { BOOKING, TERMS, bookingMessage, bookingTotal, scooterMeta, whatsappUrl } from '@/lib/landing/content';
 
 /*
  * Sheet booking 2 langkah — kartu disalin dari "2-hp-sheet-booking.html".
@@ -106,7 +106,7 @@ function AddOn({ icon, title, text, disabled, children }) {
   );
 }
 
-function StepDetails({ helmets, raincoats, setHelmets, setRaincoats, onChangeScooter, onReview }) {
+function StepDetails({ scooter, helmets, raincoats, setHelmets, setRaincoats, onChangeScooter, onReview }) {
   return (
     <section className="rounded-[20px] bg-white border border-[#E4E9F0] overflow-hidden">
       <SheetHeader id="booking-title" title="Your booking" subtitle="Step 1 of 2 · details" step={1} />
@@ -117,8 +117,8 @@ function StepDetails({ helmets, raincoats, setHelmets, setRaincoats, onChangeSco
             <PhotoPlaceholder className="h-[40px] rounded-[8px] bg-[#FFFFFF]" label="bike" />
           </span>
           <span className="flex flex-col grow">
-            <span className="text-[14.5px] font-bold">{BOOKING.scooter}</span>
-            <span className="text-[12.5px] text-[#1E40AF]">{BOOKING.scooterMeta}</span>
+            <span className="text-[14.5px] font-bold">{scooter.name}</span>
+            <span className="text-[12.5px] text-[#1E40AF]">{scooterMeta(scooter)}</span>
           </span>
           <a
             href="#fleet"
@@ -156,7 +156,7 @@ function StepDetails({ helmets, raincoats, setHelmets, setRaincoats, onChangeSco
         <div className="flex items-center justify-between gap-[12px] p-[14px] rounded-[14px] bg-[#EEF3FF]">
           <span className="flex flex-col gap-[2px]">
             <span className="text-[12px] font-bold text-[#1E40AF]">5 days · weekly rate applied</span>
-            <span className="font-display text-[24px] font-bold">{BOOKING.total}</span>
+            <span className="font-display text-[24px] font-bold">{bookingTotal(scooter)}</span>
           </span>
           <Icon name="arrow" size="20" color="#1D4ED8" />
         </div>
@@ -181,14 +181,14 @@ function SummaryRow({ label, value }) {
   );
 }
 
-function StepReview({ helmets, raincoats, agreed, setAgreed }) {
-  const waUrl = whatsappUrl(bookingMessage({ helmets, raincoats }));
+function StepReview({ scooter, helmets, raincoats, agreed, setAgreed }) {
+  const waUrl = whatsappUrl(bookingMessage({ scooter, helmets, raincoats }));
   return (
     <section className="rounded-[20px] bg-white border border-[#E4E9F0] overflow-hidden">
       <SheetHeader id="booking-title" title="Review & send" subtitle="Step 2 of 2 · confirm" step={2} />
       <RequestNotice />
       <div className="p-[16px_18px] flex flex-col gap-[12px]">
-        <SummaryRow label="Scooter" value={BOOKING.scooter} />
+        <SummaryRow label="Scooter" value={scooter.name} />
         <SummaryRow label="Dates" value={BOOKING.dates} />
         <SummaryRow label="Duration" value={BOOKING.duration} />
         <SummaryRow label="Rate" value={BOOKING.rate} />
@@ -196,7 +196,7 @@ function StepReview({ helmets, raincoats, agreed, setAgreed }) {
         <SummaryRow label="Delivery" value={`${BOOKING.area} · free`} />
         <div className="flex items-baseline justify-between gap-[12px] p-[4px_0_2px]">
           <span className="text-[14px] font-bold">Total</span>
-          <span className="font-display text-[26px] font-bold">{BOOKING.total}</span>
+          <span className="font-display text-[26px] font-bold">{bookingTotal(scooter)}</span>
         </div>
         <div className="flex flex-col gap-[8px] pt-[6px]">
           <span className="flex items-center justify-between gap-[10px]">
@@ -241,7 +241,7 @@ function StepReview({ helmets, raincoats, agreed, setAgreed }) {
   );
 }
 
-export default function BookingSheet({ open, step, onStepChange, onClose }) {
+export default function BookingSheet({ open, step, scooter, onStepChange, onClose }) {
   const panelRef = useRef(null);
   const [helmets, setHelmets] = useState(2);
   const [raincoats, setRaincoats] = useState(1);
@@ -303,6 +303,7 @@ export default function BookingSheet({ open, step, onStepChange, onClose }) {
         </button>
         {step === 1 ? (
           <StepDetails
+            scooter={scooter}
             helmets={helmets}
             raincoats={raincoats}
             setHelmets={setHelmets}
@@ -314,7 +315,7 @@ export default function BookingSheet({ open, step, onStepChange, onClose }) {
             }}
           />
         ) : (
-          <StepReview helmets={helmets} raincoats={raincoats} agreed={agreed} setAgreed={setAgreed} />
+          <StepReview scooter={scooter} helmets={helmets} raincoats={raincoats} agreed={agreed} setAgreed={setAgreed} />
         )}
       </div>
     </div>

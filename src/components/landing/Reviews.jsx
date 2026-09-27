@@ -25,7 +25,8 @@ export function ReviewsMobile() {
           <Stars />
           <p className="text-[13.5px] leading-[1.65] text-[#475569]">{r.text}</p>
           <figcaption className="text-[12.5px] font-bold">
-            {r.name} <span className="font-medium text-[#5B6474]">· {r.country}</span>
+            {`${r.name} `}
+            <span className="font-medium text-[#5B6474]">{`· ${r.country}`}</span>
           </figcaption>
         </figure>
       ))}

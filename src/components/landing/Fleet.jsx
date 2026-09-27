@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Icon } from './icons';
 import { Eyebrow, PhotoPlaceholder } from './ui';
+import { BookingLink } from './BookingProvider';
 import { FLEET_FILTERS, filterFleet, whatsappUrl } from '@/lib/landing/content';
 
 /* Ukuran yang berbeda antara papan HP dan desktop. */
@@ -64,7 +65,7 @@ function ScooterCard({ scooter, size }) {
           </span>
         )}
         <span className="absolute top-[12px] right-[12px] p-[5px_10px] rounded-[999px] bg-white border border-[#E4E9F0] text-[11px] font-bold text-[#475569]">
-          {scooter.cc}cc
+          {`${scooter.cc}cc`}
         </span>
       </div>
       <div className="p-[14px] flex flex-col gap-[12px] grow">
@@ -77,7 +78,8 @@ function ScooterCard({ scooter, size }) {
           <span className="flex flex-col gap-[1px] pt-[10px]">
             <span className="text-[11px] text-[#5B6474] font-semibold">From</span>
             <span className={`font-display ${size.price} font-bold tracking-[-0.03em]`}>
-              Rp {scooter.daily}k<span className="text-[12px] font-semibold text-[#5B6474]"> /day</span>
+              {`Rp ${scooter.daily}k`}
+              <span className="text-[12px] font-semibold text-[#5B6474]"> /day</span>
             </span>
           </span>
           <span className="text-[11.5px] text-[#5B6474] pt-[10px] text-right">
@@ -86,14 +88,9 @@ function ScooterCard({ scooter, size }) {
             <strong className="text-[#475569]">{scooter.week}</strong>
           </span>
         </span>
-        <a
-          href={whatsappUrl(`Hi Boss Rent! I'd like to book the ${scooter.name}.`)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`${ACTION} bg-[#EEF3FF]`}
-        >
+        <BookingLink scooter={scooter} className={`${ACTION} bg-[#EEF3FF]`}>
           Book this <Icon name="arrow" size="15" color="#1E40AF" />
-        </a>
+        </BookingLink>
       </div>
     </article>
   );

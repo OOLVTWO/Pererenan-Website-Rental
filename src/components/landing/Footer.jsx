@@ -21,7 +21,8 @@ export function FooterMobile() {
         rel="noopener noreferrer"
         className="inline-flex items-center justify-center gap-[10px] min-h-[56px] rounded-[12px] bg-[#1D4ED8] text-white text-[15.5px] font-bold"
       >
-        <Icon name="whatsapp" size="19" color="#fff" /> {BUSINESS.phoneDisplay}
+        <Icon name="whatsapp" size="19" color="#fff" />
+        {` ${BUSINESS.phoneDisplay}`}
       </a>
       <PhotoPlaceholder className="h-[150px] rounded-[16px] bg-[#EEF3FF]" label="map" />
       <div className="flex flex-col gap-[12px] pt-[16px] border-t border-[#E4E9F0]">
@@ -64,7 +65,8 @@ export function FooterDesktop() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-[10px] min-h-[56px] p-[0_24px] rounded-[12px] bg-[#1D4ED8] text-white text-[15.5px] font-bold"
             >
-              <Icon name="whatsapp" size="19" color="#fff" /> {BUSINESS.phoneDisplay}
+              <Icon name="whatsapp" size="19" color="#fff" />
+        {` ${BUSINESS.phoneDisplay}`}
             </a>
             <a
               href={BUSINESS.mapsUrl}
