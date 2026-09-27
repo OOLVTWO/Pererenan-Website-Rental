@@ -2058,8 +2058,15 @@ html:has(.lp-sub) {
     font-size: 13.5px;
     color: var(--lp-soft);
   }
-  .lp-extras small:last-child {
+  /* Catatan paket mengisi sisa baris (boleh terlipat bila sempit) supaya
+     "Helmets & raincoat always free" tetap sebaris di ujung kanan seperti mockup. */
+  .lp-extras-note {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .lp-extras-free {
     margin-left: auto;
+    white-space: nowrap;
   }
 
   /* Jarak atas supaya kartu tidak menempel ke seksi How it works. */
@@ -2506,6 +2513,31 @@ html:has(.lp-sub) {
   }
   .lp-nav a {
     padding: 8px 10px;
+  }
+  /* Bilah Extras dua baris rapi: harga di atas, catatan + "always free" di bawah. */
+  .lp-extras {
+    row-gap: 6px;
+  }
+  .lp-extras::after {
+    content: '';
+    order: 1;
+    flex-basis: 100%;
+  }
+  .lp-extras-note,
+  .lp-extras-free {
+    order: 2;
+  }
+}
+
+/* 960–1099px: bilah Extras dirapatkan supaya tetap satu baris seperti mockup */
+@media (min-width: 960px) and (max-width: 1099.98px) {
+  .lp-extras {
+    column-gap: 12px;
+    padding: 18px;
+    font-size: 13px;
+  }
+  .lp-extras small {
+    font-size: 12.5px;
   }
 }
 

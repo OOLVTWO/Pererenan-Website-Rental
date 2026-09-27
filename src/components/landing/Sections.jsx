@@ -40,8 +40,8 @@ export function HowItWorks() {
         <span>
           Surf rack <strong>Rp 350.000</strong>
         </span>
-        <small>{`Rentals of ${PAID_ADDON_MIN_DAYS} days or more · fitting included`}</small>
-        <small>Helmets &amp; raincoat always free</small>
+        <small className="lp-extras-note">{`Rentals of ${PAID_ADDON_MIN_DAYS} days or more · fitting included`}</small>
+        <small className="lp-extras-free">Helmets &amp; raincoat always free</small>
       </div>
     </section>
   );
