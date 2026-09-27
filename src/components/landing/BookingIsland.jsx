@@ -11,6 +11,7 @@
  */
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Icon } from './Icon';
 import { usePageChrome } from './usePageChrome';
 import { ADDONS, BUSINESS, FLEET, TERMS, findScooter } from '@/lib/landing/config';
@@ -167,6 +168,7 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
   const [used, setUsed] = useState(false);
   const panelRef = useRef(null);
   const triggerRef = useRef(null);
+  const router = useRouter();
   usePageChrome(variant === 'bar');
 
   // Belum ada yang dipilih: motor (di beranda) & tanggal kosong, harga belum dihitung.
@@ -246,7 +248,7 @@ export default function BookingIsland({ variant = 'bar', scooterId: initialScoot
     setOpen(false);
     const fleet = document.getElementById('fleet') || document.getElementById('models');
     if (fleet) requestAnimationFrame(() => fleet.scrollIntoView());
-    else window.location.href = '/#fleet';
+    else router.push('/#fleet');
   };
 
   const dateInputs = {

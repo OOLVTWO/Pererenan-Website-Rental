@@ -21,15 +21,9 @@ export const metadata = {
   description:
     "Automatic scooter rental in Pererenan, Canggu and Berawa from Rp 100k a day. Free delivery, helmet and raincoat included.",
   metadataBase: new URL("https://pererenan-website-rental.vercel.app"),
-  icons: {
-    icon: [
-      { url: '/images/logoCompany.png', type: 'image/png' },
-      { url: '/icon.png', type: 'image/png' },
-      { url: '/favicon.ico', type: 'image/x-icon' },
-    ],
-    shortcut: '/images/logoCompany.png',
-    apple: '/icon.png',
-  },
+  // Ikon tab & layar utama HP diambil otomatis dari src/app/favicon.ico, icon.png
+  // dan apple-icon.png (konvensi file Next.js). Jangan ditambah daftar manual lagi:
+  // dulu 6 tautan ikon saling menimpa & logo 53 KB ikut terunduh di setiap halaman.
 };
 
 export default function RootLayout({ children }) {

@@ -57,9 +57,9 @@ html, body {
 
 /* ── Ringan: tanpa shadow tebal, blur, atau animasi mencolok ── */
 *, *::before, *::after { box-shadow: none !important; text-shadow: none !important; }
-.modal, .dropdown-menu { box-shadow: var(--shadow-lg) !important; }
+.modal { box-shadow: var(--shadow-lg) !important; }
 [class*="bento"], .card, .stat-card, .header, .modal-overlay { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-.fa-beat, .fa-shake, .fa-bounce, .fa-beat-fade, .fa-fade, .fa-flip { animation: none !important; }
+.fa-beat, .fa-shake, .fa-beat-fade { animation: none !important; }
 .fade-in { animation: none !important; }
 *:hover { transform: none; }
 
@@ -253,7 +253,6 @@ html, body {
 .dash2-bar { display: flex; gap: 2px; height: 10px; border-radius: 999px; overflow: hidden; background: var(--bg-elevated); }
 .dash2-bar .b1 { background: var(--brand-primary); }
 .dash2-bar .b2 { background: var(--brand-soft-border); }
-.dash2-bar .b3 { background: #CBD5E1; }
 
 .dash2-chart { display: flex; align-items: flex-end; gap: 10px; min-height: 170px; overflow-x: auto; }
 .dash2-chart-col { flex: 1; min-width: 38px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; }
@@ -316,12 +315,12 @@ pre, code { white-space: pre-wrap; word-break: break-word; }
   .table:not(.table--stack-mobile) { min-width: 560px; }
 
   /* Grid statistik jadi 2 kolom, bukan memaksa 4 */
-  .stats-grid, .grid-3, .grid-4, .dash2-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .grid-3, .grid-4, .dash2-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .stat-value, .dash2-big { font-size: 20px; word-break: break-word; }
 }
 
 @media (max-width: 400px) {
-  .stats-grid, .grid-3, .grid-4 { grid-template-columns: minmax(0, 1fr) !important; }
+  .grid-3, .grid-4 { grid-template-columns: minmax(0, 1fr) !important; }
   .page-tab { font-size: 13px; padding: 0 12px; }
 }
 

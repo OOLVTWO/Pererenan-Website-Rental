@@ -75,9 +75,6 @@ html:has(.lp-sub) {
   height: 0;
   overflow: hidden;
 }
-.lp-disp {
-  font-family: var(--font-display), system-ui, sans-serif;
-}
 .lp-eyebrow {
   font-size: 12px;
   font-weight: 700;

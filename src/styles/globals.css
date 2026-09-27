@@ -219,16 +219,6 @@ a:hover {
   overflow-x: hidden;
 }
 
-.sidebar-nav-item.active {
-  background: #2563EB;
-  color: #ffffff;
-  font-weight: 700;
-  box-shadow: 0 4px 14px rgba(37,99,235,0.4);
-  border-color: transparent;
-}
-
-.sidebar-nav-item.active .nav-icon { color: #ffffff; }
-
 /* =========================================
    HEADER
    ========================================= */
@@ -372,14 +362,6 @@ a:hover {
   font-size: 11px;
   color: var(--text-muted);
   margin-top: 4px;
-}
-
-.stat-change.positive {
-  color: var(--status-success);
-}
-
-.stat-change.negative {
-  color: var(--status-danger);
 }
 
 /* =========================================
@@ -1390,12 +1372,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   flex-wrap: wrap;
 }
 
-.tracking-filter-tab.active {
-  background: rgba(37,99,235, 0.12);
-  color: var(--brand-primary-light);
-  border-color: rgba(37,99,235, 0.3);
-}
-
 .tracking-search-wrap {
   display: flex;
   align-items: center;
@@ -1834,11 +1810,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: #1E3A8A;
 }
 
-.maintenance-item .avail-summary-icon,
-.maintenance-item .avail-summary-count {
-  color: #1E40AF;
-}
-
 .avail-summary-divider {
   width: 1px;
   height: 40px;
@@ -2273,10 +2244,6 @@ textarea {
     width: 280px !important;
     box-shadow: 8px 0 32px rgba(0,0,0, 0.5);
   }
-
-  .sidebar.mobile-active {
-    transform: translateX(0) !important;
-  }
 }
 
 .bento-card {
@@ -2297,12 +2264,6 @@ textarea {
   border-color: rgba(37,99,235, 0.3);
   box-shadow: 0 16px 48px rgba(0,0,0, 0.5), 0 0 24px rgba(37,99,235, 0.15);
 }
-.bento-deposit-item.damage {
-  background: #F5F3FF;
-  border: 1.5px solid #DDD6FE;
-}
-.damage .dep-label  { color: #1D4ED8; }
-.damage .dep-amount  { color: #1D4ED8; }
 
 /* Bento Table Card */
 .bento-table-card {
@@ -2316,42 +2277,6 @@ textarea {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-}
-
-.bento-pill-tag.info {
-  background: rgba(59,130,246, 0.12);
-  border-color: rgba(59,130,246, 0.3);
-  color: #60A5FA;
-}
-
-.bento-metric-pill.available {
-  background: rgba(29,78,216, 0.12);
-  border: 1px solid rgba(29,78,216, 0.35);
-}
-
-.bento-metric-pill.rented {
-  background: rgba(59,130,246, 0.12);
-  border: 1px solid rgba(59,130,246, 0.35);
-}
-
-.bento-metric-pill.maintenance {
-  background: rgba(30,64,175, 0.12);
-  border: 1px solid rgba(30,64,175, 0.35);
-}
-
-.bento-metric-pill.available .pill-dot {
-  background: #1D4ED8;
-  box-shadow: 0 0 8px #1D4ED8;
-}
-
-.bento-metric-pill.rented .pill-dot {
-  background: #3B82F6;
-  box-shadow: 0 0 8px #3B82F6;
-}
-
-.bento-metric-pill.maintenance .pill-dot {
-  background: #1E40AF;
-  box-shadow: 0 0 8px #1E40AF;
 }
 
 /* Horizontal Scrollable Tabs / Chips & Pills Layout System */
@@ -2399,24 +2324,6 @@ textarea {
   color: #ffffff;
   border-color: var(--brand-primary);
   box-shadow: 0 4px 16px rgba(37,99,235, 0.3);
-}
-
-.bento-deposit-box.damage {
-  background: rgba(29,78,216, 0.08);
-  border: 1px solid rgba(29,78,216, 0.28);
-}
-
-.bento-deposit-box.damage:hover {
-  border-color: rgba(29,78,216, 0.55);
-  box-shadow: 0 8px 24px rgba(29,78,216, 0.2);
-}
-
-@media (max-width: 600px) {
-  .bento-chart-full-card .card-header {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 12px !important;
-  }
 }
 
 @media (max-width: 768px) {
@@ -2616,15 +2523,6 @@ textarea {
   box-shadow: 0 6px 20px rgba(30,58,138, 0.5);
 }
 
-@media (max-width: 600px) {
-
-  .settings-logo-upload-wrap .btn {
-    width: 100% !important;
-    max-width: 100% !important;
-    justify-content: center !important;
-  }
-}
-
 .table th {
   padding: 14px 18px !important;
   font-size: 11.5px !important;
@@ -2715,27 +2613,6 @@ textarea {
   min-width: 150px;
 }
 
-.bento-stat-sub.expense {
-  border-left: 1px solid var(--bg-border);
-  padding-left: 16px;
-}
-
-@media (max-width: 768px) {
-
-  .bento-hero-top .tx-status-pill {
-    width: 100% !important;
-    justify-content: center !important;
-    box-sizing: border-box !important;
-  }
-
-  .bento-stat-sub.expense {
-    border-left: none !important;
-    border-top: 1px solid var(--bg-border) !important;
-    padding-left: 0 !important;
-    padding-top: 10px !important;
-  }
-}
-
 /* Grid kontrol Image Adjuster (vehicles page) */
 .adj-controls {
   display: grid !important;
@@ -2780,20 +2657,6 @@ textarea {
   }
 }
 
-.sidebar-dropdown-trigger.active {
-  background: #2563EB;
-  color: #FFFFFF;
-  border-color: #1D4ED8;
-  box-shadow: 0 4px 14px rgba(37,99,235, 0.4);
-}
-
-.sidebar-child-item.active {
-  color: var(--brand-primary-light);
-  background: rgba(37,99,235, 0.08);
-  border-color: rgba(37,99,235, 0.2);
-  font-weight: 600;
-}
-
 /* Header */
 .header {
   background: var(--bg-surface) !important;
@@ -2825,9 +2688,6 @@ body { background-color: var(--bg-base); color: var(--text-primary); }
 .stat-label { color: var(--text-muted) !important; }
 .stat-value { color: var(--text-primary) !important; }
 .stat-change { color: var(--text-muted) !important; }
-.stat-card-hero .stat-label { color: rgba(255,255,255,0.7) !important; }
-.stat-card-hero .stat-value { color: #ffffff !important; }
-.stat-card-hero .stat-change { color: rgba(255,255,255,0.65) !important; }
 
 /* Bento cards */
 .bento-card {
@@ -2951,67 +2811,10 @@ select.form-control option { background: var(--bg-surface); color: var(--text-pr
   border: 1px solid var(--bg-border) !important;
 }
 
-.theme-dropdown-trigger:hover,
-.theme-dropdown-trigger.open {
-  background: var(--brand-primary);
-  border-color: var(--brand-primary-dark);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(37,99,235,0.35);
-}
-.theme-dropdown-trigger.open .theme-dropdown-arrow {
-  transform: rotate(180deg);
-}
-
 @keyframes dropIn {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
-.theme-dropdown-item.active {
-  background: rgba(37,99,235,0.1);
-  color: var(--brand-primary);
-  font-weight: 700;
-}
-.sidebar-dropdown-trigger.active {
-  background: #2563EB;
-  color: #ffffff;
-  font-weight: 700;
-  box-shadow: 0 4px 14px rgba(37,99,235,0.4);
-}
-.sidebar-child-item.active {
-  color: #60A5FA;
-  background: rgba(37,99,235,0.15);
-}
-.ptab-v4.on {
-  background: var(--brand-primary);
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.3);
-}
-.ptab-v4:not(.on):hover {
-  background: var(--bg-elevated);
-  color: var(--text-primary);
-}
-.dash-alert-bar.unpaid {
-  background: rgba(30,64,175,0.1);
-  border: 1px solid rgba(30,64,175,0.3);
-  color: #1E40AF;
-}
-.dash-alert-bar.maintenance {
-  background: rgba(30,58,138,0.08);
-  border: 1px solid rgba(30,58,138,0.25);
-  color: #1E3A8A;
-}
-.dash-ptab.active {
-  background: var(--brand-primary);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(37,99,235, 0.3);
-}
-.dash-finance-item.income i { color: #1D4ED8; }
-.dash-finance-item.expense i { color: #1E3A8A; }
-.dash-finance-item.investor i { color: #1D4ED8; }
-.dash-finance-item.income .fin-value { color: #1D4ED8; }
-.dash-finance-item.expense .fin-value { color: #1E3A8A; }
-.dash-finance-item.investor .fin-value { color: #1D4ED8; }
 
 /* ── HEADER — progressive de-cluttering as screen shrinks ── */
 @media (max-width: 768px) {

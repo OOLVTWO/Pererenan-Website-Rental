@@ -3,7 +3,8 @@
  *
  * CATATAN: di Vercel serverless setiap instance punya Map sendiri, jadi ini
  * proteksi ringan — untuk proteksi produksi yang ketat (anti brute-force
- * login / API abuse) gunakan Redis/Upstash, lihat DEPLOY-GUIDE.md.
+ * login / API abuse) gunakan penyimpanan bersama seperti Redis/Upstash.
+ * Supabase Auth juga punya batas percobaan login sendiri.
  */
 const DEFAULT_WINDOW_MS = 60_000;
 const DEFAULT_MAX = 120;

@@ -23,6 +23,13 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
 - Akun admin dibuat di Supabase Auth, lalu WAJIB didaftarkan ke `public.admin_users` (RLS memakai `private.is_admin()`).
   User login yang tidak ada di `admin_users` tidak bisa melihat data apa pun.
 - Verifikasi minimal sebelum push: `npm run lint` (0 error), `npm test`, `npm run build`.
+- Header keamanan & CSP ada di `next.config.mjs` (berlaku untuk admin & halaman publik). CSP hanya mengizinkan
+  sumber yang dipakai: Supabase (`*.supabase.co`), `flagcdn.com`, `data:`/`blob:`. Kalau menambah layanan luar
+  (skrip, gambar, API), tambahkan domainnya ke CSP — kalau tidak, browser memblokirnya diam-diam.
+- Ikon tab/HP hanya dari konvensi file `src/app/favicon.ico`, `icon.png`, `apple-icon.png`. Jangan tambah
+  `metadata.icons` manual atau salinan ikon di `public/` (dulu 6 tautan ikon saling menimpa).
+- Jaga Next.js tetap di rilis patch terbaru (`npm audit --omit=dev`). `xlsx` 0.18.5 punya celah di fungsi
+  MEMBACA file; aplikasi hanya MENULIS ekspor Excel, jadi tidak terdampak — jangan pakai untuk impor file.
 - Perubahan skema = file baru di `supabase/migrations/NNN_*.sql`, idempotent, dengan RLS + grant eksplisit
   (Supabase mewajibkan grant eksplisit untuk tabel baru di Data API).
 
