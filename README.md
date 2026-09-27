@@ -3,8 +3,8 @@
 Panel administrasi rental motor Boss Rent Pererenan (Pererenan, Bali).
 Next.js 16 (App Router) + Supabase (Postgres, Auth, Storage), di-deploy di **Vercel**.
 
-> Repo ini hanya berisi **panel admin**. Website publik / katalog `/fleet`
-> tidak termasuk di sini.
+> Repo ini berisi **panel admin** dan **halaman publik** (landing) di `/`.
+> Katalog `/fleet` tidak termasuk di sini.
 
 ## Fitur
 

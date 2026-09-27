@@ -1,0 +1,83 @@
+/*
+ * Halaman publik (landing) — hanya dimuat oleh src/app/page.jsx.
+ *
+ * Tailwind dipasang TANPA preflight: mockup referensi memakai style bawaan
+ * browser (box-sizing content-box, svg inline, line-height normal), jadi reset
+ * Tailwind akan menggeser ukuran. Base di bawah = salinan persis blok <style>
+ * pada file HTML referensi. Panel admin tidak memuat file ini.
+ */
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+
+@source "../components/landing";
+@source "../app/page.jsx";
+
+@layer base {
+  body {
+    margin: 0;
+    font-family: var(--font-sans), system-ui, sans-serif;
+    background: #FFFFFF;
+    color: #0F172A;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  h1, h2, h3 {
+    margin: 0;
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  p {
+    margin: 0;
+  }
+}
+
+@layer components {
+  /* Elemen yang di referensi berupa <span>/<div> tapi di sini harus bisa
+     diklik (chip, stepper, FAQ). Menghapus style bawaan <button> supaya
+     tampilannya identik dengan elemen aslinya. */
+  .btn-reset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-align: inherit;
+    box-sizing: content-box;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
+
+/* font-family 'Schibsted Grotesk', system-ui, sans-serif — dipasang via next/font */
+@utility font-display {
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+/* Sisi kiri-kanan section desktop: max(48px, calc((100% - 1160px) / 2)) */
+@utility px-page {
+  padding-left: max(48px, calc((100% - 1160px) / 2));
+  padding-right: max(48px, calc((100% - 1160px) / 2));
+}
+@utility mx-page {
+  margin-left: max(48px, calc((100% - 1160px) / 2));
+  margin-right: max(48px, calc((100% - 1160px) / 2));
+}
+
+/* Placeholder foto bergaris dari mockup */
+@utility bg-stripes {
+  background-image: repeating-linear-gradient(135deg, rgba(29, 78, 216, 0.07) 0, rgba(29, 78, 216, 0.07) 2px, transparent 2px, transparent 15px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet-anim {
+    transition: none !important;
+  }
+}

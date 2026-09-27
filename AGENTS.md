@@ -9,7 +9,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
 
 ## Lingkup
-- Repo ini **hanya panel admin**. Website publik `/fleet` sengaja tidak ada di sini.
+- Repo ini berisi panel admin + **halaman publik (landing) di `/`**. Katalog `/fleet` sengaja tidak ada di sini.
 - Hosting: **Vercel** (bukan Netlify), project `pererenan-website-rental`.
 - Database/Auth/Storage: Supabase project **`Pererenan Website Rental`** (ref `fltfzhcvvfmregcsjovm`).
   Project lama `boss-rent-pererenan` (ref `eedrziblypwrufdzctvd`) milik app lama — JANGAN diubah dari repo ini.
@@ -56,6 +56,21 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
 - Kategori pengeluaran default = `other`. Data lama berkategori `service` sebagian besar bukan servis motor.
 - Catatan servis ada di tabel `service_logs` (tanggal, pekerjaan, bengkel, biaya, catatan). Kolom KM di tabel
   dibiarkan kosong; kolom `vehicles.current_km / last_service_km / last_serviced_at` tidak dipakai lagi.
+
+## Halaman publik `/` (landing)
+- Hasil konversi pixel-perfect 4 mockup HTML (papan HP 390px, sheet booking, desktop 1280px atas + bawah).
+  Prioritasnya kemiripan dengan mockup — jangan "merapikan" nilai (px, warna, teks) tanpa mockup baru.
+- Kode: `src/app/page.jsx`, `src/components/landing/*`, teks/data di `src/lib/landing/content.js`.
+- < 1024px pakai layout HP (melebar), ≥ 1024px layout desktop (latar selebar layar, isi maks. 1160px).
+  Mockup desktop baru muat utuh mulai 1256px; di 1024–1255px teks biasa boleh turun baris, tapi chip
+  filter & label harga Extras diberi `whitespace-nowrap`. Tanggal di bar cek harga sengaja boleh terlipat
+  (nowrap membuat bar meluber di 1024–1055px; mockup sendiri melipat "Fazzio Neo 125").
+- Styling: Tailwind v4 (arbitrary value) di `src/styles/landing.css`, **TANPA preflight** — mockup memakai
+  style bawaan browser (box-sizing content-box, svg inline). CSS ini hanya dimuat di `/`; aturan desain di
+  bawah (flat, tanpa kuning, dll.) berlaku untuk panel admin, bukan landing.
+- Elemen yang di mockup `<span>` tapi kini bisa diklik (chip, stepper, FAQ) memakai `<button class="btn-reset">`;
+  `<button>` memusatkan isi secara vertikal, jadi beri `flex` bila tombol ikut diregangkan flex.
+- Tanggal & harga di cek harga / sheet booking masih statis (sesuai mockup); foto motor masih placeholder.
 
 ## Desain (sejak redesign flat)
 - Flat & ringan: putih + satu biru (`--brand-primary` #1D4ED8), abu hanya untuk teks/garis. Tanpa gradient,
