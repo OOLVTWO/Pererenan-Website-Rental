@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/server';
-import { requireAuth } from '@/lib/apiAuth';
+import { requireAuth, readJsonBody } from '@/lib/apiAuth';
 import { NextResponse } from 'next/server';
 
 // GET /api/vehicles/[id]
@@ -26,7 +26,8 @@ export async function PUT(request, { params }) {
 
   const { id } = await params;
   const supabase = await createAdminClient();
-  const body = await request.json();
+  const body = await readJsonBody(request);
+  if (!body) return NextResponse.json({ error: 'Body request bukan JSON valid.' }, { status: 400 });
 
   const { id: _id, created_at, updated_at, ...rawUpdateData } = body;
   const updateData = { ...rawUpdateData };
@@ -39,6 +40,26 @@ export async function PUT(request, { params }) {
   if ('last_service_km' in updateData) updateData.last_service_km = parseInt(updateData.last_service_km) || 0;
   if ('purchase_date' in updateData) {
     updateData.purchase_date = (updateData.purchase_date && String(updateData.purchase_date).trim() !== '') ? updateData.purchase_date : null;
+  }
+
+  // Plat nomor: format sama dengan saat menambah motor, dan tidak boleh dipakai motor lain
+  // (kolomnya UNIQUE — tanpa cek ini admin hanya melihat galat database berbahasa Inggris).
+  if ('plate_number' in updateData) {
+    const plate = String(updateData.plate_number || '').trim().toUpperCase();
+    if (!plate) return NextResponse.json({ error: 'Plat nomor wajib diisi.' }, { status: 400 });
+    updateData.plate_number = plate;
+    const { data: dup } = await supabase
+      .from('vehicles')
+      .select('id, name')
+      .eq('plate_number', plate)
+      .neq('id', id)
+      .maybeSingle();
+    if (dup) {
+      return NextResponse.json(
+        { error: `Plat nomor ${plate} sudah dipakai motor "${dup.name}". Periksa lagi platnya.` },
+        { status: 409 }
+      );
+    }
   }
 
   let { data, error } = await supabase
@@ -63,6 +84,9 @@ export async function PUT(request, { params }) {
     error = retry.error;
   }
 
+  if (error?.code === '23505') {
+    return NextResponse.json({ error: 'Plat nomor sudah dipakai motor lain.' }, { status: 409 });
+  }
   if (error) {
     console.error('Update vehicle error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
