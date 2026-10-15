@@ -76,8 +76,37 @@ export function isPaidTransaction(t) {
 }
 
 // ── Investor / bagi hasil ──
+// Motor yang (pernah) dibagi hasil dengan investor. Motor eks-investor yang sudah
+// dibeli owner tetap termasuk di sini supaya bagi hasil SEBELUM tanggal pindah
+// tetap muncul di laporan — lihat `owned_since` & isInvestorShareTx().
 export function isInvestorVehicle(v) {
   return v.owner_type === 'investor' || (typeof v.owner_name === 'string' && v.owner_name.trim() !== '');
+}
+
+/**
+ * Tanggal motor eks-investor resmi jadi milik sendiri (YYYY-MM-DD) atau null.
+ * Sewa yang MULAI sebelum tanggal ini = bagi hasil investor; mulai tanggal ini = 100% owner.
+ */
+export function ownedSince(v) {
+  return v && typeof v.owned_since === 'string' && v.owned_since ? v.owned_since.slice(0, 10) : null;
+}
+
+/** Masih titipan investor saat ini (bukan eks-investor yang sudah dibeli owner). */
+export function isCurrentInvestorVehicle(v) {
+  return isInvestorVehicle(v) && !ownedSince(v);
+}
+
+/** Tanggal sewa untuk pembagian kepemilikan: tanggal mulai sewa (cadangan: tanggal dibuat, waktu Bali). */
+export function transactionDate(t) {
+  if (t?.start_date) return String(t.start_date).slice(0, 10);
+  return t?.created_at ? toLocalDateStr(t.created_at) : '';
+}
+
+/** Omset transaksi ini masuk bagi hasil investor? */
+export function isInvestorShareTx(t, v) {
+  if (!v || !isInvestorVehicle(v)) return false;
+  const since = ownedSince(v);
+  return !since || transactionDate(t) < since;
 }
 
 export function getVehicleSharePct(v) {
@@ -116,6 +145,14 @@ export function calcVehicleRevenue(vehicle, transactions) {
     .reduce((s, t) => s + Number(t.total_price || 0), 0);
 }
 
+// Omset motor yang dibagi hasil dengan investor (untuk motor eks-investor: hanya
+// sewa sebelum tanggal pindah kepemilikan).
+export function calcInvestorShareRevenue(vehicle, transactions) {
+  return transactions
+    .filter(t => (t.vehicle_id === vehicle.id || t.vehicles?.id === vehicle.id) && isPaidTransaction(t) && isInvestorShareTx(t, vehicle))
+    .reduce((s, t) => s + Number(t.total_price || 0), 0);
+}
+
 // Kalkulasi bagi hasil SEMUA motor investor, per motor.
 //
 // ATURAN (dikonfirmasi owner): hak investor = persentase bagi hasil × OMSET
@@ -132,7 +169,7 @@ export function calcInvestorPayouts({ transactions, vehicles }) {
   let totalRevenue = 0;
 
   const perVehicle = investorVehicles.map(v => {
-    const revenue = calcVehicleRevenue(v, safeTx);
+    const revenue = calcInvestorShareRevenue(v, safeTx);
     const sharePct = getVehicleSharePct(v);
     const payout = Math.round(revenue * (sharePct / 100));
     totalPayout += payout;
@@ -158,9 +195,11 @@ export function calcFinancialSummary({ transactions, expenses, vehicles }) {
   const unpaidTx = safeTx.filter(t => t.status === 'active' && t.payment_status === 'unpaid');
 
   const rentalRevenue = paidTx.reduce((s, t) => s + Number(t.total_price || 0), 0);
-  const investorVehicleIds = new Set((Array.isArray(vehicles) ? vehicles : []).filter(isInvestorVehicle).map(v => v.id));
+  const investorVehicleById = new Map(
+    (Array.isArray(vehicles) ? vehicles : []).filter(isInvestorVehicle).map(v => [v.id, v])
+  );
   const investorRevenue = paidTx
-    .filter(t => investorVehicleIds.has(t.vehicle_id) || investorVehicleIds.has(t.vehicles?.id))
+    .filter(t => isInvestorShareTx(t, investorVehicleById.get(t.vehicle_id) || investorVehicleById.get(t.vehicles?.id)))
     .reduce((s, t) => s + Number(t.total_price || 0), 0);
   const ownerVehicleRevenue = rentalRevenue - investorRevenue;
   const otherIncome = safeExp.filter(isIncomeEntry).reduce((s, e) => s + Number(e.amount || 0), 0);

@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { exportTransactionsToExcel, exportExpensesToExcel, exportInvestorReportToExcel, formatRupiah } from '@/lib/excel';
 import {
   calcFinancialSummary, calcInvestorPayouts, isIncomeEntry, isPaidTransaction,
-  isInvestorVehicle, getLocalDateStr,
+  isInvestorVehicle, isCurrentInvestorVehicle, isInvestorShareTx, getLocalDateStr,
 } from '@/lib/finance';
 import { createClient } from '@/lib/supabase/client';
 import { TX_LIGHT_SELECT, VEHICLE_LIGHT_COLUMNS } from '@/lib/queryColumns';
@@ -152,17 +152,21 @@ export default function ReportsPage() {
   const netProfit = summary.netProfit;
 
   // ── INVESTOR REPORT ENGINE (basis NET per motor, via shared engine) ──
-  const allInvestorVehicles = safeVeh.filter(isInvestorVehicle);
+  // Motor eks-investor (sudah dibeli owner) hanya ikut bila periode ini masih ada
+  // sewa sebelum tanggal pindah kepemilikannya.
+  const txOfVehicle = (t, v) => t.vehicle_id === v.id || t.vehicles?.id === v.id;
+  const allInvestorVehicles = safeVeh.filter(v =>
+    isCurrentInvestorVehicle(v) ||
+    (isInvestorVehicle(v) && safeTx.some(t => txOfVehicle(t, v) && isInvestorShareTx(t, v)))
+  );
   const uniqueInvestorNames = Array.from(new Set(allInvestorVehicles.map(v => v.owner_name?.trim()).filter(Boolean)));
 
   const targetInvestorVehicles = selectedInvestor === 'all'
     ? allInvestorVehicles
     : allInvestorVehicles.filter(v => v.owner_name?.trim() === selectedInvestor);
 
-  const targetVehicleIds = targetInvestorVehicles.map(v => v.id);
-
-  // Transactions for investor vehicles (untuk export & KPI)
-  const targetInvestorTx = safeTx.filter(t => targetVehicleIds.includes(t.vehicle_id) || targetVehicleIds.includes(t.vehicles?.id));
+  // Transaksi yang dibagi hasil (untuk export & KPI): motor eks-investor hanya sewa sebelum tanggal pindah.
+  const targetInvestorTx = safeTx.filter(t => targetInvestorVehicles.some(v => txOfVehicle(t, v) && isInvestorShareTx(t, v)));
   const targetPaidTx = targetInvestorTx.filter(isPaidTransaction);
 
   // Kalkulasi bagi hasil per motor (payout dibulatkan per motor — akurat

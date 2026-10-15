@@ -101,6 +101,8 @@ export async function POST(request) {
     revenue_share_percentage: sharePct,
     purchase_date: (body.purchase_date && String(body.purchase_date).trim() !== '') ? body.purchase_date : null,
     purchase_price: toNonNegativeNumber(body.purchase_price, 0),
+    // Motor eks-investor: tanggal mulai milik sendiri (YYYY-MM-DD) — lihat migration 007.
+    owned_since: /^\d{4}-\d{2}-\d{2}$/.test(String(body.owned_since || '')) ? body.owned_since : null,
   };
 
   let { data, error } = await supabase.from('vehicles').insert([payload]).select().single();
@@ -108,7 +110,7 @@ export async function POST(request) {
   // Smart Fallback jika kolom baru belum di-migrate di database Supabase
   if (error && (error.message.includes('Could not find the') || error.message.includes('schema cache'))) {
     console.warn('Fallback insertion without unmigrated columns:', error.message);
-    const { owner_type: _ot, owner_name: _on, owner_contact: _oc, revenue_share_percentage: _rsp, purchase_date: _pd, purchase_price: _pp, ...fallbackPayload } = payload;
+    const { owner_type: _ot, owner_name: _on, owner_contact: _oc, revenue_share_percentage: _rsp, purchase_date: _pd, purchase_price: _pp, owned_since: _os, ...fallbackPayload } = payload;
     const retry = await supabase.from('vehicles').insert([fallbackPayload]).select().single();
     data = retry.data;
     error = retry.error;

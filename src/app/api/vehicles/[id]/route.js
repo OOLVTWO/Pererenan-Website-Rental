@@ -42,6 +42,15 @@ export async function PUT(request, { params }) {
     updateData.purchase_date = (updateData.purchase_date && String(updateData.purchase_date).trim() !== '') ? updateData.purchase_date : null;
   }
 
+  // Motor eks-investor: tanggal mulai milik sendiri. Kosong = bukan eks-investor.
+  if ('owned_since' in updateData) {
+    const d = String(updateData.owned_since || '').trim();
+    if (d && !/^\d{4}-\d{2}-\d{2}$/.test(d)) {
+      return NextResponse.json({ error: 'Tanggal milik sendiri tidak valid.' }, { status: 400 });
+    }
+    updateData.owned_since = d || null;
+  }
+
   // Plat nomor: format sama dengan saat menambah motor, dan tidak boleh dipakai motor lain
   // (kolomnya UNIQUE — tanpa cek ini admin hanya melihat galat database berbahasa Inggris).
   if ('plate_number' in updateData) {
@@ -71,7 +80,7 @@ export async function PUT(request, { params }) {
 
   if (error && (error.message.includes('Could not find') || error.message.includes('column') || error.message.includes('schema cache') || error.code === 'PGRST204')) {
     console.warn('Fallback vehicle update without unmigrated columns:', error.message);
-    const { owner_type: _ot, owner_name: _on, owner_contact: _oc, revenue_share_percentage: _rsp, purchase_date: _pd, purchase_price: _pp, image_url: _i, current_km: _ck, ...fallbackUpdateData } = updateData;
+    const { owner_type: _ot, owner_name: _on, owner_contact: _oc, revenue_share_percentage: _rsp, purchase_date: _pd, purchase_price: _pp, image_url: _i, current_km: _ck, owned_since: _os, ...fallbackUpdateData } = updateData;
 
     const retry = await supabase
       .from('vehicles')
