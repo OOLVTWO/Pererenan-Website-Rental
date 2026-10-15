@@ -54,6 +54,11 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
 - **Bagi hasil investor = persentase × OMSET KOTOR motor investor.** Pengeluaran apa pun — termasuk biaya
   servis motor investor — TIDAK memotong bagian investor; semuanya ditanggung owner dan mengurangi laba
   bersih owner (`calcInvestorPayouts` / `calcFinancialSummary` di `src/lib/finance.js`).
+- **Motor investor yang dibeli owner: JANGAN dihapus / dibuat data baru.** Edit motor → "Milik Internal" →
+  isi `vehicles.owned_since` (migration 007). Sewa yang mulai sebelum tanggal itu tetap bagi hasil investor
+  (`owner_name` & persentase disimpan sebagai riwayat), sewa sejak tanggal itu 100% owner (`isInvestorShareTx`,
+  sama dengan `dashboard_summary`). Daftar investor aktif pakai `isCurrentInvestorVehicle`.
+  Contoh: SCOOPY 110 GREY DK 5770 FAB, eks SHAUNEY 80%, milik sendiri sejak 12 Okt 2026.
 - **Servis Motor = pencatatan manual saja.** Tidak ada deteksi jadwal servis, tidak ada interval, tidak ada KM.
 - **Kilometer (odometer) tidak dipakai di mana pun**: tidak di form transaksi, modal selesai, maupun data motor.
 - Pengaturan panel disimpan di localStorage + tabel `app_settings` (migration 005) lewat `src/lib/appSettings.js`,

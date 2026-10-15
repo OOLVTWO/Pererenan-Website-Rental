@@ -7,6 +7,14 @@ import { createClient } from '@/lib/supabase/client';
 import PageTabs from '@/components/ui/PageTabs';
 import Icon from '@/components/ui/Icon';
 import RupiahInput from '@/components/ui/RupiahInput';
+import { getLocalDateStr, isCurrentInvestorVehicle, ownedSince } from '@/lib/finance';
+
+const BULAN = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+/** '2026-10-12' → '12 Okt 2026' */
+function formatTanggal(iso) {
+  const [y, m, d] = String(iso || '').split('-').map(Number);
+  return y && m && d ? `${d} ${BULAN[m - 1]} ${y}` : '';
+}
 
 const VALID_OWNERSHIP_TABS = ['all', 'internal', 'investor', 'investor_recap'];
 
@@ -390,6 +398,8 @@ function getDefaultVehicleForm() {
     owner_name: '',
     owner_contact: '',
     revenue_share_percentage: '70',
+    // Motor eks-investor: tanggal mulai milik sendiri (YYYY-MM-DD) — lihat migration 007.
+    owned_since: '',
   };
 }
 
@@ -418,8 +428,9 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
           rate_per_month: editData.rate_per_month || '',
           image_url: editData.image_url || '',
           status: editData.status || 'available',
-          owner_type: editData.owner_type || (editData.owner_name ? 'investor' : 'internal'),
+          owner_type: editData.owned_since ? 'internal' : (editData.owner_type || (editData.owner_name ? 'investor' : 'internal')),
           owner_name: editData.owner_name || '',
+          owned_since: editData.owned_since ? String(editData.owned_since).slice(0, 10) : '',
           owner_contact: editData.owner_contact || '',
           revenue_share_percentage: editData.revenue_share_percentage ? String(editData.revenue_share_percentage) : '70',
         });
@@ -468,6 +479,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
         rate_per_week:  safeInt(form.rate_per_week),
         rate_per_month: safeInt(form.rate_per_month),
         revenue_share_percentage: safeInt(form.revenue_share_percentage) || 70,
+        owned_since: form.owner_type === 'internal' && form.owner_name.trim() ? form.owned_since : '',
       });
       if (error) {
         setSubmitError(error);
@@ -696,7 +708,12 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                     name="owner_type"
                     value="internal"
                     checked={form.owner_type === 'internal'}
-                    onChange={e => setForm(p => ({ ...p, owner_type: e.target.value }))}
+                    onChange={e => setForm(p => ({
+                      ...p,
+                      owner_type: e.target.value,
+                      // Dari titipan investor → milik sendiri: riwayat bagi hasil disimpan sampai tanggal pindah.
+                      owned_since: p.owner_name.trim() && !p.owned_since ? getLocalDateStr() : p.owned_since,
+                    }))}
                     style={{ accentColor: '#1D4ED8' }}
                   />
                   <span><Icon fa="fa-solid fa-building" style={{ marginRight: '4px', color: 'var(--brand-primary)' }} /> Milik Internal Boss Rent</span>
@@ -707,13 +724,50 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
                     name="owner_type"
                     value="investor"
                     checked={form.owner_type === 'investor'}
-                    onChange={e => setForm(p => ({ ...p, owner_type: e.target.value }))}
+                    onChange={e => setForm(p => ({ ...p, owner_type: e.target.value, owned_since: '' }))}
                     style={{ accentColor: '#1D4ED8' }}
                   />
                   <span><Icon fa="fa-solid fa-crown" style={{ marginRight: '4px', color: '#1D4ED8' }} /> Titipan Investor (Bagi Hasil)</span>
                 </label>
               </div>
             </div>
+
+            {form.owner_type === 'internal' && form.owner_name.trim() !== '' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed rgba(29,78,216, 0.3)' }}>
+                <div style={{ fontSize: '13px', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
+                  <Icon fa="fa-solid fa-crown" style={{ marginRight: '6px', color: '#1D4ED8' }} />
+                  Dulu titipan investor <strong>{form.owner_name}</strong> ({form.revenue_share_percentage || 70}% bagi hasil).
+                  Sewa <strong>sebelum</strong> tanggal di bawah tetap dihitung bagi hasil investor; sewa mulai tanggal itu
+                  100% milik Boss Rent. Riwayat pendapatan tidak hilang.
+                </div>
+                <div className="form-group" style={{ maxWidth: '260px' }}>
+                  <label className="form-label" htmlFor="v-owned-since">
+                    Milik Boss Rent sejak <span className="required">*</span>
+                  </label>
+                  <input
+                    id="v-owned-since"
+                    name="owned_since"
+                    type="date"
+                    className="form-control"
+                    value={form.owned_since}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  style={{ alignSelf: 'flex-start' }}
+                  onClick={() => {
+                    if (window.confirm(`Hapus riwayat investor ${form.owner_name}? Bagi hasil motor ini di laporan lama ikut hilang. Pilih ini hanya kalau motor ini sebenarnya tidak pernah titipan investor.`)) {
+                      setForm(p => ({ ...p, owner_name: '', owner_contact: '', owned_since: '' }));
+                    }
+                  }}
+                >
+                  Bukan eks-investor (hapus riwayat bagi hasil)
+                </button>
+              </div>
+            )}
 
             {form.owner_type === 'investor' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed rgba(29,78,216, 0.3)' }}>
@@ -929,8 +983,9 @@ export default function VehiclesPage({ initialVehicles = [] }) {
 
   const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
 
-  const investorVehicles = safeVehicles.filter(v => v.owner_type === 'investor' || (v.owner_name && v.owner_name.trim() !== ''));
-  const internalVehicles = safeVehicles.filter(v => (!v.owner_type || v.owner_type === 'internal') && (!v.owner_name || v.owner_name.trim() === ''));
+  // Motor eks-investor (sudah dibeli, ada owned_since) dihitung milik sendiri.
+  const investorVehicles = safeVehicles.filter(isCurrentInvestorVehicle);
+  const internalVehicles = safeVehicles.filter(v => !isCurrentInvestorVehicle(v));
 
   // Group vehicles by unique investor
   const investorMap = {};
@@ -950,7 +1005,7 @@ export default function VehiclesPage({ initialVehicles = [] }) {
 
   const filtered = safeVehicles.filter(v => {
     const matchStatus = statusFilter === 'all' || v.status === statusFilter;
-    const isInvestor = v.owner_type === 'investor' || (v.owner_name && v.owner_name.trim() !== '');
+    const isInvestor = isCurrentInvestorVehicle(v);
     const matchOwnership = ownershipFilter === 'all' || ownershipFilter === 'investor_recap' ||
       (ownershipFilter === 'internal' && !isInvestor) ||
       (ownershipFilter === 'investor' && isInvestor);
@@ -1178,7 +1233,8 @@ export default function VehiclesPage({ initialVehicles = [] }) {
       ) : (
         <div className="grid-3">
           {filtered.map(vehicle => {
-            const isInvestorUnit = vehicle.owner_type === 'investor' || (vehicle.owner_name && vehicle.owner_name.trim() !== '');
+            const isInvestorUnit = isCurrentInvestorVehicle(vehicle);
+            const exInvestorSince = ownedSince(vehicle);
 
             return (
               <div key={vehicle.id} className="vehicle-card" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1226,6 +1282,13 @@ export default function VehiclesPage({ initialVehicles = [] }) {
                     <div style={{ marginTop: '8px' }}>
                       <span className="badge" style={{ background: 'rgba(29,78,216, 0.15)', color: '#1D4ED8', borderColor: 'rgba(29,78,216, 0.35)', fontSize: '10.5px', padding: '3px 8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                         <Icon fa="fa-solid fa-crown" /> Investor: {vehicle.owner_name || 'Bagi Hasil'} ({vehicle.revenue_share_percentage || 70}/{100 - Number(vehicle.revenue_share_percentage || 70)})
+                      </span>
+                    </div>
+                  )}
+                  {exInvestorSince && (
+                    <div style={{ marginTop: '8px' }}>
+                      <span className="badge" style={{ fontSize: '10.5px', padding: '3px 8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <Icon fa="fa-solid fa-building" /> Milik sendiri sejak {formatTanggal(exInvestorSince)} · eks {vehicle.owner_name}
                       </span>
                     </div>
                   )}

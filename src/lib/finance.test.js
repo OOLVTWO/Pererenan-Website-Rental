@@ -19,6 +19,9 @@ import {
   calcVehicleRevenue,
   calcInvestorPayouts,
   calcFinancialSummary,
+  isCurrentInvestorVehicle,
+  isInvestorShareTx,
+  ownedSince,
 } from './finance';
 
 // ── formatRupiah ──
@@ -311,5 +314,43 @@ describe('calcFinancialSummary', () => {
     expect(summary.totalRevenue).toBe(0);
     expect(summary.netProfit).toBe(0);
     expect(summary.investorPayout).toBe(0);
+  });
+});
+
+// ── Motor eks-investor (sudah dibeli owner): tanggal pindah kepemilikan ──
+describe('owned_since — bagi hasil berhenti di tanggal pindah kepemilikan', () => {
+  // Scoopy eks-investor SHAUNEY 80%, milik sendiri mulai 12 Okt 2026
+  const scoopy = { id: 'sc', owner_type: 'internal', owner_name: 'SHAUNEY', revenue_share_percentage: 80, owned_since: '2026-10-12' };
+  const tx = [
+    { id: 'a', vehicle_id: 'sc', status: 'completed', start_date: '2026-10-09', total_price: 180000 },
+    { id: 'b', vehicle_id: 'sc', status: 'completed', start_date: '2026-10-11', total_price: 180000 }, // H-1 → masih investor
+    { id: 'c', vehicle_id: 'sc', status: 'active', payment_status: 'paid', start_date: '2026-10-13', total_price: 450000 }, // sudah milik sendiri
+  ];
+
+  it('mengenali motor eks-investor', () => {
+    expect(ownedSince(scoopy)).toBe('2026-10-12');
+    expect(isCurrentInvestorVehicle(scoopy)).toBe(false);
+    expect(isCurrentInvestorVehicle({ owner_type: 'investor', owner_name: 'X' })).toBe(true);
+    expect(isInvestorShareTx(tx[1], scoopy)).toBe(true);
+    expect(isInvestorShareTx(tx[2], scoopy)).toBe(false);
+  });
+
+  it('bagi hasil hanya dari sewa sebelum tanggal pindah', () => {
+    const r = calcInvestorPayouts({ transactions: tx, vehicles: [scoopy] });
+    expect(r.perVehicle[0]).toMatchObject({ revenue: 360000, payout: 288000, ownerShare: 72000 });
+  });
+
+  it('ringkasan: sewa setelah pindah masuk omset motor sendiri, laba owner naik', () => {
+    const s = calcFinancialSummary({ transactions: tx, expenses: [], vehicles: [scoopy] });
+    expect(s.rentalRevenue).toBe(810000);
+    expect(s.investorRevenue).toBe(360000);
+    expect(s.ownerVehicleRevenue).toBe(450000);
+    expect(s.investorPayout).toBe(288000);
+    expect(s.netProfit).toBe(810000 - 288000);
+  });
+
+  it('tanpa tanggal pindah, perilaku lama tetap (semua omset dibagi hasil)', () => {
+    const lama = { ...scoopy, owned_since: null };
+    expect(calcInvestorPayouts({ transactions: tx, vehicles: [lama] }).totalRevenue).toBe(810000);
   });
 });
