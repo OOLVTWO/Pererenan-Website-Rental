@@ -71,11 +71,14 @@ export async function POST(request) {
 
   // Cegah plat nomor duplikat (kecuali saat mengedit motor yang sama)
   if (plate) {
-    let dupQuery = supabase.from('vehicles').select('id').eq('plate_number', plate);
+    let dupQuery = supabase.from('vehicles').select('id, name').eq('plate_number', plate);
     if (body.id) dupQuery = dupQuery.neq('id', body.id);
     const { data: dup } = await dupQuery.maybeSingle();
     if (dup) {
-      return NextResponse.json({ error: 'Plat nomor sudah terdaftar pada motor lain.' }, { status: 409 });
+      return NextResponse.json(
+        { error: `Plat nomor ${plate} sudah dipakai motor "${dup.name}". Periksa lagi platnya, atau edit motor tersebut.` },
+        { status: 409 }
+      );
     }
   }
 
@@ -111,6 +114,9 @@ export async function POST(request) {
     error = retry.error;
   }
 
+  if (error?.code === '23505') {
+    return NextResponse.json({ error: `Plat nomor ${plate} sudah dipakai motor lain.` }, { status: 409 });
+  }
   if (error) {
     console.error('POST /api/vehicles error:', error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });

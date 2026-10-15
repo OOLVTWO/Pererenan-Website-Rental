@@ -397,10 +397,15 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
   const [form, setForm] = useState(() => getDefaultVehicleForm());
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  // Galat simpan ditampilkan DI DALAM form. Dulu hanya muncul di halaman di belakang
+  // jendela form (tertutup latar gelap & hilang 4 detik) → terlihat seperti "tidak bisa ditambah".
+  const [submitError, setSubmitError] = useState('');
+  const errorRef = useRef(null);
 
   useEffect(() => {
     // Defer ke microtask: hindari setState sinkron di dalam effect
     Promise.resolve().then(() => {
+      setSubmitError('');
       if (editData) {
         setForm({
           name: editData.name || '',
@@ -426,6 +431,7 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (submitError) setSubmitError('');
     const numericFields = ['rate_per_day', 'rate_per_week', 'rate_per_month', 'revenue_share_percentage'];
     if (numericFields.includes(name)) {
       setForm({ ...form, [name]: value.replace(/[^0-9]/g, '') });
@@ -452,16 +458,24 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setSubmitError('');
     const safeInt = (v) => parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0;
-    await onSubmit({
-      ...form,
-      year: parseInt(form.year, 10),
-      rate_per_day:   safeInt(form.rate_per_day),
-      rate_per_week:  safeInt(form.rate_per_week),
-      rate_per_month: safeInt(form.rate_per_month),
-      revenue_share_percentage: safeInt(form.revenue_share_percentage) || 70,
-    });
-    setLoading(false);
+    try {
+      const error = await onSubmit({
+        ...form,
+        year: parseInt(form.year, 10),
+        rate_per_day:   safeInt(form.rate_per_day),
+        rate_per_week:  safeInt(form.rate_per_week),
+        rate_per_month: safeInt(form.rate_per_month),
+        revenue_share_percentage: safeInt(form.revenue_share_percentage) || 70,
+      });
+      if (error) {
+        setSubmitError(error);
+        requestAnimationFrame(() => errorRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -772,6 +786,12 @@ function VehicleModal({ isOpen, onClose, onSubmit, editData, onOpenAdjuster }) {
 
           </section>
 
+          {submitError && (
+            <div ref={errorRef} className="alert alert-danger" role="alert" style={{ marginTop: '12px' }}>
+              <Icon fa="fa-solid fa-circle-exclamation" style={{ marginRight: '6px' }} /> {submitError}
+            </div>
+          )}
+
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>Batal</button>
             <button id="btn-vehicle-submit" type="submit" className="btn btn-primary" disabled={loading || uploading}>
@@ -940,23 +960,31 @@ export default function VehiclesPage({ initialVehicles = [] }) {
     return matchStatus && matchOwnership && matchSearch;
   });
 
+  /** Simpan motor. Mengembalikan pesan galat (ditampilkan di dalam form) atau null bila berhasil. */
   const handleSubmit = async (formData) => {
     const url = editData ? `/api/vehicles/${editData.id}` : '/api/vehicles';
     const method = editData ? 'PUT' : 'POST';
-    const res = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
-    const data = await res.json();
+    let res;
+    try {
+      res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+    } catch {
+      return 'Gagal terhubung ke server. Periksa koneksi internet lalu coba lagi.';
+    }
+    const data = await res.json().catch(() => ({}));
     if (res.ok) {
       showAlert(editData ? 'Data motor berhasil diperbarui.' : 'Motor baru berhasil ditambahkan.');
       setShowModal(false);
       setEditData(null);
       fetchVehicles();
-    } else {
-      showAlert(data.error || 'Terjadi kesalahan.', 'danger');
+      return null;
     }
+    if (res.status === 413) return 'Foto motor terlalu besar. Pilih foto lain yang lebih kecil.';
+    if (res.status === 401) return 'Sesi login habis. Muat ulang halaman lalu login kembali.';
+    return data.error || `Gagal menyimpan (kode ${res.status}). Coba lagi.`;
   };
 
   const handleDelete = async (id, cascade = false) => {
