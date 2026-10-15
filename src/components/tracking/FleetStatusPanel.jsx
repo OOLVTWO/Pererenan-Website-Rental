@@ -7,6 +7,7 @@
  * halaman Tracking (motor + sewa aktif) — cukup satu polling.
  */
 import { useState } from 'react';
+import { matchesQuery } from '@/lib/search';
 import PageTabs from '@/components/ui/PageTabs';
 import Icon from '@/components/ui/Icon';
 
@@ -170,11 +171,7 @@ export default function FleetStatusPanel({ vehicles, activeTransactions, loading
   const overdueCount = enrichedVehicles.filter(e => e.activeTx && getDaysLeft(e.activeTx.end_date) < 0).length;
 
   const filtered = enrichedVehicles.filter(({ vehicle, effectiveStatus, activeTx }) => {
-    const q = search.toLowerCase();
-    const matchSearch = !q
-      || (vehicle.name || '').toLowerCase().includes(q)
-      || (vehicle.plate_number || '').toLowerCase().includes(q)
-      || (activeTx?.renter_name || '').toLowerCase().includes(q);
+    const matchSearch = matchesQuery(search, [vehicle.name, vehicle.plate_number, activeTx?.renter_name]);
 
     const matchFilter = filter === 'all'
       || (filter === 'available' && effectiveStatus === 'available')
@@ -230,29 +227,32 @@ export default function FleetStatusPanel({ vehicles, activeTransactions, loading
         </div>
       </div>
 
-      {/* ── Filter & Search ── */}
-      <div className="tracking-controls" style={{ flexWrap: 'wrap', gap: '8px' }}>
+      {/* ── Pencarian + filter (sama dengan tab Sewa aktif) ── */}
+      <div className="tracking-controls">
+        <div className="search-bar tracking-search">
+          <span className="search-bar-icon"><Icon fa="fa-solid fa-magnifying-glass" /></span>
+          <input
+            type="text"
+            inputMode="search"
+            enterKeyHint="search"
+            className="form-control"
+            placeholder="Cari motor, plat, atau penyewa..."
+            aria-label="Cari motor"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          {search && (
+            <button type="button" onClick={() => setSearch('')} className="tracking-search-clear" aria-label="Hapus pencarian">
+              <Icon fa="fa-solid fa-xmark" />
+            </button>
+          )}
+        </div>
         <PageTabs
           ariaLabel="Filter status armada"
           value={filter}
           onChange={onFilterChange}
           tabs={FILTERS.map(f => ({ key: f.key, label: f.label, count: f.count }))}
         />
-        <div className="tracking-search-wrap">
-          <Icon fa="fa-solid fa-magnifying-glass" />
-          <input
-            type="text"
-            placeholder="Cari nama motor, plat, atau penyewa..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="tracking-search-input"
-          />
-          {search && (
-            <button onClick={() => setSearch('')} className="tracking-search-clear">
-              <Icon fa="fa-solid fa-xmark" />
-            </button>
-          )}
-        </div>
       </div>
 
       {/* ── Grid ── */}

@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { TX_LIGHT_SELECT, VEHICLE_LIGHT_COLUMNS } from '@/lib/queryColumns';
 import { startVisiblePolling } from '@/lib/visiblePolling';
+import { matchesQuery } from '@/lib/search';
 import { getWhatsAppShareUrl, getWaReminderTemplate } from '@/lib/countryCodes';
 import FleetStatusPanel, { FLEET_FILTERS } from '@/components/tracking/FleetStatusPanel';
 import PageTabs from '@/components/ui/PageTabs';
@@ -516,11 +517,7 @@ export default function TrackingPage() {
   });
 
   const filtered = enriched.filter(({ tx, vehicle, type }) => {
-    const q = search.toLowerCase();
-    const matchSearch = !q || (tx.renter_name || '').toLowerCase().includes(q)
-      || (tx.renter_phone || '').toLowerCase().includes(q)
-      || (vehicle?.name || '').toLowerCase().includes(q)
-      || (vehicle?.plate_number || '').toLowerCase().includes(q);
+    const matchSearch = matchesQuery(search, [tx.renter_name, tx.renter_phone, vehicle?.name, vehicle?.plate_number]);
 
     const matchFilter = filter === 'all'
       || (filter === 'overdue' && type === 'overdue')
@@ -628,29 +625,32 @@ export default function TrackingPage() {
         </div>
       </div>
 
-      {/* ── Filters & Search ── */}
+      {/* ── Pencarian (baris sendiri, lebar penuh di HP) + filter ── */}
       <div className="tracking-controls">
+        <div className="search-bar tracking-search">
+          <span className="search-bar-icon"><Icon fa="fa-solid fa-magnifying-glass" /></span>
+          <input
+            type="text"
+            inputMode="search"
+            enterKeyHint="search"
+            className="form-control"
+            placeholder="Cari penyewa, no HP, motor, atau plat..."
+            aria-label="Cari sewa aktif"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          {search && (
+            <button type="button" onClick={() => setSearch('')} className="tracking-search-clear" aria-label="Hapus pencarian">
+              <Icon fa="fa-solid fa-xmark" />
+            </button>
+          )}
+        </div>
         <PageTabs
           ariaLabel="Filter sewa aktif"
           value={filter}
           onChange={setFilter}
           tabs={FILTERS.map(f => ({ key: f.key, label: f.label, count: f.count }))}
         />
-        <div className="tracking-search-wrap">
-          <Icon fa="fa-solid fa-magnifying-glass" />
-          <input
-            type="text"
-            placeholder="Cari nama, HP, atau motor..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="tracking-search-input"
-          />
-          {search && (
-            <button onClick={() => setSearch('')} className="tracking-search-clear">
-              <Icon fa="fa-solid fa-xmark" />
-            </button>
-          )}
-        </div>
       </div>
 
       {/* ── Content ── */}
