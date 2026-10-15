@@ -2,6 +2,7 @@ import { createAdminClient } from '@/lib/supabase/server';
 import { requireAuth, readJsonBody, missingFields, toNonNegativeNumber } from '@/lib/apiAuth';
 import { NextResponse } from 'next/server';
 import { TX_LIGHT_SELECT, fetchAllRows } from '@/lib/queryColumns';
+import { matchesQuery, sanitizeFilterQuery } from '@/lib/search';
 
 const VALID_STATUS = ['active', 'completed', 'cancelled'];
 const VALID_PAYMENT = ['paid', 'unpaid'];
@@ -10,6 +11,7 @@ const VALID_PAYMENT = ['paid', 'unpaid'];
 //   ?status=active|completed|cancelled
 //   ?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD   (filter created_at)
 //   ?view=photo_ids                              (hanya id transaksi yang punya foto serah terima)
+//   ?q=teks                                      (nama/HP penyewa atau nama/plat motor)
 //
 // Default mengembalikan kolom RINGAN tanpa foto (lihat lib/queryColumns.js).
 // Foto diambil per transaksi lewat GET /api/transactions/:id.
@@ -42,6 +44,22 @@ export async function GET(request) {
     return NextResponse.json({ handover: data.map(r => r.id) });
   }
 
+  // Pencarian: nama / HP penyewa (di database) ATAU nama / plat motor.
+  // Tabel motor kecil (±40 baris × 3 kolom), jadi dicocokkan di sini — plat
+  // boleh diketik tanpa spasi ("dk5770" → "DK 5770 FAB").
+  let searchFilter = '';
+  if (q) {
+    const parts = [];
+    const safeQ = sanitizeFilterQuery(q);
+    if (safeQ) parts.push(`renter_name.ilike.%${safeQ}%`, `renter_phone.ilike.%${safeQ}%`);
+    const { data: vehicles, error: vError } = await supabase.from('vehicles').select('id, name, plate_number');
+    if (vError) console.error('GET /api/transactions: cari motor gagal:', vError.message);
+    const vehicleIds = (vehicles || []).filter(v => matchesQuery(q, [v.name, v.plate_number])).map(v => v.id);
+    if (vehicleIds.length) parts.push(`vehicle_id.in.(${vehicleIds.join(',')})`);
+    if (!parts.length) return NextResponse.json([]);
+    searchFilter = parts.join(',');
+  }
+
   const build = () => {
     let query = supabase
       .from('transactions')
@@ -50,8 +68,7 @@ export async function GET(request) {
     if (status && status !== 'all') query = query.eq('status', status);
     if (startDate) query = query.gte('created_at', startDate.includes('T') ? startDate : `${startDate}T00:00:00Z`);
     if (endDate) query = query.lte('created_at', endDate.includes('T') ? endDate : `${endDate}T23:59:59Z`);
-    // Pencarian dijalankan di database (nama / nomor HP penyewa)
-    if (q) query = query.or(`renter_name.ilike.%${q}%,renter_phone.ilike.%${q}%`);
+    if (searchFilter) query = query.or(searchFilter);
     return query;
   };
 

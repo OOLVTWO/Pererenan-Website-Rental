@@ -119,6 +119,9 @@ Baca bagian ini sebelum mulai kerja. Isinya pelajaran dari sesi-sesi sebelumnya.
   merah/kuning/ungu baru; status dibedakan dengan skala biru/abu + teks.
 - Navigasi: `src/components/layout/navConfig.js` = satu sumber menu. Sidebar desktop & halaman `/menu` flat,
   1 menu = 1 klik, TANPA dropdown. HP (≤900px): top bar + bar bawah (Beranda · Transaksi · Tracking · Menu).
+- Kotak cari = `.search-bar` + `.form-control` (putih, 48px). Pencocokan teks pakai `matchesQuery`
+  (`src/lib/search.js`: plat/HP boleh tanpa spasi); teks yang masuk filter `.or()` PostgREST wajib lewat
+  `sanitizeFilterQuery`. Pencarian Transaksi di server (`GET /api/transactions?q=`) juga mencari nama/plat motor.
 - Sub-bagian halaman = tab di dalam halaman (`src/components/ui/PageTabs.jsx`, tersimpan di `?tab=`),
   bukan submenu sidebar.
 - Mobile-first: target sentuh ≥ 44px, modal jadi lembar bawah di HP.
